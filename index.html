@@ -597,7 +597,12 @@ width:100%;max-width:390px;background:var(--bg);border-radius:var(--r-lg) var(--
 padding:24px 20px 40px;max-height:70vh;overflow-y:auto;
 border:1px solid var(--card-border);border-bottom:none;
 }
-.challenge-title{font-size:18px;font-weight:800;margin-bottom:16px;text-align:center}
+.challenge-title{font-size:18px;font-weight:800;margin-bottom:16px;text-align:center;position:relative}
+.challenge-close-x{
+position:absolute;top:-8px;right:-4px;width:32px;height:32px;border-radius:50%;
+background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);
+display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-sec);font-size:16px;
+}
 .challenge-opponent{
 display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px;
 border-radius:var(--r-btn);background:var(--card);border:1px solid var(--card-border);min-height:52px;
@@ -805,7 +810,7 @@ Perfil
 </div>
 </div>
 
-<div class="challenge-overlay" id="challengeOverlay">
+<div class="challenge-overlay" id="challengeOverlay" onclick="if(event.target===this)closeChallenge()">
 <div class="challenge-sheet" id="challengeSheet"></div>
 </div>
 <div class="pvp-invite-overlay" id="pvpInviteOverlay"></div>
@@ -1088,19 +1093,25 @@ if(notifs.length>0)updateNotificationBadge();
 
 // ====== AUDIO ENGINE ======
 var audioCtx=null;
+var audioReady=false;
 function initAudio(){
 if(!audioCtx){
-try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}
-if(audioCtx&&audioCtx.state==='suspended'){try{audioCtx.resume()}catch(e){}}
-}
-function ensureAudio(){
-if(!audioCtx){initAudio()}
-else if(audioCtx.state==='suspended'){try{audioCtx.resume()}catch(e){}}
+try{
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  audioReady=(audioCtx.state==='running');
+  audioCtx.onstatechange=function(){audioReady=(audioCtx.state==='running')};
+}catch(e){return}}
+if(audioCtx&&audioCtx.state==='suspended'){
+  audioCtx.resume().then(function(){audioReady=true}).catch(function(){});
+}else if(audioCtx){audioReady=(audioCtx.state==='running')}
 }
 function playTone(freq,dur,type,gain,freqEnd){
-if(!state||!state.settings.sfx)return;
-ensureAudio();
-if(!audioCtx||audioCtx.state!=='running')return;
+if(!state||!state.settings||!state.settings.sfx)return;
+if(!audioCtx){initAudio()}
+if(!audioCtx)return;
+// Try to resume if suspended (will work on next call after user gesture)
+if(audioCtx.state==='suspended'){audioCtx.resume().catch(function(){});return}
+if(audioCtx.state!=='running')return;
 type=type||'sine';gain=gain||0.12;dur=dur||100;
 try{
 var o=audioCtx.createOscillator();
@@ -1112,7 +1123,7 @@ g.gain.setValueAtTime(gain,audioCtx.currentTime);
 g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur/1000);
 o.connect(g);g.connect(audioCtx.destination);
 o.start();o.stop(audioCtx.currentTime+dur/1000+0.05);
-}catch(e){}
+}catch(e){console.warn('Audio error:',e)}
 }
 function sfxClick(){playTone(1200,25,'sine',0.08)}
 function sfxCorrect(){playTone(587,80,'sine',0.12,880);setTimeout(function(){playTone(880,120,'sine',0.1)},90)}
@@ -2298,9 +2309,9 @@ return '<div class="challenge-opponent">'+
 }).join('');
 
 sheet.innerHTML=
-'<div class="challenge-title">\u2694\uFE0F Escolha seu Oponente</div>'+
+'<div class="challenge-title">\u2694\uFE0F Escolha seu Oponente<button class="challenge-close-x" onclick="closeChallenge()">\u2715</button></div>'+
 onlineHtml+aiHtml+
-'<button class="challenge-close" onclick="closeChallenge()">Cancelar</button>';
+'';
 overlay.classList.add('show');
 }
 function closeChallenge(){document.getElementById('challengeOverlay').classList.remove('show')}
@@ -3323,8 +3334,15 @@ if(sb&&sbUser){
 }
 
 // ====== INITIALIZATION ======
-document.addEventListener('click',function(){initAudio()});
-document.addEventListener('touchstart',function(){initAudio()});
+// Init audio on first interaction, keep resuming on subsequent ones
+document.addEventListener('click',function(){
+  if(!audioCtx)initAudio();
+  else if(audioCtx.state==='suspended')audioCtx.resume().catch(function(){});
+});
+document.addEventListener('touchstart',function(){
+  if(!audioCtx)initAudio();
+  else if(audioCtx.state==='suspended')audioCtx.resume().catch(function(){});
+});
 window.addEventListener('beforeunload',function(){
   if(pvpMode&&pvpMatchChannel){
     pvpMatchChannel.send({type:'broadcast',event:'match:finished',payload:{
