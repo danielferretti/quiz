@@ -1,0 +1,738 @@
+{
+  "investimentos": [
+    {
+      "q": "O que é um consórcio de acordo com o material apresentado?",
+      "correct": "Uma forma de compra planejada onde pessoas se unem para autofinanciar um objetivo comum.",
+      "wrong1": "Um empréstimo bancário com taxas de juros reduzidas para aquisição de bens.",
+      "wrong2": "Uma modalidade de financiamento onde o bem é alienado ao banco até a quitação.",
+      "wrong3": "Um investimento de curto prazo atrelado à taxa Selic.",
+      "explanation": "O consórcio é definido como uma forma de compra colaborativa e planejada para autofinanciamento de um objetivo comum (como aquisição de imóvel ou veículo), caracterizando-se pela ausência de juros [1, 2].",
+      "difficulty": 1
+    },
+    {
+      "q": "Quais são os quatro itens que compõem o valor da parcela mensal de um consórcio?",
+      "correct": "Fundo comum, taxa de administração, fundo de reserva e seguro prestamista.",
+      "wrong1": "Amortização, juros, taxa de administração e IOF.",
+      "wrong2": "Fundo comum, taxa de juros, seguro obrigatório e comissão.",
+      "wrong3": "Lance embutido, fundo de reserva, juros e seguro prestamista.",
+      "explanation": "As parcelas do consórcio não possuem juros e são compostas exatamente por: Fundo Comum, Taxa de Administração, Fundo de Reserva e Seguro Prestamista [3].",
+      "difficulty": 2
+    },
+    {
+      "q": "Quais são os dois tipos de lance mencionados para tentar antecipar a contemplação no consórcio?",
+      "correct": "Lance fixo e lance livre.",
+      "wrong1": "Lance garantido e lance condicionado.",
+      "wrong2": "Lance embutido e lance parcelado.",
+      "wrong3": "Lance obrigatório e lance voluntário.",
+      "explanation": "O material especifica duas modalidades de lance: o Lance Fixo, predeterminado pela administradora, e o Lance Livre, que funciona como um leilão onde vence o maior percentual ofertado [4].",
+      "difficulty": 1
+    },
+    {
+      "q": "Como funciona a estratégia de 'Lance Embutido' no consórcio?",
+      "correct": "O consorciado utiliza parte do próprio crédito da carta para potencializar seu lance, sendo o valor descontado no recebimento.",
+      "wrong1": "O consorciado pega um empréstimo com a administradora para pagar o valor do lance.",
+      "wrong2": "O valor do lance é embutido e dividido nas parcelas restantes do grupo do consórcio.",
+      "wrong3": "O consorciado utiliza o saldo do FGTS para cobrir inteiramente o lance ofertado.",
+      "explanation": "No lance embutido, o consorciado utiliza um percentual do próprio crédito para dar o lance. Esse valor utilizado é descontado do valor total do crédito que ele receberá na contemplação [5].",
+      "difficulty": 2
+    },
+    {
+      "q": "Em qual situação é válido utilizar os recursos do FGTS para o pagamento de um lance no consórcio?",
+      "correct": "Apenas para consórcios de imóveis, de acordo com as regras da Caixa Econômica Federal.",
+      "wrong1": "Para consórcios de veículos novos e seminovos comerciais.",
+      "wrong2": "Para qualquer tipo de consórcio, desde que o cliente possua saldo disponível.",
+      "wrong3": "Apenas para consórcios de serviços ou financiamento de painéis solares.",
+      "explanation": "O uso de recursos do FGTS para pagamento de lances é válido exclusivamente para os consórcios de imóveis, seguindo as diretrizes da Caixa Econômica Federal [5].",
+      "difficulty": 2
+    },
+    {
+      "q": "Sobre a utilização do crédito e a junção de cotas de consórcio, qual das afirmativas é verdadeira?",
+      "correct": "É permitida a junção de cotas do mesmo produto, desde que todas estejam contempladas.",
+      "wrong1": "É permitida a junção de cotas de produtos diferentes, mesmo que não estejam contempladas.",
+      "wrong2": "A junção de cotas só é permitida exclusivamente para consórcios de automóveis.",
+      "wrong3": "Não é permitida a junção de cotas sob nenhuma hipótese nas administradoras parceiras.",
+      "explanation": "O material esclarece que é permitida a junção de cotas do mesmo produto, não importando a nomenclatura do grupo, com a condição de que todas as cotas envolvidas já estejam contempladas [6].",
+      "difficulty": 3
+    },
+    {
+      "q": "Existe um tempo limite para o consorciado utilizar o crédito após ser contemplado?",
+      "correct": "Não há limite de tempo; se não for utilizado, o recurso fica aplicado em um fundo lastreado em títulos públicos.",
+      "wrong1": "Sim, o crédito deve ser obrigatoriamente utilizado em até 90 dias após a contemplação.",
+      "wrong2": "Sim, o limite é de 1 ano, após o qual o consorciado perde definitivamente o direito à carta.",
+      "wrong3": "Não há limite de tempo, mas o valor da carta sofre uma depreciação mensal de 1%.",
+      "explanation": "Não há limite de tempo para a utilização do crédito. Caso o consorciado não utilize imediatamente, os recursos são aplicados e rendem em um fundo lastreado em títulos públicos [6].",
+      "difficulty": 2
+    },
+    {
+      "q": "Um consorciado contemplado é obrigado a utilizar o valor total da carta de crédito para a compra de apenas um único bem?",
+      "correct": "Não, o crédito não precisa ser utilizado de uma única vez e a mesma cota pode ser usada para comprar mais de um bem.",
+      "wrong1": "Sim, a regra principal do consórcio exige a aquisição de um único bem correspondente ao valor da cota.",
+      "wrong2": "Não, mas a compra fracionada só é permitida para consórcios de serviços e pequenas reformas.",
+      "wrong3": "Sim, exceto nos casos em que o consorciado faz a junção com outra cota do mesmo grupo.",
+      "explanation": "O crédito obtido através do consórcio não precisa ser gasto todo de uma só vez, sendo perfeitamente possível usar uma mesma cota contemplada para a compra de mais de um bem [6].",
+      "difficulty": 1
+    },
+    {
+      "q": "Qual o propósito do 'Fundo de Reserva' embutido na parcela do consórcio?",
+      "correct": "Funciona como garantia para cobrir imprevistos do grupo, como inadimplência, e o valor não utilizado é devolvido no encerramento.",
+      "wrong1": "É o montante principal utilizado para formar a carta de crédito e comprar o bem dos contemplados.",
+      "wrong2": "Corresponde ao lucro retido pela Administradora pela gestão e manutenção administrativa do grupo.",
+      "wrong3": "Trata-se de um seguro obrigatório destinado a cobrir as parcelas em caso de falecimento do consorciado.",
+      "explanation": "O Fundo de Reserva é um percentual voltado a cobrir imprevistos, como a inadimplência ou demandas jurídicas. Ao final do grupo, se esse valor não for gasto, ele é devolvido ao consorciado [3].",
+      "difficulty": 2
+    },
+    {
+      "q": "Como o material exemplifica a estratégia de 'Alavancagem Patrimonial' utilizando o consórcio?",
+      "correct": "Contemplar uma carta, comprar um imóvel e utilizar o valor do aluguel recebido para pagar a própria parcela do consórcio.",
+      "wrong1": "Vender várias cartas de consórcio antes da contemplação, cobrando ágio sobre os valores já pagos.",
+      "wrong2": "Pausar o pagamento das parcelas temporariamente para investir o dinheiro na bolsa de valores.",
+      "wrong3": "Utilizar exclusivamente lances embutidos de 100% para não precisar desembolsar valores de parcelas ao longo do grupo.",
+      "explanation": "A engenharia financeira (alavancagem patrimonial) explicada envolve contemplar a carta, adquirir o imóvel e alugá-lo, fazendo com que a renda do aluguel pague as parcelas do consórcio e ainda gere sobra, utilizando recursos de terceiros [7, 8].",
+      "difficulty": 3
+    }
+  ],
+  "atendimento": [
+    {
+      "q": "Qual é o LTV (Loan-to-Value) máximo permitido para a garantia de um apartamento nas operações de Home Equity?",
+      "correct": "Até 60%",
+      "wrong1": "Até 50%",
+      "wrong2": "Até 40%",
+      "wrong3": "Até 30%",
+      "explanation": "A política de crédito estipula que apartamentos podem ter um LTV de até 60% do valor do imóvel.",
+      "difficulty": 1
+    },
+    {
+      "q": "Quais tipos de imóveis NÃO são aceitos como garantia na modalidade de Home Equity?",
+      "correct": "Imóvel rural, galpões, imóvel operacional, escolas e igrejas",
+      "wrong1": "Casa, apartamento e terrenos PF",
+      "wrong2": "Salas comerciais e escritórios",
+      "wrong3": "Terrenos PJ e apartamentos",
+      "explanation": "A apresentação lista explicitamente imóvel rural, galpões, imóveis operacionais, escolas e igrejas como imóveis que não são aceitos.",
+      "difficulty": 1
+    },
+    {
+      "q": "De acordo com a política de crédito para Home Equity, qual é o LTV máximo permitido para casas e salas comerciais, respectivamente?",
+      "correct": "Até 50% para casas e até 40% para salas comerciais",
+      "wrong1": "Até 60% para casas e até 50% para salas comerciais",
+      "wrong2": "Até 40% para casas e até 30% para salas comerciais",
+      "wrong3": "Até 60% para casas e até 40% para salas comerciais",
+      "explanation": "A política define LTV de até 50% para casas e até 40% para salas comerciais.",
+      "difficulty": 2
+    },
+    {
+      "q": "Quem pode ser o proponente para um Crédito com Garantia de Imóvel (Home Equity)?",
+      "correct": "Pessoa Física (PF) e Pessoa Jurídica (PJ), sendo permitidos múltiplos proponentes",
+      "wrong1": "Apenas Pessoa Física (PF)",
+      "wrong2": "Apenas Pessoa Jurídica (PJ) com mais de 2 anos de CNPJ",
+      "wrong3": "Apenas servidores públicos e aposentados",
+      "explanation": "O perfil do cliente engloba tanto Pessoa Física quanto Pessoa Jurídica, e é possível ter múltiplos proponentes na operação.",
+      "difficulty": 2
+    },
+    {
+      "q": "Na jornada de contratação, qual é o prazo estimado para a etapa de 'Laudo de avaliação e análise jurídica' após a etapa do Parceiro?",
+      "correct": "D+7",
+      "wrong1": "D+2",
+      "wrong2": "D+5",
+      "wrong3": "D+3",
+      "explanation": "A linha do tempo estima o prazo de D+7 para o Laudo de avaliação e análise jurídica.",
+      "difficulty": 3
+    },
+    {
+      "q": "Qual é a principal característica dos prazos e taxas de juros no Crédito com Garantia de Imóvel?",
+      "correct": "Prazos alongados com taxas de juros menores",
+      "wrong1": "Prazos curtos com taxas de juros menores",
+      "wrong2": "Prazos alongados com taxas de juros maiores",
+      "wrong3": "Prazos curtos sem a cobrança de juros",
+      "explanation": "Por possuir a garantia real do imóvel, a modalidade oferece a vantagem de prazos alongados combinados com taxas de juros menores.",
+      "difficulty": 1
+    },
+    {
+      "q": "O que é recomendado incluir em uma boa 'Defesa de Crédito' para aumentar as chances de aprovação da proposta?",
+      "correct": "Informações detalhadas como empresa, cargo, tempo de admissão, patrimônio, carteira de investimentos e fontes de renda extra",
+      "wrong1": "Apenas a matrícula atualizada do imóvel e um comprovante de residência simples",
+      "wrong2": "Ocultar a finalidade do crédito para que a análise foque apenas no valor da garantia",
+      "wrong3": "Apenas o nome completo do cliente e a assinatura digital",
+      "explanation": "Uma boa defesa de crédito, que pode aumentar a chance de aprovação em 30%, inclui justificar o motivo do crédito e fornecer detalhes sobre renda extra, patrimônio e vínculos empregatícios.",
+      "difficulty": 2
+    },
+    {
+      "q": "Com base nos dados da ABECIP de 2024 na apresentação, como está dividido percentualmente o Sistema de Amortização dos contratos em carteira?",
+      "correct": "TP com 56,1% e SAC com 43,9%",
+      "wrong1": "SAC com 56,1% e TP com 43,9%",
+      "wrong2": "TP com 50,0% e SAC com 50,0%",
+      "wrong3": "TP com 60,0% e SAC com 40,0%",
+      "explanation": "Os dados de saldo em carteira demonstram que a Tabela Price (TP) representa 56,1% e o SAC 43,9% dos sistemas de amortização.",
+      "difficulty": 3
+    },
+    {
+      "q": "Como funciona a composição de renda na etapa de Pré-análise do Home Equity?",
+      "correct": "O sistema leva em conta a soma da renda de todos os participantes informados (múltiplos proponentes e cônjuges)",
+      "wrong1": "É considerada apenas a renda da pessoa em cujo nome o imóvel está registrado",
+      "wrong2": "Apenas a renda do proponente com o maior salário é contabilizada",
+      "wrong3": "A composição de renda não é analisada, pois apenas o valor do imóvel serve como garantia",
+      "explanation": "O sistema automaticamente leva em conta a renda de todos os participantes e cônjuges, validando se a soma da renda é compatível com o valor solicitado.",
+      "difficulty": 2
+    },
+    {
+      "q": "Quando ocorre o desembolso do recurso aprovado para o cliente na jornada do Home Equity?",
+      "correct": "Em estimado D+3, mas apenas após o registro da garantia no Cartório de Imóveis, que pode levar até 30 dias",
+      "wrong1": "Imediatamente após a aprovação da análise jurídica, antes da assinatura do contrato",
+      "wrong2": "No mesmo dia da assinatura do contrato, de forma antecipada pelo parceiro",
+      "wrong3": "Junto com a emissão do laudo de avaliação do imóvel em D+7",
+      "explanation": "O desembolso do recurso (estimado em D+3 nesta etapa final) ocorre somente após o registro da garantia no Cartório de Imóveis, cujo prazo pode se estender a até 30 dias após o protocolo.",
+      "difficulty": 3
+    }
+  ],
+  "cambio": [
+    {
+      "q": "Quais são os bancos parceiros da Franq para operações de Crédito Imobiliário listados no material?",
+      "correct": "Santander, Inter, Itaú e Bradesco.",
+      "wrong1": "Caixa, Banco do Brasil, Itaú e Nubank.",
+      "wrong2": "Santander, Bradesco, C6 Bank e Banco Bari.",
+      "wrong3": "Itaú, Creditas, Porto Bank e BV.",
+      "explanation": "O material indica que a Franq opera com Santander, Inter, Itaú e Bradesco para o Crédito Imobiliário.",
+      "difficulty": 1
+    },
+    {
+      "q": "Quais são as condições máximas de prazo e comprometimento de renda estipuladas para o financiamento de imóveis residenciais?",
+      "correct": "Prazo de até 420 meses e comprometimento de renda de até 35%.",
+      "wrong1": "Prazo de até 240 meses e comprometimento de renda de até 25%.",
+      "wrong2": "Prazo de até 360 meses e comprometimento de renda de até 30%.",
+      "wrong3": "Prazo de até 420 meses e comprometimento de renda de até 25%.",
+      "explanation": "Para residenciais, o prazo pode chegar a 420 vezes com comprometimento de até 35% da renda do cliente.",
+      "difficulty": 2
+    },
+    {
+      "q": "No financiamento de terrenos, qual é a peculiaridade em relação aos parceiros bancários e seguros obrigatórios citada nas condições comerciais?",
+      "correct": "É feito somente pelo Bradesco e exige apenas o seguro MIP, além do IOF.",
+      "wrong1": "É feito por todos os parceiros e exige seguros MIP e DFI obrigatórios.",
+      "wrong2": "É feito apenas pelo Itaú e não exige seguros obrigatórios.",
+      "wrong3": "É feito pelo Santander e Inter, exigindo os seguros MIP e DFI.",
+      "explanation": "O financiamento de terreno possui restrição de ser feito somente pelo Bradesco, exigindo apenas o seguro MIP e cobrança de IOF.",
+      "difficulty": 3
+    },
+    {
+      "q": "Qual é o LTV (Loan to Value) máximo permitido para o financiamento de imóveis comerciais?",
+      "correct": "Até 70%.",
+      "wrong1": "Até 90%.",
+      "wrong2": "Até 50%.",
+      "wrong3": "Até 80%.",
+      "explanation": "As condições comerciais estipulam um LTV de até 70% para a aquisição de imóveis comerciais.",
+      "difficulty": 1
+    },
+    {
+      "q": "Quais documentos compõem o 'Checklist I' essencial para a etapa de avaliação do imóvel?",
+      "correct": "Matrícula do imóvel, espelho do IPTU, proposta de financiamento modelo Banco e DPS (declaração pessoal de saúde).",
+      "wrong1": "Matrícula do imóvel, holerites dos últimos 3 meses, certidão de casamento e proposta.",
+      "wrong2": "Contrato social, certidão conjunta, espelho do IPTU e matrícula do imóvel.",
+      "wrong3": "Matrícula do imóvel, laudo de vistoria prévio, fotos do imóvel e certidão negativa de débitos.",
+      "explanation": "O Checklist I de avaliação do imóvel exige especificamente a Matrícula, Espelho do IPTU (áreas do imóvel), Proposta do banco e a DPS.",
+      "difficulty": 2
+    },
+    {
+      "q": "Em relação ao uso do FGTS na aquisição de imóvel residencial, qual regra o comprador e o vendedor devem cumprir para que o recurso seja liberado?",
+      "correct": "O comprador não pode ter financiamento ativo no SFH no país e o vendedor não pode ter usado FGTS para comprar este mesmo imóvel nos últimos 3 anos.",
+      "wrong1": "O comprador deve ter no mínimo 24 meses de depósitos e o vendedor não precisa seguir regras do SFH.",
+      "wrong2": "O comprador pode ter outro financiamento no SFH, desde que não seja na mesma cidade do novo imóvel.",
+      "wrong3": "O comprador não pode ser proprietário de imóvel comercial na cidade e o vendedor deve quitar a dívida antes da venda.",
+      "explanation": "A regra do FGTS veta financiamento ativo no Sistema Financeiro de Habitação (SFH) em qualquer lugar do país para o comprador, e exige que o vendedor não tenha utilizado FGTS neste bem nos últimos três anos.",
+      "difficulty": 3
+    },
+    {
+      "q": "De acordo com o Acordo de Nível de Serviço (S.L.A) do produto, qual é o prazo estipulado para a Análise Jurídica a partir da entrega do Checklist II?",
+      "correct": "Até 10 dias.",
+      "wrong1": "Até 3 dias úteis.",
+      "wrong2": "Em média 30 dias.",
+      "wrong3": "De 1 a 3 dias úteis.",
+      "explanation": "O S.L.A informa que a análise jurídica da operação ocorre em até 10 dias após a entrega completa do checklist II.",
+      "difficulty": 2
+    },
+    {
+      "q": "Segundo o material de apresentação, quais são as destinações permitidas para a operação de Crédito Imobiliário na Franq?",
+      "correct": "Exclusivamente para aquisição de imóveis residenciais, comerciais ou terrenos.",
+      "wrong1": "Exclusivamente para reforma, construção e aquisição de imóveis comerciais.",
+      "wrong2": "Exclusivamente para aquisição de veículos pesados, terrenos e casas rurais.",
+      "wrong3": "Exclusivamente para refinanciamento de dívidas e compra de galpões logísticos.",
+      "explanation": "O documento define claramente que o crédito é utilizado exclusivamente para a aquisição de imóveis residenciais, comerciais ou terrenos.",
+      "difficulty": 1
+    },
+    {
+      "q": "Qual banco parceiro apresenta a restrição específica de só dar seguimento na avaliação do imóvel após a recepção da documentação completa (pasta completa)?",
+      "correct": "Banco Itaú.",
+      "wrong1": "Banco Santander.",
+      "wrong2": "Banco Bradesco.",
+      "wrong3": "Banco Inter.",
+      "explanation": "O material enfatiza explicitamente em sua observação que, para o Banco Itaú, a pasta da operação deverá estar completa para que ocorra a avaliação do imóvel.",
+      "difficulty": 3
+    },
+    {
+      "q": "Na contratação de financiamento de um imóvel comercial, quais são os seguros obrigatórios incidentes na operação?",
+      "correct": "Seguro MIP e DFI.",
+      "wrong1": "Apenas Seguro MIP.",
+      "wrong2": "Apenas Seguro DFI.",
+      "wrong3": "Seguro Prestamista e Seguro Fiança.",
+      "explanation": "Para o financiamento de imóveis comerciais, o material aponta os seguros MIP e DFI como obrigatórios (além do IOF).",
+      "difficulty": 2
+    }
+  ],
+  "previdencia": [
+    {
+      "q": "Qual a idade mínima e máxima permitida para um cliente Pessoa Física (PF) solicitar o financiamento de veículos (Fin Auto)?",
+      "correct": "Mínimo 18 anos e máximo 70 anos.",
+      "wrong1": "Mínimo 21 anos e máximo 65 anos.",
+      "wrong2": "Mínimo 18 anos e máximo 65 anos.",
+      "wrong3": "Mínimo 21 anos e máximo 75 anos.",
+      "explanation": "As condições gerais do Fin Auto estipulam claramente que a idade do cliente PF deve ser de no mínimo 18 anos e no máximo 70 anos.",
+      "difficulty": 1
+    },
+    {
+      "q": "Qual foi a modalidade de financiamento de veículos com maior representatividade no mercado em dezembro de 2024?",
+      "correct": "CDC, representando 85,7% das modalidades.",
+      "wrong1": "Consórcio, representando 85,7% das modalidades.",
+      "wrong2": "Leasing, representando 13,5% das modalidades.",
+      "wrong3": "Outros (Reserva de Domínio), representando 16,0% das modalidades.",
+      "explanation": "O CDC (Crédito Direto ao Consumidor) foi a modalidade de financiamento com maior representatividade em dezembro de 2024, compondo 85,7% do mercado, seguido por consórcio com 13,5%.",
+      "difficulty": 1
+    },
+    {
+      "q": "No Fin Auto, qual é o limite de LTV (Loan to Value) e o prazo recomendado para o financiamento de um veículo com até 03 anos de fabricação?",
+      "correct": "LTV de 100% com prazo recomendado de 60 meses.",
+      "wrong1": "LTV de 80% com prazo recomendado de 60 meses.",
+      "wrong2": "LTV de 60% com prazo recomendado de 48 meses.",
+      "wrong3": "LTV de 100% com prazo recomendado de 48 meses.",
+      "explanation": "A tabela de variáveis importantes do Fin Auto sugere que para garantias de até 03 anos, o LTV pode ser de 100% e o prazo recomendado é de 60 meses.",
+      "difficulty": 2
+    },
+    {
+      "q": "Como funciona a modalidade de crédito conhecida como Auto Equity?",
+      "correct": "O cliente oferece o próprio carro como garantia do empréstimo para obter taxas menores, mantendo a posse do veículo.",
+      "wrong1": "O cliente compra um carro novo diretamente da fábrica sem juros e o banco retém o documento até a quitação.",
+      "wrong2": "É uma modalidade exclusiva para Pessoas Jurídicas (PJ) adquirirem frotas de veículos pesados com desconto.",
+      "wrong3": "O cliente aluga um carro do banco com a opção de comprá-lo pagando o valor residual no final do contrato.",
+      "explanation": "O Auto Equity é um empréstimo com garantia de veículos (refinanciamento) onde o solicitante obtém crédito com taxas reduzidas e continua com a posse do carro, que fica vinculado ao banco como garantia.",
+      "difficulty": 2
+    },
+    {
+      "q": "Segundo as condições do Auto Equity, quais são os limites sugeridos de LTV e prazo para veículos com mais de 10 anos de fabricação?",
+      "correct": "LTV de 50% e prazo recomendado de 36 meses.",
+      "wrong1": "LTV de 50% e prazo recomendado de 48 meses.",
+      "wrong2": "LTV de 60% e prazo recomendado de 48 meses.",
+      "wrong3": "LTV de 80% e prazo recomendado de 60 meses.",
+      "explanation": "Para a modalidade Auto Equity, veículos acima de 10 anos possuem um LTV sugerido de 50% e prazo recomendado restrito a 36 meses.",
+      "difficulty": 3
+    },
+    {
+      "q": "Durante a jornada do Auto Equity, como funciona o processo e os prazos da auto vistoria do veículo?",
+      "correct": "O link enviado ao cliente tem validade de 72 horas, e a vistoriadora tem 3 horas para gerar o laudo após a finalização do cliente.",
+      "wrong1": "O link tem validade de 24 horas, e a vistoriadora tem 24 horas para gerar o laudo após o envio das fotos.",
+      "wrong2": "O link tem validade de 72 horas, e o laudo de aprovação é gerado instantaneamente por inteligência artificial.",
+      "wrong3": "O link tem validade de 48 horas, e a vistoriadora tem 6 horas para avaliar e aprovar as fotos do veículo.",
+      "explanation": "O material especifica que o link enviado via WhatsApp/SMS tem validade de 72 horas e, após o cliente finalizar a auto vistoria, a vistoriadora tem 3 horas para gerar o laudo.",
+      "difficulty": 2
+    },
+    {
+      "q": "Um cliente pode financiar diretamente um Motor home, uma lancha ou máquinas agrícolas pelo Fin Auto?",
+      "correct": "Não, mas ele pode utilizar a modalidade de Auto Equity para refinanciar um carro de sua propriedade e usar o dinheiro para comprá-los.",
+      "wrong1": "Sim, desde que o valor total financiado seja superior a R$ 200.000,00 e o cliente tenha renda mínima.",
+      "wrong2": "Sim, mas os bancos aceitam apenas máquinas e tratores agrícolas diretamente pelo Fin Auto.",
+      "wrong3": "Não, a política bancária proíbe tanto o financiamento direto quanto a utilização de crédito de refinanciamento para estes fins.",
+      "explanation": "O guia Tira Dúvidas orienta que o financiamento direto para Motor home, lanchas e máquinas não é feito, mas o cliente pode refinanciar outro bem do seu patrimônio (veículos) para fazer a aquisição.",
+      "difficulty": 3
+    },
+    {
+      "q": "Qual é a idade máxima de fabricação aceita para veículos de passeio tanto na modalidade Fin Auto quanto no Auto Equity?",
+      "correct": "Até 20 anos de fabricação.",
+      "wrong1": "Até 10 anos de fabricação.",
+      "wrong2": "Até 06 anos de fabricação.",
+      "wrong3": "Até 15 anos de fabricação.",
+      "explanation": "As condições gerais de ambas as modalidades (Fin Auto e Auto Equity) destacam que são aceitos veículos de passeio com até 20 anos de fabricação.",
+      "difficulty": 1
+    },
+    {
+      "q": "É possível realizar o refinanciamento (Auto Equity) de um veículo que ainda possui uma dívida em aberto?",
+      "correct": "Sim, alguns bancos aceitam, geralmente considerando até 80% de LTV, e o saldo devedor não pode ser maior que o saldo liberado.",
+      "wrong1": "Não, o veículo deve estar integralmente quitado e sem qualquer tipo de restrição ou dívida atrelada.",
+      "wrong2": "Sim, os bancos aceitam financiar com 100% de LTV independentemente do valor da dívida remanescente.",
+      "wrong3": "Sim, mas exclusivamente para veículos pesados ou comerciais com no máximo 3 anos de uso.",
+      "explanation": "O FAQ confirma que é possível (sujeito a análise), e os parceiros consideram em média até 80% de LTV, desde que a dívida em aberto não seja superior ao novo crédito liberado.",
+      "difficulty": 2
+    },
+    {
+      "q": "Qual foi a penetração de financiamentos sobre as vendas especificamente de veículos usados no acumulado do ano de 2024 (YTD'24)?",
+      "correct": "29,6%.",
+      "wrong1": "35,0%.",
+      "wrong2": "52,9%.",
+      "wrong3": "85,7%.",
+      "explanation": "A tabela 'Financiamentos vs. Vendas | Veículos Usados' mostra que a penetração de financiamentos para veículos usados no acumulado do ano de 2024 (YTD'24) foi de 29,6%.",
+      "difficulty": 3
+    }
+  ],
+  "compliance": [
+    {
+      "q": "Na análise de crédito para empresas (PME), quais são os principais motivos ligados à conformidade e histórico financeiro que geram recusa da operação?",
+      "correct": "Vencidos, prejuízo e Bacen zerado, alavancagem, CNPJ comprado, alteração de atividade recente e problemas judiciais.",
+      "wrong1": "Faturamento acima de 50 milhões no último ano e falta de imóveis operacionais registrados.",
+      "wrong2": "Apenas a falta de um avalista com patrimônio líquido superior ao dobro do crédito solicitado.",
+      "wrong3": "Venda de produtos exclusivamente para pessoa física e ausência de máquina de cartão própria.",
+      "explanation": "Conforme as regras de Crédito para Empresas, motivos de recusa incluem Bacen zerado, CNPJ comprado, histórico de prejuízo, alavancagem e problemas judiciais.",
+      "difficulty": 2
+    },
+    {
+      "q": "Para a utilização do FGTS na compra de um imóvel residencial, qual é a regra estipulada em relação à quantidade de depósitos e a financiamentos ativos?",
+      "correct": "É necessário ter no mínimo 36 depósitos na conta FGTS e não possuir financiamento habitacional ativo no SFH em nenhum lugar do país.",
+      "wrong1": "É necessário ter 24 depósitos contínuos e não possuir mais de um financiamento ativo no SFH na mesma cidade.",
+      "wrong2": "É exigido apenas ter saldo suficiente, sem limite mínimo de depósitos, contanto que o imóvel seja novo.",
+      "wrong3": "É necessário ter 48 depósitos e o vendedor não pode ter utilizado o FGTS na compra daquele imóvel nos últimos cinco anos.",
+      "explanation": "As diretrizes exigem no mínimo 36 depósitos, nenhum financiamento SFH ativo no país e que o imóvel se enquadre nas regras do SFH.",
+      "difficulty": 3
+    },
+    {
+      "q": "Dentro das regras regulatórias para uso do FGTS na aquisição de imóvel, qual a restrição sobre a posse prévia de propriedades pelo beneficiário?",
+      "correct": "O beneficiário não pode ser proprietário de nenhum imóvel residencial na cidade onde trabalha ou reside, nem em municípios limítrofes.",
+      "wrong1": "O beneficiário pode ter até um imóvel na mesma cidade, desde que comprove que ele está alugado para terceiros.",
+      "wrong2": "É proibido possuir propriedades comerciais em qualquer estado, mas permite-se ter imóveis residenciais fora da cidade de residência.",
+      "wrong3": "Não há restrições sobre possuir outros imóveis, desde que o novo imóvel adquirido com FGTS passe a ser a residência principal.",
+      "explanation": "Para fins de compliance e regulação do FGTS, o comprador não pode possuir imóvel residencial na cidade em que reside, trabalha ou em cidades limítrofes.",
+      "difficulty": 2
+    },
+    {
+      "q": "No contexto de seguro de vida em grupo, para quais categorias de trabalhadores o seguro é estritamente obrigatório por lei (e não apenas por convenção coletiva)?",
+      "correct": "Construção civil e motoristas de transportes rodoviários.",
+      "wrong1": "Bares, restaurantes e indústrias em geral.",
+      "wrong2": "Metalúrgicas e empresas de vigilância patrimonial.",
+      "wrong3": "Apenas estagiários, jovens aprendizes e terceirizados de qualquer setor.",
+      "explanation": "Enquanto metalúrgicas, vigilantes e bares dependem de Convenção Coletiva de Trabalho (CCT), a lei obriga seguros de vida para profissionais da construção civil e motoristas rodoviários.",
+      "difficulty": 1
+    },
+    {
+      "q": "Qual é a exigência regulatória específica em relação ao status tributário do veículo nas operações de Fin Auto e Auto Equity?",
+      "correct": "O veículo oferecido como garantia não pode mais conter restrição tributária no sistema do Detran.",
+      "wrong1": "O veículo pode conter restrição tributária, desde que o banco parceiro emita uma carta de anuência assumindo o imposto.",
+      "wrong2": "A restrição tributária é permitida apenas para veículos com menos de 3 anos de fabricação.",
+      "wrong3": "Veículos com restrição tributária têm o LTV (Loan to Value) reduzido obrigatoriamente para 50%.",
+      "explanation": "O material especifica claramente nas condições de Fin Auto e Auto Equity que o veículo não pode mais conter restrição tributária no sistema do Detran para ser aceito na operação.",
+      "difficulty": 3
+    },
+    {
+      "q": "Na jornada de contratação do Crédito com Garantia de Imóvel (Home Equity), em que momento o Aceite Bacen do proponente deve ser fornecido à mesa?",
+      "correct": "Na etapa de Lead/Checklist, logo após a solicitação, para que o analista confira os documentos e faça o enquadramento técnico.",
+      "wrong1": "Na etapa de Desembolso, devendo ser assinado no cartório junto com o registro da alienação.",
+      "wrong2": "Apenas após a etapa de Laudo de Avaliação e Análise Jurídica completa do imóvel.",
+      "wrong3": "O Aceite Bacen não é necessário para Home Equity, sendo exclusivo para financiamentos de veículos leves.",
+      "explanation": "A linha do tempo (D+2) indica que a mesa recebe a solicitação e já exige o envio do checklist e do Aceite Bacen na fase inicial (Lead/Checklist) para a devida verificação.",
+      "difficulty": 2
+    },
+    {
+      "q": "No que diz respeito ao compliance na contratação de Consignado Privado, quais são os requisitos comerciais básicos sobre a constituição e receita da empresa conveniada?",
+      "correct": "A empresa deve ter no mínimo 2 anos da data de constituição e a sua receita deve ser advinda da iniciativa privada.",
+      "wrong1": "A empresa precisa estar constituída há no máximo 1 ano e apresentar receita majoritária advinda de licitações públicas.",
+      "wrong2": "Não há exigência mínima de tempo de constituição, desde que a empresa comprove ter pelo menos 50 funcionários registrados.",
+      "wrong3": "A empresa deve ter no mínimo 5 anos de constituição e capital aberto na Bolsa de Valores.",
+      "explanation": "As condições do Consignado Privado exigem 2 anos de data de constituição da empresa e que ela possua receita advinda da iniciativa privada.",
+      "difficulty": 1
+    },
+    {
+      "q": "Qual documentação fiscal é obrigatória no checklist básico de Crédito Imobiliário para atestar a regularidade quando o comprador ou vendedor for Pessoa Jurídica (PJ)?",
+      "correct": "CRF do FGTS e Certidão Conjunta da Receita Federal e INSS.",
+      "wrong1": "Declaração de Imposto de Renda Pessoa Física dos sócios e IPTU da sede da empresa quitado.",
+      "wrong2": "Certidão Negativa de Débitos Municipais e alvará de funcionamento válido para o ano corrente.",
+      "wrong3": "Apenas o Contrato Social consolidado, sendo dispensadas quaisquer certidões de regularidade tributária.",
+      "explanation": "O checklist básico para PJ exige a apresentação do CRF do FGTS e a Certidão conjunta (Receita Federal e INSS) para assegurar a regularidade da empresa envolvida na transação.",
+      "difficulty": 1
+    },
+    {
+      "q": "Segundo as políticas de crédito do Home Equity, quais tipos de imóveis não são elegíveis e não podem ser aceitos como garantia na operação?",
+      "correct": "Imóvel rural, galpões, imóvel operacional, escolas e igrejas.",
+      "wrong1": "Apartamentos padrão, casas em condomínio fechado e salas comerciais.",
+      "wrong2": "Terrenos em áreas urbanas regularizadas e lajes corporativas.",
+      "wrong3": "Apenas imóveis cujo LTV solicitado pela operação de crédito seja superior a 20%.",
+      "explanation": "O material de Home Equity aponta expressamente em 'Qualidade do cliente' os imóveis que não são aceitos: imóvel rural, galpões, imóvel operacional, escolas e igrejas.",
+      "difficulty": 1
+    },
+    {
+      "q": "No contexto da regulação dos Consórcios, qual é a regra aplicável à utilização do FGTS para o pagamento de lances?",
+      "correct": "O uso do FGTS é válido apenas para Consórcios de Imóveis, devendo respeitar as regras estabelecidas pela Caixa Econômica Federal (CEF).",
+      "wrong1": "É permitido utilizar o FGTS para consórcios de automóveis de passeio, desde que sejam veículos novos (zero km).",
+      "wrong2": "Pode ser utilizado para qualquer tipo de consórcio (veículos, bens ou imóveis), com limite de saque de até 30% do saldo total da conta.",
+      "wrong3": "O uso de FGTS é estritamente proibido para pagamentos de lances, sendo liberado apenas na modalidade de financiamento imobiliário direto.",
+      "explanation": "No material explicativo sobre consórcios, fica detalhado que o lance com FGTS é 'Válido para Consórcios de Imóveis, de acordo com as regras da CEF'.",
+      "difficulty": 2
+    }
+  ],
+  "rendafixa": [
+    {
+      "q": "De acordo com o material sobre Seguro de Vida Individual, qual das opções abaixo NÃO é uma das coberturas ou assistências listadas no portfólio?",
+      "correct": "Manutenção veicular preventiva.",
+      "wrong1": "Diária por Incapacidade Temporária (DIT).",
+      "wrong2": "Diária por Internação Hospitalar (DIH).",
+      "wrong3": "Assistência residencial.",
+      "explanation": "As fontes citam coberturas como Morte, Invalidez, Doenças Graves, DIT, DIH, além de assistências como funeral, telemedicina e assistência residencial. Manutenção veicular não é mencionada para seguros de vida.",
+      "difficulty": 1
+    },
+    {
+      "q": "Qual é um dos grandes diferenciais do Seguro de Vida em Grupo em relação ao Seguro de Vida Individual?",
+      "correct": "Não há necessidade de preenchimento da Declaração Pessoal de Saúde (DPS).",
+      "wrong1": "O capital segurado é sempre fixo e não pode ultrapassar R$ 50.000,00.",
+      "wrong2": "É obrigatório para empresas com apenas 1 funcionário.",
+      "wrong3": "Não permite estender o benefício para a família do colaborador.",
+      "explanation": "O material destaca que o Seguro de Vida em Grupo não exige DPS, costuma ser mais econômico, aceita profissões de risco e o benefício pode ser estendido à família.",
+      "difficulty": 1
+    },
+    {
+      "q": "Segundo a apresentação, qual é a realidade encontrada ao analisar apólices de Seguros Obrigatórios vinculadas a Convenções Coletivas de Trabalho (CCT)?",
+      "correct": "Cerca de 90% destas apólices estavam em não conformidade com a CCT ou realidade da empresa.",
+      "wrong1": "A maioria das apólices cobre muito mais do que o exigido pelos sindicatos.",
+      "wrong2": "Quase 100% das empresas cumprem as exigências da CCT rigorosamente.",
+      "wrong3": "As CCTs proíbem que terceiros e estagiários sejam incluídos na apólice.",
+      "explanation": "O material ressalta que, ao analisar as coberturas e valores no mercado, foi identificado que 90% das apólices estavam em não conformidade com as regras exigidas pelas CCTs.",
+      "difficulty": 2
+    },
+    {
+      "q": "No exemplo de comissionamento do Seguro de Vida Tradicional com contribuição mensal de R$ 1.000,00, qual é o valor total de comissão no primeiro ano?",
+      "correct": "R$ 2.800,00.",
+      "wrong1": "R$ 3.600,00.",
+      "wrong2": "R$ 2.400,00.",
+      "wrong3": "R$ 1.200,00.",
+      "explanation": "O slide de comissionamento demonstra que o Vida Tradicional gera R$ 2.800,00 no primeiro ano, divididos entre parcelas de 60% e 20%. R$ 3.600,00 é o valor do Vida Resgatável.",
+      "difficulty": 3
+    },
+    {
+      "q": "Para fins de abordagem e oportunidades de novas contratações, em quais 3 grandes blocos a metodologia da Franq separa os clientes?",
+      "correct": "Sem proteção e planejamento; Com proteção, mas precisa de revisão; Protegido e atualizado.",
+      "wrong1": "Alta renda; Média renda; Baixa renda.",
+      "wrong2": "Empregados CLT; Empreendedores; Aposentados.",
+      "wrong3": "Independentes financeiramente; Em fase de acumulação; Em fase de trabalho.",
+      "explanation": "A Franq ensina a separar os clientes nos blocos focados no seu nível de proteção para facilitar a venda: sem proteção (novas vendas), com proteção (revisão de coberturas) e atualizado (novos produtos e indicações).",
+      "difficulty": 2
+    },
+    {
+      "q": "No material sobre coberturas isoladas ou em conjunto do Seguro de Vida Individual, qual é a idade limite para a aceitação da cobertura de Invalidez Parcial e Total por Acidente?",
+      "correct": "Até 85 anos.",
+      "wrong1": "Até 70 anos.",
+      "wrong2": "Até 65 anos.",
+      "wrong3": "Até 60 anos.",
+      "explanation": "A tabela de preços do Seguro de Vida Individual aponta que a cobertura extra de Invalidez parcial e total por acidente (IPA) tem aceitação até os 85 anos de idade do segurado.",
+      "difficulty": 3
+    },
+    {
+      "q": "Na pirâmide das 'Fases do cliente', qual camada serve de proteção e encontra-se imediatamente acima da base 'Trabalho (Renda)'?",
+      "correct": "Gerenciamento de Risco (Seguro vida, invalidez, residencial).",
+      "wrong1": "Acumulação (Previdência, investimentos, consórcios).",
+      "wrong2": "Independência Financeira (Poder de escolha).",
+      "wrong3": "Sucessão Patrimonial.",
+      "explanation": "A pirâmide mostra que logo acima do 'Trabalho', onde se gera a renda, a próxima necessidade primária do cliente é o 'Gerenciamento de Risco', representado pelos seguros.",
+      "difficulty": 2
+    },
+    {
+      "q": "De acordo com o workshop de Vida Individual, como as necessidades de cobertura do cliente podem ser classificadas quanto à sua duração?",
+      "correct": "Temporárias e Vitalícias.",
+      "wrong1": "Primárias e Secundárias.",
+      "wrong2": "Resgatáveis e Não Resgatáveis.",
+      "wrong3": "Básicas e Premium.",
+      "explanation": "O material orienta o Personal Banker a classificar as necessidades do cliente entre 'Temporárias' (fases específicas da vida) e 'Vitalícias' (proteção permanente).",
+      "difficulty": 1
+    },
+    {
+      "q": "Além das coberturas de Morte e Invalidez, qual das opções abaixo é uma cobertura específica frequentemente incluída no Seguro de Vida em Grupo para apoiar a empresa e o funcionário?",
+      "correct": "Verba rescisória.",
+      "wrong1": "Seguro Fiança Locatícia.",
+      "wrong2": "Telemedicina para animais de estimação.",
+      "wrong3": "Título de capitalização anual.",
+      "explanation": "A Verba Rescisória é listada como uma das principais coberturas do Vida Grupo, protegendo a empresa financeiramente em casos de demissões forçadas por fatalidades ou invalidez do funcionário.",
+      "difficulty": 2
+    },
+    {
+      "q": "Segundo o fluxo sugerido no material para ganhar a confiança dos clientes e fechar vendas de seguros, qual é a etapa recomendada logo após o comissionamento (Comemore a venda)?",
+      "correct": "Solicitar indicações de novos clientes ao segurado.",
+      "wrong1": "Agendar um check-up médico imediatamente.",
+      "wrong2": "Oferecer um financiamento imobiliário.",
+      "wrong3": "Reduzir o valor da apólice no ano seguinte.",
+      "explanation": "A etapa 'Comemore a venda' indica que, enquanto se aguarda o comissionamento, deve-se solicitar indicações ao cliente, pois esse modelo de captação impulsiona novos negócios.",
+      "difficulty": 2
+    }
+  ],
+  "rendavariavel": [
+    {
+      "q": "Qual é a exigência de número mínimo de funcionários para uma empresa contratar o Consignado Privado através do parceiro GooRoo?",
+      "correct": "A partir de 1 funcionário.",
+      "wrong1": "Acima de 50 funcionários.",
+      "wrong2": "Mínimo de 10 funcionários.",
+      "wrong3": "Acima de 100 funcionários.",
+      "explanation": "Enquanto Creditas e Neon exigem empresas com mais de 50 funcionários, a GooRoo atende empresas a partir de 1 funcionário.",
+      "difficulty": 1
+    },
+    {
+      "q": "No Consignado Privado, qual parceiro da Franq oferece a funcionalidade de compra de dívida de cartão de crédito?",
+      "correct": "Gooroo.",
+      "wrong1": "Creditas.",
+      "wrong2": "Neon.",
+      "wrong3": "Santander.",
+      "explanation": "No slide sobre a jornada de contratação do Consignado Privado, a compra de dívida de cartão de crédito é um diferencial apontado especificamente para a GooRoo.",
+      "difficulty": 2
+    },
+    {
+      "q": "Dentre as condições comerciais e de documentação para o Consignado Privado, qual é o tempo mínimo exigido de constituição da empresa?",
+      "correct": "2 anos de data de constituição da empresa.",
+      "wrong1": "1 ano de data de constituição da empresa.",
+      "wrong2": "3 anos de data de constituição da empresa.",
+      "wrong3": "5 anos de data de constituição da empresa.",
+      "explanation": "O checklist de condições comerciais para o Consignado Privado exige explicitamente que a empresa tenha 2 anos da data de constituição.",
+      "difficulty": 3
+    },
+    {
+      "q": "Como funciona a recorrência do comissionamento do Personal Banker nas operações de Consignado Privado?",
+      "correct": "Gera comissão a curto, médio e longo prazo, para 'sempre' enquanto o convênio estiver vigente na empresa.",
+      "wrong1": "A comissão é paga apenas sobre o primeiro contrato de empréstimo realizado na empresa.",
+      "wrong2": "O comissionamento é limitado aos primeiros 12 meses de vigência do convênio.",
+      "wrong3": "Não há recorrência, o PB recebe apenas um valor fixo no momento do cadastro do CNPJ.",
+      "explanation": "A operação de recorrência faz a diferença, pois o PB é comissionado a curto, médio e longo prazo, sempre que contratos são realizados enquanto o convênio estiver ativo.",
+      "difficulty": 2
+    },
+    {
+      "q": "Qual é a principal vantagem apontada para o caixa/risco da empresa ao ofertar o Consignado Privado aos funcionários?",
+      "correct": "A dívida fica no CPF do funcionário e nunca no CNPJ da empresa.",
+      "wrong1": "A dívida é dividida de forma igualitária entre o CPF do funcionário e o CNPJ.",
+      "wrong2": "A empresa atua como garantidora solidária, mas com taxas isentas.",
+      "wrong3": "O CNPJ absorve o risco de inadimplência, mas recebe isenção fiscal.",
+      "explanation": "Uma das maiores vantagens para a empresa na contratação é que a responsabilidade da dívida recai unicamente sobre o CPF do funcionário, não comprometendo o CNPJ.",
+      "difficulty": 1
+    },
+    {
+      "q": "Qual é o percentual de margem livre estipulado para 'uso fruto de consignado' no Consignado Público?",
+      "correct": "35%.",
+      "wrong1": "25%.",
+      "wrong2": "30%.",
+      "wrong3": "40%.",
+      "explanation": "O material de Consignado Público define que a operação de margem livre tem a característica de 35% de utilização para o uso fruto do consignado.",
+      "difficulty": 1
+    },
+    {
+      "q": "Quais são os parceiros que atendem o produto de Consignado Público na Franq e quais operações eles realizam?",
+      "correct": "Santander (Crédito novo e Refinanciamento) e Inter (Portabilidade).",
+      "wrong1": "Creditas (Crédito novo) e Neon (Refinanciamento).",
+      "wrong2": "Santander (Portabilidade) e Inter (Crédito novo).",
+      "wrong3": "Bradesco (Refinanciamento) e Itaú (Portabilidade).",
+      "explanation": "De acordo com o slide de parceiros do Consignado Público, o Santander atende Crédito novo e Refinanciamento, enquanto o Inter cuida da Portabilidade.",
+      "difficulty": 2
+    },
+    {
+      "q": "Qual dos documentos abaixo NÃO faz parte do checklist exigido para a contratação de Consignado Público?",
+      "correct": "Declaração de Imposto de Renda.",
+      "wrong1": "Extrato de margem.",
+      "wrong2": "Contracheque atualizado (o último vigente).",
+      "wrong3": "DED ou DEC (dependendo do convênio).",
+      "explanation": "A documentação necessária para o Público inclui RG/CNH, Contracheque, Extrato de margem, Extrato de consignações e DED/DEC. O Imposto de Renda não é mencionado.",
+      "difficulty": 2
+    },
+    {
+      "q": "No Consignado Privado, os prazos de pagamento dos empréstimos costumam variar dentro de qual faixa de meses?",
+      "correct": "De 12 a 48 meses.",
+      "wrong1": "De 24 a 60 meses.",
+      "wrong2": "De 6 a 36 meses.",
+      "wrong3": "De 12 a 72 meses.",
+      "explanation": "A jornada de contratação do Consignado Privado menciona que os prazos de contratação para os funcionários variam de 12 a 48 meses.",
+      "difficulty": 2
+    },
+    {
+      "q": "No Consignado Público, quais são alguns dos critérios avaliados para a elegibilidade de contratação do cliente?",
+      "correct": "Regras de idade, bloqueios, e existência de procuração.",
+      "wrong1": "Faturamento dos últimos 2 anos e tempo de constituição do órgão.",
+      "wrong2": "Gfip e contrato social consolidado.",
+      "wrong3": "Número de dependentes e histórico de pontuação Serasa (Score).",
+      "explanation": "A elegibilidade no Consignado Público envolve regras de idade, tempo dos contratos em andamento, existência de procuração, tipos de bloqueios, cargos comissionados, etc.",
+      "difficulty": 3
+    }
+  ],
+  "mercado": [
+    {
+      "q": "Quais são os quatro componentes que formam o valor da parcela mensal de um consórcio?",
+      "correct": "Fundo comum, taxa de administração, fundo de reserva e seguro prestamista.",
+      "wrong1": "Fundo comum, juros remuneratórios, taxa de adesão e IOF.",
+      "wrong2": "Taxa de administração, juros de mora, fundo garantidor e seguro desemprego.",
+      "wrong3": "Amortização, juros compostos, taxa de administração e TR.",
+      "explanation": "A parcela do consórcio não possui juros. Ela é composta pelo fundo comum (poupança para a carta), taxa de administração, fundo de reserva (garantia para imprevistos) e seguro prestamista.",
+      "difficulty": 2
+    },
+    {
+      "q": "Na política de crédito do Home Equity (Crédito com Garantia de Imóvel), qual é o limite máximo de LTV (Loan to Value) permitido para Casas e Apartamentos, respectivamente?",
+      "correct": "Até 50% para Casas e até 60% para Apartamentos.",
+      "wrong1": "Até 60% para Casas e até 70% para Apartamentos.",
+      "wrong2": "Até 40% para Casas e até 50% para Apartamentos.",
+      "wrong3": "Até 70% para Casas e até 80% para Apartamentos.",
+      "explanation": "No Home Equity, o LTV varia conforme o tipo de imóvel: chega a até 60% para apartamentos, 50% para casas, 40% para salas comerciais e 30% para terrenos.",
+      "difficulty": 3
+    },
+    {
+      "q": "No produto Auto Equity (Crédito com garantia de veículos), qual é o percentual máximo do valor do veículo que pode ser liberado como crédito (LTV sugerido)?",
+      "correct": "Até 80% do valor do veículo.",
+      "wrong1": "Até 100% do valor do veículo.",
+      "wrong2": "Até 50% do valor do veículo.",
+      "wrong3": "Até 60% do valor do veículo.",
+      "explanation": "No Auto Equity, que é o refinanciamento onde o veículo fica como garantia, o crédito máximo liberado é de até 80% do valor do veículo.",
+      "difficulty": 1
+    },
+    {
+      "q": "Para utilizar o FGTS na compra de um imóvel residencial através do Crédito Imobiliário, qual das regras abaixo é uma exigência obrigatória?",
+      "correct": "Ter no mínimo 36 depósitos na conta do FGTS e não possuir financiamento ativo no SFH em nenhum lugar do país.",
+      "wrong1": "Ter no mínimo 12 depósitos na conta do FGTS e o imóvel deve ser obrigatoriamente novo.",
+      "wrong2": "O beneficiário precisa residir na cidade do imóvel há pelo menos 5 anos e ter no mínimo 24 depósitos.",
+      "wrong3": "Não há exigência de número mínimo de depósitos, desde que o cliente dê 20% de entrada em recursos próprios.",
+      "explanation": "O uso do FGTS exige no mínimo 36 depósitos, que o cliente não possua imóvel na cidade onde reside ou trabalha, e que não tenha financiamento ativo no Sistema Financeiro de Habitação (SFH).",
+      "difficulty": 2
+    },
+    {
+      "q": "Qual é uma das principais vantagens para a empresa ao oferecer o Consignado Privado para seus funcionários (CLT)?",
+      "correct": "A dívida fica atrelada exclusivamente ao CPF do funcionário e nunca ao CNPJ da empresa.",
+      "wrong1": "A empresa recebe uma porcentagem dos juros cobrados pelo banco na operação.",
+      "wrong2": "A empresa passa a ser a fiadora principal do funcionário perante o banco parceiro.",
+      "wrong3": "Os funcionários são obrigados a abrir conta corrente na corretora que ofereceu o crédito.",
+      "explanation": "Uma das maiores vantagens para o RH e para a empresa na adesão ao Consignado Privado é que a dívida do empréstimo fica no CPF do colaborador, sem trazer qualquer risco para o CNPJ.",
+      "difficulty": 1
+    },
+    {
+      "q": "Como funciona a modalidade de 'Lance Embutido' no Consórcio?",
+      "correct": "O consorciado utiliza parte do próprio valor da carta de crédito para potencializar o seu lance, descontando esse percentual do valor final.",
+      "wrong1": "O consorciado pega um empréstimo com a administradora para pagar o lance por fora, aumentando o valor da parcela.",
+      "wrong2": "O valor do lance é embutido e diluído nas parcelas restantes do grupo, sem reduzir o valor da carta de crédito.",
+      "wrong3": "É um lance pré-fixado pela administradora onde todos os participantes adimplentes dão obrigatoriamente o mesmo valor.",
+      "explanation": "No lance embutido, usa-se uma fatia do próprio crédito contratado para dar o lance, o que diminui o valor líquido a ser recebido no momento de utilizar a carta.",
+      "difficulty": 2
+    },
+    {
+      "q": "Qual é o principal público-alvo do Seguro de Vida em Grupo e qual sua vantagem em relação ao seguro de vida individual?",
+      "correct": "É destinado a empresas a partir de 2 funcionários, com custo geralmente inferior ao do seguro individual.",
+      "wrong1": "É destinado exclusivamente a grandes corporações (acima de 500 funcionários) e possui um custo mais elevado devido ao risco.",
+      "wrong2": "É um seguro obrigatório exclusivo para grupos familiares visando apenas a proteção de crédito imobiliário.",
+      "wrong3": "É destinado a autônomos que desejam formar um grupo de compra fechado para obter isenção de imposto de renda.",
+      "explanation": "O seguro de vida em grupo visa proteger sócios, colaboradores, terceiros e suas famílias em empresas a partir de 2 vidas, possuindo um custo inferior ao individual e ajudando na retenção de talentos.",
+      "difficulty": 1
+    },
+    {
+      "q": "No processo de análise de Home Equity, certos tipos de imóveis NÃO são aceitos como garantia. Qual das alternativas apresenta apenas propriedades que são RECUSADAS neste produto?",
+      "correct": "Imóveis rurais, galpões, imóveis operacionais, escolas e igrejas.",
+      "wrong1": "Apartamentos na planta, casas, terrenos de pessoa física e salas comerciais.",
+      "wrong2": "Salas comerciais, casas de praia, terrenos quitados e galpões de pequeno porte.",
+      "wrong3": "Imóveis urbanos, apartamentos residenciais, lotes averbados e casas em condomínio fechado.",
+      "explanation": "A política do Home Equity barra garantias frágeis ou difíceis de liquidar. Estão expressamente não aceitos: imóvel rural, galpões, imóveis operacionais, escolas e igrejas.",
+      "difficulty": 2
+    },
+    {
+      "q": "No portfólio de Seguros, qual é o principal objetivo da solução conhecida como 'Seguro Fiança Locatícia'?",
+      "correct": "Substituir a necessidade de um fiador e facilitar o processo de locação de imóveis.",
+      "wrong1": "Garantir o pagamento das parcelas de um financiamento habitacional caso o cliente fique desempregado.",
+      "wrong2": "Cobrir eventuais danos físicos e estruturais no imóvel que foram causados por desastres ambientais.",
+      "wrong3": "Fornecer uma linha de crédito para que o inquilino possa antecipar as taxas de condomínio do ano.",
+      "explanation": "O Seguro Fiança Locatícia serve especificamente para substituir a figura do fiador tradicional, garantindo o aluguel para o proprietário e trazendo mais facilidade para quem vai alugar.",
+      "difficulty": 1
+    },
+    {
+      "q": "Quais são os três principais tipos de operações disponíveis na contratação do produto Consignado Público?",
+      "correct": "Margem livre, Refinanciamento e Portabilidade.",
+      "wrong1": "Antecipação de recebíveis, Capital de giro e Home Equity.",
+      "wrong2": "Empréstimo com garantia de veículo, Financiamento e Consórcio.",
+      "wrong3": "Lance embutido, Saque-aniversário FGTS e Crédito pessoal sem garantia.",
+      "explanation": "O Consignado Público atua com três frentes principais de operação: Margem Livre (quando o cliente ainda tem parte dos 35% de limite disponível), Refinanciamento e Portabilidade de dívida.",
+      "difficulty": 2
+    }
+  ]
+}

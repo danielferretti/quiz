@@ -5,3 +5,16 @@ dist/
 .DS_Store
 screenshots/
 *.log
+*.psd
+untitled*
+error_image*
+capture-*.js
+notebooklm-sync.py
+notebooklm-quiz-chat.txt
+franq-quiz-v*.html
+franq-quiz.html
+marketplace-*.html
+skills-lock.json
+design/mockup_*
+design/screenshot_*
+design/new_mockup_*

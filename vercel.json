@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/franq-quiz-v3.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
