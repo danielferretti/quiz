@@ -1094,12 +1094,8 @@ if(notifs.length>0)updateNotificationBadge();
 // ====== AUDIO ENGINE ======
 var audioCtx=null;
 
-function playTone(freq,dur,type,gain,freqEnd){
-if(!state||!state.settings||!state.settings.sfx)return;
-if(!audioCtx)return;
+function _playOsc(freq,dur,type,gain,freqEnd){
 try{
-  // Resume on every call if needed (mobile requires this)
-  if(audioCtx.state!=='running'){audioCtx.resume();return}
   type=type||'sine';gain=gain||0.12;dur=dur||100;
   var o=audioCtx.createOscillator();
   var g=audioCtx.createGain();
@@ -1111,6 +1107,19 @@ try{
   o.connect(g);g.connect(audioCtx.destination);
   o.start();o.stop(audioCtx.currentTime+dur/1000+0.05);
 }catch(e){}
+}
+
+function playTone(freq,dur,type,gain,freqEnd){
+if(!state||!state.settings||!state.settings.sfx)return;
+if(!audioCtx)return;
+if(audioCtx.state==='running'){
+  _playOsc(freq,dur,type,gain,freqEnd);
+}else{
+  // Await resume then play
+  audioCtx.resume().then(function(){
+    _playOsc(freq,dur,type,gain,freqEnd);
+  }).catch(function(){});
+}
 }
 function sfxClick(){playTone(1200,25,'sine',0.08)}
 function sfxCorrect(){playTone(587,80,'sine',0.12,880);setTimeout(function(){playTone(880,120,'sine',0.1)},90)}
