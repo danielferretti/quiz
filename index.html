@@ -566,24 +566,26 @@ background:var(--card);border:1px solid var(--card-border);color:var(--text);fon
 }
 
 .bottom-nav{
-position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-width:100%;max-width:390px;
-background:rgba(20,24,38,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-border-top:1px solid rgba(255,255,255,0.05);
-display:none;padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom,0));z-index:100;
+position:fixed;bottom:0;left:0;right:0;
+display:none;justify-content:center;z-index:100;
 }
 .bottom-nav.visible{display:flex}
+.bottom-nav-inner{
+width:100%;max-width:390px;
+background:rgba(14,18,30,0.98);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+border-top:1px solid rgba(255,255,255,0.08);
+padding:4px 0;padding-bottom:calc(4px + env(safe-area-inset-bottom,0));
+}
 .nav-items{display:flex;justify-content:space-around;width:100%}
 .nav-item{
-display:flex;flex-direction:column;align-items:center;gap:3px;
-padding:4px 12px;border-radius:12px;background:transparent;color:var(--text-ter);
+display:flex;flex-direction:column;align-items:center;gap:2px;
+padding:6px 12px;border-radius:12px;background:transparent;color:var(--text-ter);
 font-size:9px;font-weight:600;transition:color 200ms var(--ease);border:none;min-height:44px;
 letter-spacing:0.3px;text-transform:uppercase;
 }
 .nav-item.active{color:var(--accent-light)}
-.nav-item .nav-icon{width:24px;height:22px;display:flex;align-items:center;justify-content:center}
-.nav-item .nav-icon img{width:20px;height:20px;object-fit:contain;opacity:0.35;transition:opacity 200ms var(--ease),filter 200ms var(--ease)}
-.nav-item.active .nav-icon img{opacity:0.9;filter:brightness(1.4) saturate(1.3)}
+.nav-item svg{transition:opacity 200ms var(--ease);opacity:0.4}
+.nav-item.active svg{opacity:1;filter:drop-shadow(0 0 4px rgba(104,123,234,0.4))}
 
 .challenge-overlay{
 position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;
@@ -781,19 +783,25 @@ letter-spacing:0.5px;margin:14px 0 8px;display:flex;align-items:center;gap:6px;
 <div id="chat" class="screen"></div>
 
 <div class="bottom-nav" id="bottomNav">
+<div class="bottom-nav-inner">
 <div class="nav-items">
 <button class="nav-item" data-tab="home" onclick="showScreen('home')">
-<span class="nav-icon"><img src="design/img/menu_inicio.svg" alt=""></span>In&#237;cio
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+In&#237;cio
 </button>
 <button class="nav-item" data-tab="topics" onclick="showScreen('topics')">
-<span class="nav-icon"><img src="design/img/menu_topicos.svg" alt=""></span>T&#243;picos
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/></svg>
+T&#243;picos
 </button>
 <button class="nav-item" data-tab="leaderboard" onclick="showScreen('leaderboard')">
-<span class="nav-icon"><img src="design/img/menu_ranking.svg" alt=""></span>Ranking
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+Ranking
 </button>
 <button class="nav-item" data-tab="profile" onclick="showScreen('profile')">
-<span class="nav-icon"><img src="design/img/menu_perfil.svg" alt=""></span>Perfil
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+Perfil
 </button>
+</div>
 </div>
 </div>
 
