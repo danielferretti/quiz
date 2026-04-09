@@ -926,7 +926,7 @@ const MISSION_POOL=[
 var state;
 function defaultState(){
 return{
-name:"",role:"Personal Banker",avatar:"\u{1F9D1}\u200D\u{1F4BC}",photo:"design/img/profile_ferretti.png",
+name:"",role:"Personal Banker",avatar:"\u{1F9D1}\u200D\u{1F4BC}",photo:null,
 level:1,xp:0,coins:50,totalPoints:0,
 wins:0,gamesPlayed:0,
 hasPerfectMatch:false,hasComboX3:false,
@@ -943,7 +943,7 @@ tutorialSeen:false
 function loadState(){
 try{
 var s=localStorage.getItem('franqQuizV3');
-if(s){state=JSON.parse(s);if(state.tutorialSeen===undefined)state.tutorialSeen=false;if(!state.photo)state.photo="design/img/profile_picture.jpg";return true}
+if(s){state=JSON.parse(s);if(state.tutorialSeen===undefined)state.tutorialSeen=false;return true}
 }catch(e){}
 state=defaultState();
 return false;
@@ -975,7 +975,7 @@ var res=await sb.from('profiles').select('*').eq('id',sbUser.id).single();
 if(res.error||!res.data)return false;
 var p=res.data;
 state.name=p.name;state.role=p.role;state.avatar=p.avatar;
-state.photo=p.photo_url||'design/img/profile_picture.jpg';
+state.photo=p.photo_url||null;
 state.level=p.level;state.xp=p.xp;state.coins=p.coins;
 state.totalPoints=p.total_points;state.wins=p.wins;
 state.gamesPlayed=p.games_played;
@@ -1109,6 +1109,39 @@ for(var i=0;i<RANKS.length;i++){if(level>=RANKS[i].minLevel)r=RANKS[i]}
 return r;
 }
 function xpForLevel(lv){return Math.round(100*Math.pow(1.3,lv-1))}
+function getInitials(name){
+if(!name)return '?';
+var parts=name.trim().split(/\s+/);
+if(parts.length>=2)return(parts[0][0]+parts[parts.length-1][0]).toUpperCase();
+return parts[0].substring(0,2).toUpperCase();
+}
+function avatarBubble(name,photo,size){
+size=size||'';
+if(photo&&photo.indexOf('profile_picture')===-1)return '<div class="avatar '+size+'"><img src="'+photo+'" alt=""></div>';
+var initials=getInitials(name);
+return '<div class="avatar '+size+'" style="background:linear-gradient(135deg,var(--accent),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:'+(size==='xl'?'28':size==='lg'?'22':size==='sm'?'13':'16')+'px;font-weight:700;color:#fff;border:none">'+initials+'</div>';
+}
+function avatarInner(name,photo){
+if(photo&&photo.indexOf('profile_picture')===-1)return '<img src="'+photo+'" alt="">';
+var initials=getInitials(name);
+return '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),#8B5CF6);border-radius:50%">'+initials+'</div>';
+}
+async function uploadProfilePhoto(file){
+if(!sb||!sbUser||!file)return null;
+try{
+  var ext=file.name.split('.').pop();
+  var path='avatars/'+sbUser.id+'.'+ext;
+  var res=await sb.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type});
+  if(res.error){console.warn('Upload error:',res.error);return null}
+  var urlRes=sb.storage.from('avatars').getPublicUrl(path);
+  var url=urlRes.data.publicUrl;
+  // Update profile
+  state.photo=url;
+  await sb.from('profiles').update({photo_url:url}).eq('id',sbUser.id);
+  saveStateLocal();
+  return url;
+}catch(e){console.warn('Upload error:',e);return null}
+}
 function getPlayerLeaderboardPos(filter){
 var lb=buildLeaderboard(filter);
 for(var i=0;i<lb.length;i++){if(lb[i].isPlayer)return i+1}
@@ -1468,7 +1501,6 @@ var topRanking=lb.slice(0,5);
 var playerPos=0;
 for(var i=0;i<lb.length;i++){if(lb[i].isPlayer){playerPos=i+1;break}}
 
-var profilePhoto=state.photo?'<img src="'+state.photo+'" alt="">':state.avatar;
 var rankLabel='Nível '+toRoman(state.level);
 
 var topicsHtml=homeTopics.map(function(key){
@@ -1484,9 +1516,8 @@ return '<div class="topic-card-home" onclick="startMatch(\''+key+'\')">'+
 
 var rankingHtml=topRanking.map(function(e,i){
 var opp=OPPONENTS.find(function(o){return o.name===e.name});
-var photoHtml=e.photo?'<img src="'+e.photo+'" alt="">':
-opp&&opp.photo?'<img src="'+opp.photo+'" alt="">':
-'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,var(--accent),#8B5CF6)">'+(e.avatar||'🧑‍💼')+'</div>';
+var photo=e.photo||(opp&&opp.photo)||null;
+var photoHtml=avatarInner(e.name,photo);
 var roleLabel=e.isPlayer?state.role:opp?opp.role+' | '+(opp.rankTitle||''):(e.role||'');
 return '<div class="ranking-row'+(e.isPlayer?' me':'')+'">'+
 '<div class="ranking-pos">'+(i+1)+'</div>'+
@@ -1505,7 +1536,7 @@ var playerRowHtml='';
 if(!playerInTop){
 playerRowHtml='<div class="ranking-row me">'+
 '<div class="ranking-pos">'+playerPos+'</div>'+
-'<div class="ranking-avatar">'+(state.photo?'<img src="'+state.photo+'" alt="">':'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,var(--accent),#8B5CF6)">'+state.avatar+'</div>')+'</div>'+
+'<div class="ranking-avatar">'+avatarInner(state.name,state.photo)+'</div>'+
 '<div class="ranking-info">'+
 '<div class="ranking-name">Você</div>'+
 '<div class="ranking-role">'+state.role+' | '+rankLabel+'</div>'+
@@ -1518,7 +1549,7 @@ playerRowHtml='<div class="ranking-row me">'+
 document.getElementById('home').innerHTML=
 '<div class="home-header anim-fiu">'+
 '<div class="home-profile" onclick="showScreen(\'settings\')" style="cursor:pointer">'+
-'<div class="avatar">'+profilePhoto+'</div>'+
+avatarBubble(state.name,state.photo,'')+
 '<div>'+
 '<div class="home-name">'+state.name+'</div>'+
 '<div class="home-role">'+state.role+' | '+rankLabel+'</div>'+
@@ -2244,10 +2275,8 @@ return '<button class="lb-tab'+(t===lbFilter?' active':'')+'" onclick="lbFilter=
 var listHtml=lb.map(function(e,i){
 var pos=i+1;
 var opp=OPPONENTS.find(function(o){return o.name===e.name});
-var photoHtml=e.photo?'<img src="'+e.photo+'" alt="">':
-opp&&opp.photo?'<img src="'+opp.photo+'" alt="">':
-e.isPlayer&&state.photo?'<img src="'+state.photo+'" alt="">':
-'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:15px;background:linear-gradient(135deg,var(--accent),#8B5CF6)">'+(e.avatar||'🧑‍💼')+'</div>';
+var photo=e.photo||(opp&&opp.photo)||(e.isPlayer&&state.photo)||null;
+var photoHtml=avatarInner(e.name,photo);
 var roleLabel=e.isPlayer?state.role+' | Nível '+toRoman(state.level):
 opp?(opp.role+' | '+(opp.rankTitle||'')):(e.role||'')+' | Nível '+(e.level?toRoman(e.level):'I');
 var cls=e.isPlayer?' me':pos===1?' top1':pos===2?' top2':pos===3?' top3':'';
@@ -2277,7 +2306,6 @@ var rank=getRank(state.level);
 var xpNeeded=xpForLevel(state.level);
 var xpPct=Math.round(state.xp/xpNeeded*100);
 var winRate=state.gamesPlayed?Math.round(state.wins/state.gamesPlayed*100):0;
-var profilePhoto=state.photo?'<img src="'+state.photo+'" alt="">':state.avatar;
 var rankLabel='Nível '+toRoman(state.level);
 
 var medalsHtml=MEDAL_DEFS.map(function(m){
@@ -2289,7 +2317,11 @@ return '<div class="medal'+(earned?'':' locked')+'">'+
 }).join('');
 
 document.getElementById('profile').innerHTML=
-'<div class="avatar xl anim-bi">'+profilePhoto+'</div>'+
+'<div style="position:relative;display:inline-block" class="anim-bi">'+
+avatarBubble(state.name,state.photo,'xl')+
+'<label for="photoUpload" style="position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;border:2px solid var(--bg)">📷</label>'+
+'<input type="file" id="photoUpload" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">'+
+'</div>'+
 '<div class="profile-name anim-fiu">'+state.name+'</div>'+
 '<div class="profile-role anim-fiu">'+state.role+' | '+rankLabel+'</div>'+
 '<div class="rank-pill profile-rank anim-fiu" style="color:'+rank.color+';border:1px solid '+rank.color+'33;font-size:13px;padding:5px 14px">'+
@@ -2317,6 +2349,15 @@ rank.emoji+' '+rank.title+
 }
 
 // ====== SETTINGS ======
+async function handlePhotoUpload(input){
+if(!input.files||!input.files[0])return;
+var file=input.files[0];
+if(file.size>2*1024*1024){alert('Imagem muito grande. Máximo 2MB.');return}
+var url=await uploadProfilePhoto(file);
+if(url){renderProfile();renderHome()}
+else{alert('Erro ao enviar foto. Tente novamente.')}
+}
+
 function renderSettings(){
 var s=state.settings;
 document.getElementById('settings').innerHTML=
