@@ -1093,43 +1093,23 @@ if(notifs.length>0)updateNotificationBadge();
 
 // ====== AUDIO ENGINE ======
 var audioCtx=null;
-var audioUnlocked=false;
-
-function unlockAudio(){
-if(audioUnlocked)return;
-try{
-  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==='suspended')audioCtx.resume();
-  // Play a silent buffer to unlock audio on iOS/mobile
-  var buf=audioCtx.createBuffer(1,1,22050);
-  var src=audioCtx.createBufferSource();
-  src.buffer=buf;
-  src.connect(audioCtx.destination);
-  src.start(0);
-  src.onended=function(){audioUnlocked=true};
-  // Also mark as unlocked after a short delay as fallback
-  setTimeout(function(){
-    if(audioCtx&&audioCtx.state==='running')audioUnlocked=true;
-  },100);
-}catch(e){}
-}
 
 function playTone(freq,dur,type,gain,freqEnd){
 if(!state||!state.settings||!state.settings.sfx)return;
-if(!audioCtx||!audioUnlocked)return;
-if(audioCtx.state==='suspended'){try{audioCtx.resume()}catch(e){};return}
-if(audioCtx.state!=='running')return;
-type=type||'sine';gain=gain||0.12;dur=dur||100;
+if(!audioCtx)return;
 try{
-var o=audioCtx.createOscillator();
-var g=audioCtx.createGain();
-o.type=type;
-o.frequency.setValueAtTime(freq,audioCtx.currentTime);
-if(freqEnd)o.frequency.linearRampToValueAtTime(freqEnd,audioCtx.currentTime+dur/1000);
-g.gain.setValueAtTime(gain,audioCtx.currentTime);
-g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur/1000);
-o.connect(g);g.connect(audioCtx.destination);
-o.start();o.stop(audioCtx.currentTime+dur/1000+0.05);
+  // Resume on every call if needed (mobile requires this)
+  if(audioCtx.state!=='running'){audioCtx.resume();return}
+  type=type||'sine';gain=gain||0.12;dur=dur||100;
+  var o=audioCtx.createOscillator();
+  var g=audioCtx.createGain();
+  o.type=type;
+  o.frequency.setValueAtTime(freq,audioCtx.currentTime);
+  if(freqEnd)o.frequency.linearRampToValueAtTime(freqEnd,audioCtx.currentTime+dur/1000);
+  g.gain.setValueAtTime(gain,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur/1000);
+  o.connect(g);g.connect(audioCtx.destination);
+  o.start();o.stop(audioCtx.currentTime+dur/1000+0.05);
 }catch(e){}
 }
 function sfxClick(){playTone(1200,25,'sine',0.08)}
@@ -3341,10 +3321,26 @@ if(sb&&sbUser){
 }
 
 // ====== INITIALIZATION ======
-// Unlock audio on every user gesture (required for mobile browsers)
-document.addEventListener('touchstart',unlockAudio,{passive:true});
-document.addEventListener('touchend',unlockAudio,{passive:true});
-document.addEventListener('click',unlockAudio);
+// Mobile audio unlock — must create AudioContext + play sound in same gesture
+function _initAudioOnGesture(){
+try{
+  if(!audioCtx){
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  }
+  if(audioCtx.state==='suspended'){
+    audioCtx.resume();
+  }
+  // Play a near-silent oscillator to truly unlock on iOS/Android
+  var o=audioCtx.createOscillator();
+  var g=audioCtx.createGain();
+  g.gain.value=0.001;
+  o.connect(g);g.connect(audioCtx.destination);
+  o.start();o.stop(audioCtx.currentTime+0.01);
+}catch(e){}
+}
+document.addEventListener('touchstart',_initAudioOnGesture,{passive:true});
+document.addEventListener('touchend',_initAudioOnGesture,{passive:true});
+document.addEventListener('click',_initAudioOnGesture);
 window.addEventListener('beforeunload',function(){
   if(pvpMode&&pvpMatchChannel){
     pvpMatchChannel.send({type:'broadcast',event:'match:finished',payload:{
