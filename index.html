@@ -703,6 +703,26 @@ display:flex;align-items:center;justify-content:center;border:none;cursor:pointe
 color:#fff;font-size:18px;flex-shrink:0;
 }
 .chat-send-btn:active{transform:scale(0.9)}
+.pvp-invite-overlay{
+position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:250;
+display:none;align-items:center;justify-content:center;padding:20px;
+}
+.pvp-invite-overlay.show{display:flex}
+.pvp-invite-card{
+background:var(--bg);border:1px solid var(--card-border);border-radius:var(--r-lg);
+padding:28px 24px;max-width:320px;width:100%;display:flex;flex-direction:column;align-items:center;
+box-shadow:0 16px 48px rgba(0,0,0,0.5);
+}
+.online-dot{
+width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block;
+animation:pulse 2s infinite;flex-shrink:0;
+}
+.challenge-section-title{
+font-size:11px;font-weight:700;color:var(--text-ter);text-transform:uppercase;
+letter-spacing:0.5px;margin:14px 0 8px;display:flex;align-items:center;gap:6px;
+}
+.challenge-empty{font-size:12px;color:var(--text-ter);text-align:center;padding:12px 0}
+.spinner{width:32px;height:32px;border:3px solid var(--card-border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -776,6 +796,7 @@ color:#fff;font-size:18px;flex-shrink:0;
 <div class="challenge-overlay" id="challengeOverlay">
 <div class="challenge-sheet" id="challengeSheet"></div>
 </div>
+<div class="pvp-invite-overlay" id="pvpInviteOverlay"></div>
 </div>
 
 <script>
@@ -1172,6 +1193,486 @@ selected.sort(function(a,b){return a.d-b.d});
 return selected;
 }
 
+// ====== PVP SYSTEM ======
+var pvpPresenceChannel=null;
+var pvpUserChannel=null;
+var pvpMatchChannel=null;
+var pvpOnlineUsers=[];
+var pvpMatchId=null;
+var pvpSeed=null;
+var pvpOpponentInfo=null;
+var pvpMode=false;
+var pvpOpponentFinished=false;
+var pvpOpponentFinalScore=0;
+var pvpMyFinished=false;
+var pvpChallengeTimer=null;
+var pvpWaitingForAccept=false;
+var pvpIncomingChallenge=null;
+var pvpReadyReceived=false;
+
+// Seeded PRNG (mulberry32)
+function seededRandom(seed){
+return function(){
+  seed|=0;seed=seed+0x6D2B79F5|0;
+  var t=Math.imul(seed^seed>>>15,1|seed);
+  t=t+Math.imul(t^t>>>7,61|t)^t;
+  return((t^t>>>14)>>>0)/4294967296;
+};
+}
+function seededShuffle(arr,rng){
+var a=arr.slice();
+for(var i=a.length-1;i>0;i--){var j=Math.floor(rng()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}
+return a;
+}
+function selectQuestionsForMatchSeeded(topicKey,seed){
+var rng=seededRandom(seed);
+var all=QUESTIONS[topicKey].slice();
+var easy=seededShuffle(all.filter(function(q){return q.d===1}),rng);
+var med=seededShuffle(all.filter(function(q){return q.d===2}),rng);
+var hard=seededShuffle(all.filter(function(q){return q.d===3}),rng);
+var selected=[];
+function pick(pool,count){var c=0;while(c<count&&pool.length>0){selected.push(pool.pop());c++}}
+pick(easy,2);pick(med,2);pick(hard,1);
+while(selected.length<5){
+  if(med.length>0)selected.push(med.pop());
+  else if(easy.length>0)selected.push(easy.pop());
+  else if(hard.length>0)selected.push(hard.pop());
+  else break;
+}
+selected.sort(function(a,b){return a.d-b.d});
+return selected;
+}
+function pvpSeededShuffleForRound(arr,seed,roundIndex){
+return seededShuffle(arr,seededRandom(seed*1000+roundIndex));
+}
+
+function initPvpPresence(){
+if(!sb||!sbUser)return;
+// Presence channel - track online users
+pvpPresenceChannel=sb.channel('franq-presence',{config:{presence:{key:sbUser.id}}});
+pvpPresenceChannel.on('presence',{event:'sync'},function(){
+  var pState=pvpPresenceChannel.presenceState();
+  pvpOnlineUsers=[];
+  Object.keys(pState).forEach(function(key){
+    if(key===sbUser.id)return;
+    var presences=pState[key];
+    if(presences&&presences.length>0)pvpOnlineUsers.push(presences[0]);
+  });
+});
+pvpPresenceChannel.subscribe(function(status){
+  console.log('Presence channel status:',status);
+  if(status==='SUBSCRIBED'){
+    pvpPresenceChannel.track({
+      userId:sbUser.id,name:state.name,role:state.role,
+      avatar:state.avatar,photo:state.photo,level:state.level
+    });
+  }
+});
+
+// User channel - receive challenge invitations
+pvpUserChannel=sb.channel('pvp-user:'+sbUser.id);
+pvpUserChannel.on('broadcast',{event:'challenge:invite'},function(payload){
+  handleChallengeInvite(payload.payload);
+});
+pvpUserChannel.on('broadcast',{event:'challenge:accept'},function(payload){
+  handleChallengeAccepted(payload.payload);
+});
+pvpUserChannel.on('broadcast',{event:'challenge:decline'},function(payload){
+  handleChallengeDeclined(payload.payload);
+});
+pvpUserChannel.on('broadcast',{event:'challenge:cancel'},function(payload){
+  dismissIncomingChallenge();
+});
+pvpUserChannel.subscribe();
+}
+
+function cleanupPvpPresence(){
+if(pvpPresenceChannel){pvpPresenceChannel.untrack();sb.removeChannel(pvpPresenceChannel);pvpPresenceChannel=null}
+if(pvpUserChannel){sb.removeChannel(pvpUserChannel);pvpUserChannel=null}
+if(pvpMatchChannel){sb.removeChannel(pvpMatchChannel);pvpMatchChannel=null}
+pvpOnlineUsers=[];
+}
+
+function getOnlineUsers(){
+return pvpOnlineUsers.filter(function(u){return u.userId!==sbUser.id});
+}
+
+// ====== PVP CHALLENGE FLOW ======
+
+function sendPvpChallenge(targetUserId){
+var target=pvpOnlineUsers.find(function(u){return u.userId===targetUserId});
+if(!target)return;
+var topicKeys=Object.keys(TOPICS_META).filter(function(k){return k!=='mercado'});
+var topicKey=topicKeys[Math.floor(Math.random()*topicKeys.length)];
+pvpMatchId=crypto.randomUUID();
+pvpSeed=Date.now();
+pvpTopicKey=topicKey;
+pvpOpponentInfo=target;
+pvpWaitingForAccept=true;
+
+// Send challenge to target's user channel
+var targetChannel=sb.channel('pvp-user:'+targetUserId);
+targetChannel.subscribe(function(status){
+  if(status==='SUBSCRIBED'){
+    targetChannel.send({type:'broadcast',event:'challenge:invite',payload:{
+      matchId:pvpMatchId,seed:pvpSeed,topicKey:topicKey,
+      challenger:{userId:sbUser.id,name:state.name,role:state.role,avatar:state.avatar,photo:state.photo,level:state.level}
+    }});
+    sb.removeChannel(targetChannel);
+  }
+});
+
+// Close challenge sheet, show matchmaking with waiting state
+var overlay=document.getElementById('challengeOverlay');
+if(overlay)overlay.classList.remove('show');
+
+showScreen('matchmaking');
+document.getElementById('matchmaking').innerHTML=
+'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:20px;padding:20px">'+
+'<div style="font-size:16px;font-weight:700;color:var(--text)">Aguardando resposta...</div>'+
+'<div style="display:flex;align-items:center;gap:30px">'+
+avatarBubble(state.name,state.photo,'lg')+
+'<div style="font-size:24px;font-weight:800;color:var(--text-ter)">VS</div>'+
+avatarBubble(target.name,target.photo,'lg')+
+'</div>'+
+'<div style="font-size:13px;color:var(--text-sec)">'+target.name+'</div>'+
+'<div class="pvp-wait-timer" id="pvpWaitTimer" style="width:200px;height:4px;border-radius:4px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:10px">'+
+'<div id="pvpWaitBar" style="height:100%;width:100%;background:var(--accent);transition:width 0.5s linear;border-radius:4px"></div>'+
+'</div>'+
+'<div style="font-size:11px;color:var(--text-ter)" id="pvpWaitCountdown">20s</div>'+
+'<button class="btn-secondary" onclick="cancelPvpChallenge()" style="margin-top:10px;padding:10px 24px;border-radius:12px;background:var(--card);color:var(--text-sec);font-size:13px;font-weight:600">Cancelar</button>'+
+'</div>';
+
+// 20-second timeout
+var timeLeft=20;
+pvpChallengeTimer=setInterval(function(){
+  timeLeft--;
+  var bar=document.getElementById('pvpWaitBar');
+  var cd=document.getElementById('pvpWaitCountdown');
+  if(bar)bar.style.width=(timeLeft/20*100)+'%';
+  if(cd)cd.textContent=timeLeft+'s';
+  if(timeLeft<=0){
+    clearInterval(pvpChallengeTimer);pvpChallengeTimer=null;
+    pvpWaitingForAccept=false;
+    showScreen('home');
+    showToast('Desafio expirado');
+  }
+},1000);
+}
+
+function cancelPvpChallenge(){
+if(pvpChallengeTimer){clearInterval(pvpChallengeTimer);pvpChallengeTimer=null}
+pvpWaitingForAccept=false;
+// Notify opponent that challenge was cancelled
+if(pvpOpponentInfo&&sb){
+  var ch=sb.channel('pvp-user:'+pvpOpponentInfo.userId);
+  ch.subscribe(function(s){if(s==='SUBSCRIBED'){ch.send({type:'broadcast',event:'challenge:cancel',payload:{}});sb.removeChannel(ch)}});
+}
+pvpOpponentInfo=null;pvpMatchId=null;pvpSeed=null;
+showScreen('home');
+}
+
+function handleChallengeInvite(data){
+// Auto-decline if in game
+if(pvpMode||currentScreen==='gameplay'||currentScreen==='matchmaking'){
+  var ch=sb.channel('pvp-user:'+data.challenger.userId);
+  ch.subscribe(function(s){if(s==='SUBSCRIBED'){ch.send({type:'broadcast',event:'challenge:decline',payload:{reason:'busy'}});sb.removeChannel(ch)}});
+  return;
+}
+pvpIncomingChallenge=data;
+showIncomingChallengeModal(data);
+}
+
+function showIncomingChallengeModal(data){
+sfxPowerup();vibrate([100,50,100]);
+var topicName=TOPICS_META[data.topicKey]?TOPICS_META[data.topicKey].name:data.topicKey;
+var overlay=document.getElementById('pvpInviteOverlay');
+overlay.innerHTML=
+'<div class="pvp-invite-card anim-bi">'+
+'<div style="font-size:20px;font-weight:800;text-align:center;margin-bottom:16px">\u2694\uFE0F DESAFIO!</div>'+
+avatarBubble(data.challenger.name,data.challenger.photo,'lg')+
+'<div style="font-size:16px;font-weight:700;margin-top:10px;text-align:center">'+data.challenger.name+'</div>'+
+'<div style="font-size:12px;color:var(--text-sec);text-align:center">'+data.challenger.role+'</div>'+
+'<div style="margin-top:14px;padding:8px 16px;border-radius:10px;background:rgba(255,255,255,0.06);text-align:center;font-size:13px;font-weight:600">'+
+'Tópico: '+topicName+
+'</div>'+
+'<div style="width:100%;height:4px;border-radius:4px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:16px">'+
+'<div id="pvpInviteBar" style="height:100%;width:100%;background:var(--success);border-radius:4px;transition:width 0.5s linear"></div>'+
+'</div>'+
+'<div style="font-size:11px;color:var(--text-ter);text-align:center;margin-top:4px" id="pvpInviteCountdown">20s</div>'+
+'<div style="display:flex;gap:10px;margin-top:16px;width:100%">'+
+'<button onclick="acceptPvpChallenge()" style="flex:1;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--success),#059669);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;min-height:48px">ACEITAR</button>'+
+'<button onclick="declinePvpChallenge()" style="flex:1;padding:14px;border-radius:12px;background:var(--card);color:var(--text-sec);font-size:15px;font-weight:700;border:1px solid var(--card-border);cursor:pointer;min-height:48px">RECUSAR</button>'+
+'</div>'+
+'</div>';
+overlay.classList.add('show');
+
+// 20-second countdown
+var timeLeft=20;
+var inviteTimer=setInterval(function(){
+  timeLeft--;
+  var bar=document.getElementById('pvpInviteBar');
+  var cd=document.getElementById('pvpInviteCountdown');
+  if(bar){
+    bar.style.width=(timeLeft/20*100)+'%';
+    if(timeLeft<=5)bar.style.background='var(--danger)';
+    else if(timeLeft<=10)bar.style.background='var(--gold)';
+  }
+  if(cd)cd.textContent=timeLeft+'s';
+  if(timeLeft<=0){
+    clearInterval(inviteTimer);
+    declinePvpChallenge();
+  }
+},1000);
+overlay.dataset.timer=inviteTimer;
+}
+
+function acceptPvpChallenge(){
+if(!pvpIncomingChallenge)return;
+var data=pvpIncomingChallenge;
+dismissIncomingChallenge();
+
+// Send accept to challenger
+var ch=sb.channel('pvp-user:'+data.challenger.userId);
+ch.subscribe(function(s){
+  if(s==='SUBSCRIBED'){
+    ch.send({type:'broadcast',event:'challenge:accept',payload:{
+      matchId:data.matchId,
+      acceptor:{userId:sbUser.id,name:state.name,role:state.role,avatar:state.avatar,photo:state.photo,level:state.level}
+    }});
+    sb.removeChannel(ch);
+  }
+});
+
+// Start the match from acceptor's side
+pvpMatchId=data.matchId;
+pvpSeed=data.seed;
+pvpOpponentInfo=data.challenger;
+startPvpMatch(data.matchId,data.topicKey,data.seed,data.challenger);
+}
+
+function declinePvpChallenge(){
+if(!pvpIncomingChallenge)return;
+var data=pvpIncomingChallenge;
+dismissIncomingChallenge();
+
+var ch=sb.channel('pvp-user:'+data.challenger.userId);
+ch.subscribe(function(s){
+  if(s==='SUBSCRIBED'){ch.send({type:'broadcast',event:'challenge:decline',payload:{matchId:data.matchId}});sb.removeChannel(ch)}
+});
+}
+
+function dismissIncomingChallenge(){
+var overlay=document.getElementById('pvpInviteOverlay');
+if(overlay){
+  if(overlay.dataset.timer)clearInterval(parseInt(overlay.dataset.timer));
+  overlay.classList.remove('show');
+  overlay.innerHTML='';
+}
+pvpIncomingChallenge=null;
+}
+
+function handleChallengeAccepted(data){
+if(!pvpWaitingForAccept)return;
+if(pvpChallengeTimer){clearInterval(pvpChallengeTimer);pvpChallengeTimer=null}
+pvpWaitingForAccept=false;
+pvpOpponentInfo=data.acceptor;
+startPvpMatch(pvpMatchId,pvpTopicKey,pvpSeed,data.acceptor);
+}
+
+function handleChallengeDeclined(data){
+if(!pvpWaitingForAccept)return;
+if(pvpChallengeTimer){clearInterval(pvpChallengeTimer);pvpChallengeTimer=null}
+pvpWaitingForAccept=false;
+pvpOpponentInfo=null;pvpMatchId=null;pvpSeed=null;
+showScreen('home');
+showToast(data&&data.reason==='busy'?'Jogador em partida':'Desafio recusado');
+}
+
+function showToast(msg){
+var t=document.createElement('div');
+t.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:12px;background:rgba(28,33,51,0.95);color:var(--text);font-size:13px;font-weight:600;z-index:400;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);animation:fadeInUp .3s';
+t.textContent=msg;
+document.body.appendChild(t);
+setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(function(){t.remove()},300)},2500);
+}
+
+// ====== PVP MATCH SYNC ======
+
+function startPvpMatch(matchId,topicKey,seed,opponentInfo){
+pvpMode=true;pvpMyFinished=false;pvpOpponentFinished=false;pvpOpponentFinalScore=0;pvpReadyReceived=false;
+
+// Determine topic — challenger passes topicKey in sendPvpChallenge, acceptor gets it from invite
+// For challenger who called handleChallengeAccepted, topicKey may be null — we stored it when sending
+if(!topicKey){
+  // Retrieve from the challenge data — we need to store it
+  // The challenger already has it from sendPvpChallenge context
+  // Actually the challenger stored pvpSeed, pvpMatchId but not topicKey... let's fix this
+}
+
+// Join match channel
+pvpMatchChannel=sb.channel('pvp-match:'+matchId);
+pvpMatchChannel.on('broadcast',{event:'match:ready'},function(p){
+  pvpReadyReceived=true;
+  checkBothReady(topicKey||pvpTopicKey,seed,opponentInfo);
+});
+pvpMatchChannel.on('broadcast',{event:'match:round-result'},function(p){
+  handleOpponentRoundResult(p.payload);
+});
+pvpMatchChannel.on('broadcast',{event:'match:finished'},function(p){
+  handleOpponentFinished(p.payload);
+});
+pvpMatchChannel.subscribe(function(status){
+  if(status==='SUBSCRIBED'){
+    pvpMatchChannel.send({type:'broadcast',event:'match:ready',payload:{userId:sbUser.id}});
+    // Show matchmaking screen
+    showScreen('matchmaking');
+    document.getElementById('matchmaking').innerHTML=
+    '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:20px;padding:20px">'+
+    '<div style="font-size:16px;font-weight:700;color:var(--text)">Preparando partida...</div>'+
+    '<div style="display:flex;align-items:center;gap:30px">'+
+    avatarBubble(state.name,state.photo,'lg')+
+    '<div style="font-size:24px;font-weight:800;color:var(--text-ter)">VS</div>'+
+    avatarBubble(opponentInfo.name,opponentInfo.photo,'lg')+
+    '</div>'+
+    '<div style="font-size:13px;color:var(--text-sec)">'+opponentInfo.name+'</div>'+
+    '</div>';
+    // Check if opponent already sent ready
+    checkBothReady(topicKey||pvpTopicKey,seed,opponentInfo);
+  }
+});
+
+// Safety timeout — if opponent doesn't ready in 15s, forfeit
+setTimeout(function(){
+  if(pvpMode&&!pvpReadyReceived){
+    showToast('Oponente não respondeu');
+    cleanupPvpMatch();
+    showScreen('home');
+  }
+},15000);
+}
+
+var pvpTopicKey=null; // Store topic key for challenger
+
+function checkBothReady(topicKey,seed,opponentInfo){
+if(!pvpReadyReceived)return;
+// Both ready — start countdown
+pvpTopicKey=topicKey;
+startPvpCountdown(topicKey,seed,opponentInfo);
+}
+
+function startPvpCountdown(topicKey,seed,opponentInfo){
+var count=3;
+var el=document.getElementById('matchmaking');
+el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:72px;font-weight:900;color:var(--accent)">'+count+'</div>';
+sfxCountdown();
+var iv=setInterval(function(){
+  count--;
+  if(count>0){el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:72px;font-weight:900;color:var(--accent)">'+count+'</div>';sfxCountdown()}
+  else{
+    clearInterval(iv);
+    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:48px;font-weight:900;color:var(--success)">VAI!</div>';
+    sfxClick();
+    setTimeout(function(){beginPvpGame(topicKey,seed,opponentInfo)},500);
+  }
+},1000);
+}
+
+function beginPvpGame(topicKey,seed,opponentInfo){
+var qs=selectQuestionsForMatchSeeded(topicKey,seed);
+game={
+  topic:topicKey,topicMeta:TOPICS_META[topicKey],
+  opponent:{name:opponentInfo.name,role:opponentInfo.role,avatar:opponentInfo.avatar||'\u{1F9D1}\u200D\u{1F4BC}',photo:opponentInfo.photo},
+  questions:qs,round:0,playerScore:0,opponentScore:0,
+  combo:0,maxCombo:0,correctCount:0,
+  powerups:{tempo:false,fiftyFifty:false,double:false},
+  matchDouble:false,answered:false,timeLeft:10,timerWarnPlayed:false,
+  quit:false,roundHistory:[],pvpMode:true,pvpSeed:seed
+};
+showScreen('gameplay');
+showRoundOverlay(game.round+1,function(){playRound()});
+}
+
+function broadcastRoundResult(){
+if(!pvpMatchChannel||!pvpMode)return;
+pvpMatchChannel.send({type:'broadcast',event:'match:round-result',payload:{
+  userId:sbUser.id,round:game.round,cumulativeScore:game.playerScore
+}});
+}
+
+function handleOpponentRoundResult(data){
+if(data.userId===sbUser.id)return;
+game.opponentScore=data.cumulativeScore;
+var el=document.getElementById('oScore');
+if(el)el.textContent=game.opponentScore;
+}
+
+function broadcastMatchFinished(){
+if(!pvpMatchChannel||!pvpMode)return;
+pvpMyFinished=true;
+pvpMatchChannel.send({type:'broadcast',event:'match:finished',payload:{
+  userId:sbUser.id,finalScore:game.playerScore,correctCount:game.correctCount,maxCombo:game.maxCombo
+}});
+if(pvpOpponentFinished){
+  endMatch();
+}else{
+  // Show waiting overlay on results area
+  showScreen('results');
+  document.getElementById('results').innerHTML=
+  '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px">'+
+  '<div style="font-size:16px;font-weight:700">Aguardando oponente...</div>'+
+  '<div style="font-size:13px;color:var(--text-sec)">Seu placar: '+game.playerScore+' pts</div>'+
+  '<div class="spinner" style="width:32px;height:32px;border:3px solid var(--card-border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite"></div>'+
+  '</div>';
+  // Safety timeout 60s
+  setTimeout(function(){
+    if(pvpMode&&!pvpOpponentFinished){
+      pvpOpponentFinished=true;
+      showToast('Oponente desconectou');
+      endMatch();
+    }
+  },60000);
+}
+}
+
+function handleOpponentFinished(data){
+if(data.userId===sbUser.id)return;
+pvpOpponentFinished=true;
+pvpOpponentFinalScore=data.finalScore;
+game.opponentScore=data.finalScore;
+if(pvpMyFinished){
+  endMatch();
+}
+}
+
+function cleanupPvpMatch(){
+if(pvpMatchChannel){sb.removeChannel(pvpMatchChannel);pvpMatchChannel=null}
+pvpMode=false;pvpMyFinished=false;pvpOpponentFinished=false;
+pvpOpponentFinalScore=0;pvpMatchId=null;pvpSeed=null;
+pvpOpponentInfo=null;pvpReadyReceived=false;pvpTopicKey=null;
+}
+
+async function persistPvpMatch(result){
+if(!sb||!sbUser||!pvpOpponentInfo)return;
+try{
+  await sb.from('pvp_matches').insert({
+    match_id:pvpMatchId,topic_key:game.topic,
+    player1_id:sbUser.id,player2_id:pvpOpponentInfo.userId,
+    player1_score:game.playerScore,player2_score:game.opponentScore,
+    player1_correct:game.correctCount,
+    winner_id:result==='win'?sbUser.id:result==='loss'?pvpOpponentInfo.userId:null,
+    status:'completed',seed:pvpSeed
+  });
+  await sb.from('profiles').update({
+    pvp_played:state.gamesPlayed,
+    pvp_wins:(state.pvpWins||0)+(result==='win'?1:0)
+  }).eq('id',sbUser.id);
+  // Also persist as regular match for leaderboard/stats
+  persistMatchToSupabase(result,game.playerScore,0);
+}catch(e){console.warn('PvP persist error:',e)}
+cleanupPvpMatch();
+}
+
 // ====== LEADERBOARD DATA ======
 var _lbCache={data:null,filter:null,ts:0};
 
@@ -1389,7 +1890,7 @@ if(sb){
       sbUser=sess.data.session.user;
       state=defaultState();
       var loaded=await loadProfileFromSupabase();
-      if(loaded&&state.name){showScreen('home');return}
+      if(loaded&&state.name){showScreen('home');initPvpPresence();return}
     }
   }catch(e){}
 }
@@ -1479,6 +1980,7 @@ try{
   }
   saveStateLocal();
   sfxClick();showScreen('home');
+  initPvpPresence();
   if(!state.tutorialSeen)showTutorial();
 }catch(e){
   err.textContent='Erro de conexão. Tente novamente.';
@@ -1603,6 +2105,10 @@ return r;
 }
 
 function challengeFromRanking(name){
+// Check if this person is online for PvP
+var onlineUser=pvpOnlineUsers.find(function(u){return u.name===name});
+if(onlineUser){sendPvpChallenge(onlineUser.userId);return}
+// Fallback to AI
 var opp=OPPONENTS.find(function(o){return o.name===name});
 if(opp){
 var topicKey=shuffle(Object.keys(TOPICS_META))[0];
@@ -1649,8 +2155,31 @@ function openChallenge(){
 sfxClick();
 var overlay=document.getElementById('challengeOverlay');
 var sheet=document.getElementById('challengeSheet');
+
+// Online users section
+var onlineHtml='';
+var online=getOnlineUsers();
+if(online.length>0){
+  onlineHtml='<div class="challenge-section-title"><span class="online-dot"></span> JOGADORES ONLINE ('+online.length+')</div>';
+  onlineHtml+=online.map(function(u){
+    return '<div class="challenge-opponent">'+
+    '<div class="avatar sm" style="position:relative">'+avatarInner(u.name,u.photo)+'</div>'+
+    '<div class="challenge-opponent-info">'+
+    '<div class="challenge-opponent-name">'+u.name+'</div>'+
+    '<div class="challenge-opponent-role">'+(u.role||'')+'</div>'+
+    '</div>'+
+    '<button class="challenge-fight-btn" onclick="closeChallenge();sendPvpChallenge(\''+u.userId+'\')">DESAFIAR</button>'+
+    '</div>';
+  }).join('');
+}else if(sb&&sbUser){
+  onlineHtml='<div class="challenge-section-title"><span class="online-dot"></span> JOGADORES ONLINE</div>'+
+  '<div class="challenge-empty">Nenhum jogador online no momento</div>';
+}
+
+// AI opponents section
 var opps=shuffle(OPPONENTS).slice(0,5);
-var oppsHtml=opps.map(function(o){
+var aiHtml='<div class="challenge-section-title">\u{1F916} OPONENTES IA</div>';
+aiHtml+=opps.map(function(o){
 var photoHtml=o.photo?'<img src="'+o.photo+'" alt="">':o.avatar;
 return '<div class="challenge-opponent">'+
 '<div class="avatar sm">'+photoHtml+'</div>'+
@@ -1661,9 +2190,10 @@ return '<div class="challenge-opponent">'+
 '<button class="challenge-fight-btn" onclick="challengeStart(\''+o.name+'\')">DESAFIAR</button>'+
 '</div>';
 }).join('');
+
 sheet.innerHTML=
 '<div class="challenge-title">\u2694\uFE0F Escolha seu Oponente</div>'+
-oppsHtml+
+onlineHtml+aiHtml+
 '<button class="challenge-close" onclick="closeChallenge()">Cancelar</button>';
 overlay.classList.add('show');
 }
@@ -1801,7 +2331,7 @@ var q=game.questions[game.round];
 var isR5=game.round===4;
 
 var correct=q.a[0];
-var shuffled=shuffle(q.a);
+var shuffled=game.pvpMode?pvpSeededShuffleForRound(q.a,game.pvpSeed,game.round):shuffle(q.a);
 var correctIdx=shuffled.indexOf(correct);
 game.currentCorrectIdx=correctIdx;
 game.currentShuffled=shuffled;
@@ -1910,6 +2440,7 @@ sfxWrong();vibrate([50,30,50]);
 showExplanation();
 game.roundHistory.push({q:game.currentQuestion,chosen:-1,correctIdx:game.currentCorrectIdx,shuffled:game.currentShuffled,wasCorrect:false});
 aiAnswer();
+if(game.pvpMode)broadcastRoundResult();
 setTimeout(nextRound,2000);
 }
 
@@ -1962,6 +2493,7 @@ updateComboDisplay();
 showExplanation();
 game.roundHistory.push({q:game.currentQuestion,chosen:idx,correctIdx:game.currentCorrectIdx,shuffled:game.currentShuffled,wasCorrect:isCorrect});
 aiAnswer();
+if(game.pvpMode)broadcastRoundResult();
 setTimeout(nextRound,2000);
 }
 
@@ -1980,6 +2512,7 @@ area.innerHTML='<div class="explanation-card"><strong>\u{1F4A1} Sabia?</strong> 
 }
 
 function aiAnswer(){
+if(game.pvpMode)return;
 var aiCorrect=Math.random()<0.55;
 if(aiCorrect){
 var pts=Math.floor(Math.random()*15+5);
@@ -2004,7 +2537,7 @@ ind.innerHTML=dots+(mult?'<div class="combo-badge">'+mult+'</div>':'');
 function nextRound(){
 game.round++;
 if(game.round>=5){
-endMatch();
+if(game.pvpMode){broadcastMatchFinished()}else{endMatch()}
 }else{
 showRoundOverlay(game.round+1,function(){playRound()});
 }
@@ -2039,6 +2572,10 @@ saveState();
 function quitGame(){
 if(timerRAF)cancelAnimationFrame(timerRAF);
 game.quit=true;
+if(game.pvpMode){
+  broadcastMatchFinished();
+  cleanupPvpMatch();
+}
 state.gamesPlayed++;state.dailyPlayed++;
 saveState();
 showScreen('home');
@@ -2106,7 +2643,11 @@ state.coins+=10;
 }
 
 saveState();
-persistMatchToSupabase(won?'win':draw?'draw':'loss',totalPts,rewardCoins);
+if(game.pvpMode){
+  persistPvpMatch(won?'win':draw?'draw':'loss');
+}else{
+  persistMatchToSupabase(won?'win':draw?'draw':'loss',totalPts,rewardCoins);
+}
 
 showScreen('results');
 var resultType=won?'win':draw?'draw':'loss';
@@ -2156,7 +2697,9 @@ reviewBtnHtml+
 '<div id="reviewList" style="display:none"></div>'+
 '</div>'+
 '<div class="result-actions anim-fiu" style="animation-delay:.4s">'+
-'<button class="btn-primary" onclick="startMatch(\''+game.topic+'\')">\u{1F504} Revanche</button>'+
+(game.pvpMode&&pvpOpponentInfo
+  ?'<button class="btn-primary" onclick="sendPvpChallenge(\''+pvpOpponentInfo.userId+'\')">\u2694\uFE0F Revanche PvP</button>'
+  :'<button class="btn-primary" onclick="startMatch(\''+game.topic+'\')">\u{1F504} Revanche</button>')+
 '<button class="btn-secondary" style="width:100%" onclick="showScreen(\'topics\')">\u{1F4DA} Novo Tópico</button>'+
 '<button class="btn-secondary" style="width:100%" onclick="showScreen(\'home\')">\u{1F3E0} Início</button>'+
 '</div>';
@@ -2398,6 +2941,7 @@ sfxClick();saveState();
 }
 
 async function doLogout(){
+cleanupPvpPresence();
 if(sb){try{await sb.auth.signOut()}catch(e){}}
 sbUser=null;
 localStorage.removeItem('franqQuizV3');
@@ -2673,6 +3217,13 @@ if(sb&&sbUser){
 // ====== INITIALIZATION ======
 document.addEventListener('click',function(){initAudio()},{once:true});
 document.addEventListener('touchstart',function(){initAudio()},{once:true});
+window.addEventListener('beforeunload',function(){
+  if(pvpMode&&pvpMatchChannel){
+    pvpMatchChannel.send({type:'broadcast',event:'match:finished',payload:{
+      userId:sbUser?sbUser.id:'',finalScore:game?game.playerScore:0,correctCount:game?game.correctCount:0,forfeit:true
+    }});
+  }
+});
 loadState();
 runSplash();
 </script>
