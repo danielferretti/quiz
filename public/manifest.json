@@ -1,0 +1,19 @@
+{
+  "name": "FRANQ QUIZ",
+  "short_name": "Franq Quiz",
+  "description": "Quiz de conhecimento financeiro para Personal Bankers",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1C2133",
+  "theme_color": "#0F1923",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/design/img/icon_jogar.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

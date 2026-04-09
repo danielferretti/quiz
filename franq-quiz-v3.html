@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0F1923">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/public/manifest.json">
+<title>FRANQ QUIZ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#1C2133;--card:rgba(255,255,255,0.06);--card-border:rgba(255,255,255,0.08);
+--accent:#687BEA;--accent-light:#8899FD;--success:#10B981;--danger:#EF4444;--gold:#FFD700;--flame:#FF6B35;
+--text:#FFFFFF;--text-sec:rgba(255,255,255,0.65);--text-ter:rgba(255,255,255,0.40);
+--r-card:18px;--r-btn:12px;--r-lg:24px;
+--ease:cubic-bezier(0.4,0,0.2,1);--ease-enter:cubic-bezier(0,0,0.2,1);--ease-exit:cubic-bezier(0.4,0,1,1);
+--ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+}
+html,body{
+font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+overflow-x:hidden;-webkit-tap-highlight-color:transparent;
+height:100%;overscroll-behavior:none;
+}
+body{display:flex;justify-content:center;min-height:100%;-webkit-touch-callout:none}
+::-webkit-scrollbar{display:none}
+#app{
+width:100%;max-width:390px;position:relative;min-height:100vh;min-height:100dvh;
+overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0);touch-action:manipulation;
+}
+.screen{
+display:none;flex-direction:column;position:absolute;inset:0;
+overflow-y:auto;overflow-x:hidden;padding:20px;padding-top:calc(env(safe-area-inset-top,20px) + 10px);
+}
+.screen.active{display:flex}
+.screen.with-nav{padding-bottom:90px}
+button{
+font-family:'Inter',sans-serif;border:none;cursor:pointer;
+-webkit-user-select:none;user-select:none;transition:transform 150ms var(--ease),opacity 150ms var(--ease);
+touch-action:manipulation;min-height:44px;
+}
+button:active{transform:scale(0.97) scaleY(0.98);opacity:0.92}
+input{
+font-family:'Inter',sans-serif;width:100%;padding:14px 18px;
+background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-btn);
+color:var(--text);font-size:15px;outline:none;transition:border-color 200ms var(--ease);min-height:48px;
+}
+input:focus{border-color:var(--accent)}
+input::placeholder{color:var(--text-ter)}
+.btn-primary{
+width:100%;padding:16px;border-radius:var(--r-btn);font-weight:700;font-size:16px;
+background:linear-gradient(135deg,var(--accent),#8B5CF6);color:#fff;letter-spacing:0.5px;
+}
+.btn-primary:active{transform:scale(0.96) scaleY(0.97);filter:brightness(0.92)}
+.btn-secondary{
+padding:12px 20px;border-radius:var(--r-btn);font-weight:600;font-size:14px;
+background:var(--card);color:var(--text);border:1px solid var(--card-border);
+}
+.btn-secondary:active{background:rgba(255,255,255,0.1)}
+.card{
+background:rgba(255,255,255,0.05);border:1px solid var(--card-border);border-radius:var(--r-card);
+padding:16px;
+}
+.gradient-text{
+background:linear-gradient(135deg,var(--accent),#8B5CF6,var(--flame));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(0.6)}40%{opacity:1;transform:scale(1.04)}70%{transform:scale(0.97)}100%{opacity:1;transform:scale(1)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes countUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes comboBounce{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes progressFill{from{width:0}to{width:var(--fill)}}
+@keyframes xpFill{from{width:var(--from)}to{width:var(--to)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+@keyframes springBounce{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes timerPulse{0%,100%{box-shadow:0 0 8px rgba(239,68,68,0.3)}50%{box-shadow:0 0 20px rgba(239,68,68,0.6)}}
+@keyframes shimmerGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes coinBounce{0%{transform:translateY(0)}30%{transform:translateY(-8px)}60%{transform:translateY(0)}80%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+@keyframes roundOverlay{0%{opacity:0;transform:scale(0.5)}40%{opacity:1;transform:scale(1.1)}60%{transform:scale(0.95)}80%{transform:scale(1.02)}100%{transform:scale(1)}}
+.anim-fiu{animation:fadeInUp .4s var(--ease-enter) both;will-change:transform,opacity}
+.anim-fi{animation:fadeIn .3s var(--ease-enter) both;will-change:opacity}
+.anim-bi{animation:bounceIn .5s var(--ease) both;will-change:transform,opacity}
+.anim-sir{animation:slideInRight .35s var(--ease-enter) both;will-change:transform,opacity}
+.anim-sil{animation:slideInLeft .35s var(--ease-enter) both;will-change:transform,opacity}
+.answers .anim-fiu{animation-duration:.3s}
+.topics-grid-home .anim-fiu:nth-child(1){animation-delay:0s}
+.topics-grid-home .anim-fiu:nth-child(2){animation-delay:.04s}
+.topics-grid-home .anim-fiu:nth-child(3){animation-delay:.08s}
+.topics-grid-home .anim-fiu:nth-child(4){animation-delay:.12s}
+.topics-grid-home .anim-fiu:nth-child(5){animation-delay:.16s}
+.topics-grid-home .anim-fiu:nth-child(6){animation-delay:.2s}
+.topics-grid .anim-fiu:nth-child(1){animation-delay:0s}
+.topics-grid .anim-fiu:nth-child(2){animation-delay:.04s}
+.topics-grid .anim-fiu:nth-child(3){animation-delay:.08s}
+.topics-grid .anim-fiu:nth-child(4){animation-delay:.12s}
+.topics-grid .anim-fiu:nth-child(5){animation-delay:.16s}
+.topics-grid .anim-fiu:nth-child(6){animation-delay:.2s}
+.topics-grid .anim-fiu:nth-child(7){animation-delay:.24s}
+.topics-grid .anim-fiu:nth-child(8){animation-delay:.28s}
+
+#splash{justify-content:center;align-items:center;gap:20px;background:radial-gradient(ellipse at 50% 35%,rgba(104,123,234,0.12) 0%,transparent 70%)}
+.splash-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.splash-particle{position:absolute;opacity:0;animation:particleDrift linear infinite;will-change:transform,opacity}
+@keyframes particleDrift{
+0%{opacity:0;transform:translateY(0) rotate(0deg)}
+10%{opacity:0.35}
+90%{opacity:0.35}
+100%{opacity:0;transform:translateY(-100vh) rotate(180deg)}
+}
+.splash-logo-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:120px;height:120px}
+.splash-ring{position:absolute;inset:0;border-radius:50%;
+border:2px solid transparent;border-top-color:var(--accent);border-right-color:rgba(139,92,246,0.4);
+animation:spin 3s linear infinite}
+.splash-logo{
+width:90px;height:90px;border-radius:var(--r-lg);
+background:linear-gradient(135deg,var(--accent),#8B5CF6);
+display:flex;align-items:center;justify-content:center;font-size:42px;
+box-shadow:0 4px 20px rgba(104,123,234,0.3);
+animation:logoEntrance .8s var(--ease-spring) both;
+position:relative;z-index:1;overflow:visible;
+}
+.splash-logo-glow{
+position:absolute;inset:-8px;border-radius:var(--r-lg);
+background:inherit;z-index:-1;filter:blur(16px);opacity:0;
+animation:glowPulse 2s ease-in-out infinite .8s;pointer-events:none;
+}
+@keyframes logoEntrance{
+0%{opacity:0;transform:scale(0) rotate(-180deg)}
+70%{opacity:1;transform:scale(1.08) rotate(8deg)}
+100%{opacity:1;transform:scale(1) rotate(0deg)}
+}
+@keyframes glowPulse{
+0%,100%{opacity:0.2;transform:scale(1)}
+50%{opacity:0.45;transform:scale(1.12)}
+}
+.splash-title{
+font-size:36px;font-weight:900;letter-spacing:2px;text-align:center;
+display:flex;justify-content:center;align-items:center;min-height:44px;
+}
+.splash-title .letter{
+display:inline-block;opacity:0;
+color:var(--accent-light);
+animation:letterPop .35s var(--ease-spring) both;
+}
+.splash-title .letter.space{width:10px}
+@keyframes letterPop{
+0%{opacity:0;transform:translateY(18px) scale(0.4)}
+70%{transform:translateY(-3px) scale(1.06)}
+100%{opacity:1;transform:translateY(0) scale(1)}
+}
+.splash-tagline{font-size:14px;color:var(--text-sec);font-weight:400;letter-spacing:1px;opacity:0;animation:fadeInUp .5s var(--ease-enter) .9s both}
+.splash-bar-wrap{width:200px;height:4px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;opacity:0;animation:fadeIn .3s var(--ease) 1s both}
+.splash-bar{height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--accent),#8B5CF6);box-shadow:0 0 10px rgba(104,123,234,0.5);transition:width .1s linear}
+
+#login{justify-content:center;gap:16px;padding:40px 24px}
+.login-logo{text-align:center;margin-bottom:10px}
+.login-logo-icon{
+width:64px;height:64px;border-radius:16px;margin:0 auto 12px;
+background:linear-gradient(135deg,var(--accent),#8B5CF6);
+display:flex;align-items:center;justify-content:center;font-size:28px;
+}
+.login-title{font-size:24px;font-weight:800;text-align:center;margin-bottom:6px}
+.login-sub{text-align:center;color:var(--text-sec);font-size:13px;margin-bottom:12px}
+.login-field{margin-bottom:4px}
+.login-field label{display:block;font-size:12px;font-weight:600;color:var(--text-sec);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.login-error{color:var(--danger);font-size:12px;min-height:18px;margin-top:4px}
+
+#home{gap:14px;padding-bottom:100px}
+.home-header{display:flex;align-items:center;justify-content:space-between}
+.home-profile{display:flex;align-items:center;gap:12px}
+.avatar{
+width:48px;height:48px;border-radius:50%;
+background:linear-gradient(135deg,var(--accent),#8B5CF6);
+display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+overflow:hidden;border:2.5px solid #A3D977;
+}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar.sm{width:36px;height:36px;font-size:18px;border-width:0}
+.avatar.lg{width:64px;height:64px;font-size:32px;border-width:2.5px}
+.avatar.xl{width:80px;height:80px;font-size:40px;border-width:3px}
+.avatar.no-ring{border:none}
+.home-name{font-weight:700;font-size:16px}
+.home-role{font-size:11px;color:var(--text-sec)}
+.rank-pill{
+display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;
+font-size:11px;font-weight:600;background:rgba(104,123,234,0.15);margin-top:2px;
+}
+.home-actions{display:flex;align-items:center;gap:10px}
+.chat-btn{
+width:44px;height:38px;border-radius:12px;background:none;border:none;
+display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;
+}
+.chat-btn img{width:100%;height:100%;object-fit:contain}
+
+.play-buttons{display:flex;gap:10px}
+.play-btn{
+flex:1;aspect-ratio:1/0.82;border-radius:0;font-weight:700;font-size:15px;
+color:#fff;text-align:center;position:relative;overflow:visible;
+background:none!important;border:none;padding:0;
+}
+.play-btn .play-bg{position:absolute;inset:0;pointer-events:none}
+.play-btn .play-bg img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 14px rgba(104,123,234,0.35))}
+.play-btn .play-content{
+position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
+justify-content:center;gap:4px;height:100%;padding:14px 10px;
+}
+.play-btn .play-icon-img{width:62px;height:38px;object-fit:contain}
+.play-btn .play-label{font-size:16px;font-weight:800;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.play-btn .play-sub{font-size:10px;font-weight:400;opacity:.75;margin-top:0}
+.play-btn:active{transform:scale(0.96);opacity:0.9}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.section-title{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:0}
+.section-link{font-size:12px;font-weight:600;color:var(--accent-light);cursor:pointer;background:none;border:none;white-space:nowrap}
+
+.topics-grid-home{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0}
+.topic-card-home{
+border-radius:14px;text-align:center;
+position:relative;overflow:hidden;cursor:pointer;
+background:rgba(255,255,255,0.07)!important;
+border:1px solid rgba(255,255,255,0.10);
+display:flex;flex-direction:column;align-items:center;
+padding:0;aspect-ratio:1/0.95;
+transition:transform 150ms var(--ease),background 150ms var(--ease);
+}
+.topic-card-home .topic-bg{
+display:none;
+}
+.topic-card-home .topic-bg img{display:none}
+.topic-card-home .topic-content{
+position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
+justify-content:center;gap:5px;height:100%;padding:10px 4px;
+}
+.topic-card-home .topic-icon-img{width:36px;height:36px;object-fit:contain}
+.topic-card-home .topic-name{font-size:10px;font-weight:600;color:var(--text-sec);line-height:1.2}
+.topic-card-home:active{transform:scale(0.95);background:rgba(255,255,255,0.11)!important}
+
+.mission-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.mission-item:last-child{border-bottom:none}
+.mission-icon{font-size:20px;flex-shrink:0}
+.mission-info{flex:1;min-width:0}
+.mission-name{font-size:13px;font-weight:600}
+.mission-prog-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:4px;margin-top:4px;overflow:hidden}
+.mission-prog-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .3s}
+.mission-val{font-size:11px;color:var(--text-sec);font-weight:600;flex-shrink:0}
+.flame-reward{
+display:flex;align-items:center;gap:6px;justify-content:center;
+padding:10px;margin-top:6px;border-radius:var(--r-btn);
+background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,215,0,0.1));
+font-size:13px;font-weight:600;color:var(--flame);min-height:44px;
+}
+
+.ranking-list{display:flex;flex-direction:column;gap:0}
+.ranking-row{
+display:flex;align-items:center;gap:8px;padding:9px 0;
+border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.ranking-row:last-child{border-bottom:none}
+.ranking-pos{width:16px;font-size:13px;font-weight:800;color:var(--text-sec);text-align:center;flex-shrink:0}
+.ranking-avatar{width:34px;height:34px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--card);border:none}
+.ranking-avatar img{width:100%;height:100%;object-fit:cover}
+.ranking-info{flex:1;min-width:0}
+.ranking-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ranking-role{font-size:9px;color:var(--text-sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ranking-score{font-size:13px;font-weight:800;color:var(--accent-light);flex-shrink:0;min-width:36px;text-align:right}
+.ranking-challenge-btn{
+padding:4px 8px;border-radius:6px;font-size:9px;font-weight:700;
+background:var(--accent);color:#fff;border:none;cursor:pointer;flex-shrink:0;
+letter-spacing:0.3px;min-height:24px;
+}
+.ranking-challenge-btn:active{transform:scale(0.95)}
+.ranking-row.me{background:rgba(104,123,234,0.06);border-radius:var(--r-btn);padding:9px 8px;margin:0 -8px}
+
+.hot-banner{
+position:absolute;top:0;left:0;right:0;padding:3px;text-align:center;
+background:linear-gradient(90deg,var(--flame),var(--gold));
+font-size:9px;font-weight:800;color:#000;letter-spacing:.5px;
+}
+.hot-2x{
+position:absolute;top:26px;right:6px;
+background:var(--flame);color:#fff;font-size:9px;font-weight:800;
+padding:2px 6px;border-radius:8px;
+}
+
+.lb-preview{display:flex;flex-direction:column;gap:8px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r-btn);background:rgba(255,255,255,0.02)}
+.lb-pos{width:24px;text-align:center;font-weight:800;font-size:14px}
+.lb-name{flex:1;font-size:13px;font-weight:600}
+.lb-pts{font-size:13px;font-weight:700;color:var(--accent)}
+
+#topics{gap:16px}
+.topics-header{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.back-btn{
+width:44px;height:44px;border-radius:50%;background:var(--card);
+display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);
+border:1px solid var(--card-border);
+}
+.screen-title{font-size:22px;font-weight:800}
+.topics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0}
+.topic-card{
+text-align:center;position:relative;overflow:hidden;cursor:pointer;
+background:rgba(255,255,255,0.07)!important;border:1px solid rgba(255,255,255,0.10);
+border-radius:14px;
+display:flex;flex-direction:column;align-items:center;padding:0;aspect-ratio:1/0.95;
+transition:transform 150ms var(--ease),background 150ms var(--ease);
+}
+.topic-card .topic-bg{display:none}
+.topic-card .topic-bg img{display:none}
+.topic-card .topic-content{
+position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
+justify-content:center;gap:6px;height:100%;padding:10px 4px;
+}
+.topic-card:active{transform:scale(0.95);background:rgba(255,255,255,0.11)!important}
+.topic-card .topic-icon-img{width:40px;height:40px;object-fit:contain}
+.topic-card .topic-icon{font-size:36px}
+.topic-card .topic-name{font-size:11px;font-weight:600;color:var(--text-sec);line-height:1.2}
+.topic-card .topic-meta{font-size:9px;color:var(--text-ter)}
+.topic-card .hot-banner{font-size:10px;padding:4px}
+
+#matchmaking{justify-content:center;align-items:center;gap:24px}
+.match-topic{font-size:14px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px}
+.match-vs{display:flex;align-items:center;gap:24px;margin:20px 0}
+.match-player{text-align:center}
+.match-player .avatar{margin:0 auto 8px}
+.match-player-name{font-size:14px;font-weight:700}
+.match-player-role{font-size:11px;color:var(--text-sec)}
+.vs-text{
+font-size:28px;font-weight:900;
+background:linear-gradient(135deg,var(--flame),var(--gold));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.match-status{font-size:16px;font-weight:600;color:var(--text-sec);text-align:center}
+.match-countdown{font-size:72px;font-weight:900;animation:bounceIn .4s var(--ease)}
+.match-cancel{
+padding:12px 32px;border-radius:var(--r-btn);background:rgba(239,68,68,0.15);
+color:var(--danger);font-weight:600;font-size:14px;
+}
+
+#gameplay{gap:10px;padding:12px 16px;touch-action:manipulation}
+.game-topbar{display:flex;align-items:center;justify-content:space-between}
+.game-topic{font-size:13px;font-weight:600;color:var(--accent)}
+.game-round{font-size:13px;font-weight:700}
+.game-quit{
+padding:6px 14px;border-radius:20px;background:rgba(239,68,68,0.12);
+color:var(--danger);font-size:12px;font-weight:600;min-height:36px;
+}
+.game-scores{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.game-player{display:flex;align-items:center;gap:8px}
+.game-player.right{flex-direction:row-reverse}
+.game-player-name{font-size:12px;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.game-player-score{font-size:18px;font-weight:900}
+.score-bar-wrap{height:6px;background:rgba(255,255,255,0.06);border-radius:6px;overflow:hidden;margin-bottom:6px;display:flex}
+.score-bar-left{height:100%;background:linear-gradient(90deg,var(--accent),#8B5CF6);transition:width .4s;border-radius:6px 0 0 6px}
+.score-bar-right{height:100%;background:linear-gradient(90deg,var(--flame),#FF8C42);transition:width .4s;border-radius:0 6px 6px 0}
+.timer-bar-wrap{height:6px;background:rgba(255,255,255,0.06);border-radius:6px;overflow:hidden;position:relative}
+.timer-bar{height:100%;border-radius:6px;transition:background .3s;will-change:width}
+.timer-bar.green{background:linear-gradient(90deg,var(--success),#34D399)}
+.timer-bar.yellow{background:linear-gradient(90deg,var(--gold),#FBBF24)}
+.timer-bar.red{background:linear-gradient(90deg,var(--danger),#F87171)}
+.timer-danger .timer-bar-wrap{animation:timerPulse 0.5s ease infinite}
+.timer-number{text-align:center;font-size:28px;font-weight:900;margin:2px 0;transition:color .3s}
+.timer-number.green{color:var(--success)}
+.timer-number.yellow{color:var(--gold)}
+.timer-number.red{color:var(--danger)}
+.question-text{font-size:16px;font-weight:600;line-height:1.5;text-align:center;min-height:50px;padding:6px 0}
+.answers{display:flex;flex-direction:column;gap:8px}
+.answer-btn{
+width:100%;padding:14px 16px;border-radius:var(--r-btn);background:var(--card);
+border:1px solid var(--card-border);color:var(--text);font-size:14px;font-weight:600;
+text-align:left;display:flex;align-items:center;gap:10px;transition:transform 200ms var(--ease),border-color 200ms var(--ease),background 200ms var(--ease),opacity 200ms var(--ease);
+min-height:52px;
+}
+.answer-btn:active:not(.correct):not(.wrong):not(.dimmed){transform:scale(0.98);border-color:var(--accent)}
+.answer-btn .letter{
+width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.06);
+display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+flex-shrink:0;transition:background 200ms var(--ease),color 200ms var(--ease);
+}
+.answer-btn.correct{background:rgba(16,185,129,0.2);border-color:var(--success)}
+.answer-btn.correct .letter{background:var(--success);color:#fff}
+.answer-btn.wrong{background:rgba(239,68,68,0.2);border-color:var(--danger)}
+.answer-btn.wrong .letter{background:var(--danger);color:#fff}
+.answer-btn.dimmed{opacity:0.3;pointer-events:none}
+.answer-btn.removed{display:none}
+.explanation-card{
+margin-top:8px;padding:12px 16px;border-radius:var(--r-btn);
+background:rgba(104,123,234,0.12);border:1px solid rgba(104,123,234,0.25);
+font-size:13px;line-height:1.5;color:var(--text-sec);
+animation:slideUp .3s var(--ease-enter) both;
+}
+.explanation-card strong{color:var(--text);font-weight:700}
+.powerups{display:flex;gap:8px;justify-content:center;margin-top:2px}
+.powerup-btn{
+flex:1;padding:8px 4px;border-radius:var(--r-btn);background:var(--card);
+border:1px solid var(--card-border);text-align:center;font-size:11px;font-weight:600;
+color:var(--text);max-width:110px;min-height:44px;
+}
+.powerup-btn:active:not(.used):not(.locked){transform:scale(0.95);border-color:var(--accent)}
+.powerup-btn .pu-icon{font-size:18px;display:block;margin-bottom:2px}
+.powerup-btn .pu-cost{font-size:10px;color:var(--gold);font-weight:700}
+.powerup-btn.locked{opacity:0.35;pointer-events:none}
+.powerup-btn.used{opacity:0.25;pointer-events:none}
+.combo-indicator{display:flex;align-items:center;justify-content:center;gap:6px;min-height:24px;margin-top:2px}
+.combo-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:background .2s}
+.combo-dot.active{background:var(--gold)}
+.combo-badge{
+padding:3px 10px;border-radius:12px;font-size:12px;font-weight:800;
+background:linear-gradient(135deg,var(--gold),var(--flame));color:#000;
+animation:springBounce .4s cubic-bezier(.34,1.56,.64,1);
+}
+
+.round-overlay{
+position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;
+background:rgba(15,25,35,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.round-overlay-text{
+font-size:42px;font-weight:900;animation:roundOverlay .6s var(--ease) both;
+background:linear-gradient(135deg,var(--accent),#8B5CF6);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+#results{justify-content:center;align-items:center;gap:14px;text-align:center;padding-bottom:40px}
+.result-banner{
+width:100%;padding:24px;border-radius:var(--r-lg);font-size:28px;font-weight:900;letter-spacing:1px;
+}
+.result-banner.win{background:linear-gradient(135deg,rgba(16,185,129,0.25),rgba(104,123,234,0.15))}
+.result-banner.draw{background:linear-gradient(135deg,rgba(104,123,234,0.25),rgba(139,92,246,0.15))}
+.result-banner.loss{background:linear-gradient(135deg,rgba(239,68,68,0.25),rgba(239,68,68,0.08))}
+.result-score-compare{display:flex;align-items:center;justify-content:center;gap:20px;font-size:32px;font-weight:900}
+.result-score-compare .vs-x{font-size:16px;color:var(--text-sec);font-weight:700}
+.rewards-list{width:100%;text-align:left}
+.reward-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px}
+.reward-row:last-child{border-bottom:none}
+.reward-label{color:var(--text-sec);font-weight:500}
+.reward-val{font-weight:700;color:var(--success)}
+.result-coins{display:flex;align-items:center;justify-content:center;gap:6px;font-size:20px;font-weight:800;color:var(--gold)}
+.xp-section{width:100%}
+.xp-label{font-size:12px;color:var(--text-sec);margin-bottom:4px;display:flex;justify-content:space-between}
+.xp-bar-wrap{height:8px;background:rgba(255,255,255,0.06);border-radius:8px;overflow:hidden}
+.xp-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--accent),#8B5CF6);transition:width 1s var(--ease)}
+.level-up-flash{
+position:fixed;inset:0;background:rgba(104,123,234,0.3);
+display:flex;align-items:center;justify-content:center;z-index:999;
+font-size:36px;font-weight:900;animation:fadeIn .3s var(--ease-enter);cursor:pointer;
+}
+.result-actions{display:flex;flex-direction:column;gap:10px;width:100%}
+.result-actions .btn-primary{font-size:14px;padding:14px}
+
+.review-section{width:100%;text-align:left;margin-top:4px}
+.review-toggle{
+width:100%;padding:14px;border-radius:var(--r-btn);background:rgba(104,123,234,0.12);
+border:1px solid rgba(104,123,234,0.25);color:var(--accent);font-weight:700;font-size:14px;
+text-align:center;min-height:48px;
+}
+.review-toggle:active{background:rgba(104,123,234,0.2)}
+.review-list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.review-item{padding:14px;border-radius:var(--r-card);background:var(--card);border:1px solid var(--card-border)}
+.review-q{font-size:14px;font-weight:700;margin-bottom:8px;line-height:1.4}
+.review-answer{
+padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:4px;
+display:flex;align-items:center;gap:8px;
+}
+.review-answer.correct-answer{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--success)}
+.review-answer.wrong-answer{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--danger)}
+.review-answer.neutral{background:rgba(255,255,255,0.03);border:1px solid transparent;color:var(--text-ter)}
+.review-explanation{
+margin-top:8px;padding:10px 12px;border-radius:8px;
+background:rgba(104,123,234,0.08);font-size:12px;line-height:1.5;color:var(--text-sec);
+}
+
+#leaderboard{gap:16px}
+.lb-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;flex-wrap:nowrap}
+.lb-tab{
+padding:8px 14px;border-radius:20px;background:var(--card);border:1px solid var(--card-border);
+font-size:12px;font-weight:600;color:var(--text-sec);white-space:nowrap;flex-shrink:0;min-height:44px;
+}
+.lb-tab:active{transform:scale(0.97)}
+.lb-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lb-reset{text-align:center;font-size:12px;color:var(--text-ter);margin-bottom:4px}
+.lb-list{display:flex;flex-direction:column;gap:6px}
+.lb-entry{
+display:flex;align-items:center;gap:10px;padding:10px 12px;
+border-radius:var(--r-btn);background:var(--card);border:1px solid var(--card-border);
+}
+.lb-entry.me{border-color:var(--accent);background:rgba(104,123,234,0.1)}
+.lb-entry.top1{border-color:var(--gold);background:rgba(255,215,0,0.08)}
+.lb-entry.top2{border-color:#C0C0C0;background:rgba(192,192,192,0.06)}
+.lb-entry.top3{border-color:#CD7F32;background:rgba(205,127,50,0.06)}
+.lb-rank{width:28px;text-align:center;font-weight:800;font-size:14px}
+.lb-entry-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--card)}
+.lb-entry-avatar img{width:100%;height:100%;object-fit:cover}
+.lb-entry-info{flex:1;min-width:0}
+.lb-entry-name{font-size:13px;font-weight:700}
+.lb-entry-role{font-size:10px;color:var(--text-sec)}
+.lb-entry-pts{font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0}
+.lb-challenge-btn{
+padding:5px 10px;border-radius:8px;font-size:10px;font-weight:700;
+background:var(--accent);color:#fff;border:none;cursor:pointer;flex-shrink:0;
+}
+.lb-challenge-btn:active{transform:scale(0.95)}
+
+#profile{align-items:center;gap:16px;text-align:center}
+.profile-name{font-size:22px;font-weight:800;margin-top:8px}
+.profile-role{font-size:13px;color:var(--text-sec)}
+.profile-rank{margin-top:4px}
+.profile-level{width:100%;margin-top:8px}
+.profile-level-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-sec);margin-bottom:4px}
+.profile-xp-bar{height:8px;background:rgba(255,255,255,0.06);border-radius:8px;overflow:hidden;width:100%}
+.profile-xp-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--accent),#8B5CF6)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%;margin-top:8px}
+.stat-box{
+padding:14px 8px;border-radius:var(--r-card);background:var(--card);
+border:1px solid var(--card-border);text-align:center;
+}
+.stat-val{font-size:20px;font-weight:800}
+.stat-label{font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;margin-top:2px}
+.medals-section{width:100%;text-align:left;margin-top:4px}
+.medals-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px}
+.medal{
+padding:12px 4px;border-radius:var(--r-btn);background:var(--card);border:1px solid var(--card-border);
+text-align:center;font-size:24px;position:relative;
+}
+.medal.locked{opacity:0.3;filter:grayscale(1)}
+.medal-name{font-size:8px;font-weight:600;color:var(--text-sec);margin-top:4px;line-height:1.2}
+
+#settings{gap:12px}
+.setting-row{
+display:flex;align-items:center;justify-content:space-between;padding:14px 0;
+border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.setting-label{font-size:14px;font-weight:600}
+.toggle{
+width:48px;height:28px;border-radius:14px;background:rgba(255,255,255,0.1);
+position:relative;cursor:pointer;transition:background .2s;border:none;min-height:28px;
+}
+.toggle.on{background:var(--accent)}
+.toggle::after{
+content:'';position:absolute;width:22px;height:22px;border-radius:50%;
+background:#fff;top:3px;left:3px;transition:transform .2s;
+}
+.toggle.on::after{transform:translateX(20px)}
+.btn-danger{
+width:100%;padding:14px;border-radius:var(--r-btn);
+background:rgba(239,68,68,0.12);color:var(--danger);font-weight:700;font-size:15px;margin-top:8px;
+}
+.btn-feedback{
+width:100%;padding:14px;border-radius:var(--r-btn);
+background:var(--card);border:1px solid var(--card-border);color:var(--text);font-weight:600;font-size:15px;
+}
+
+.bottom-nav{
+position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+width:100%;max-width:390px;
+background:rgba(20,24,38,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+border-top:1px solid rgba(255,255,255,0.05);
+display:none;padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom,0));z-index:100;
+}
+.bottom-nav.visible{display:flex}
+.nav-items{display:flex;justify-content:space-around;width:100%}
+.nav-item{
+display:flex;flex-direction:column;align-items:center;gap:3px;
+padding:4px 12px;border-radius:12px;background:transparent;color:var(--text-ter);
+font-size:9px;font-weight:600;transition:color 200ms var(--ease);border:none;min-height:44px;
+letter-spacing:0.3px;text-transform:uppercase;
+}
+.nav-item.active{color:var(--accent-light)}
+.nav-item .nav-icon{width:24px;height:22px;display:flex;align-items:center;justify-content:center}
+.nav-item .nav-icon img{width:20px;height:20px;object-fit:contain;opacity:0.35;transition:opacity 200ms var(--ease),filter 200ms var(--ease)}
+.nav-item.active .nav-icon img{opacity:0.9;filter:brightness(1.4) saturate(1.3)}
+
+.challenge-overlay{
+position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;
+display:none;align-items:flex-end;justify-content:center;
+}
+.challenge-overlay.show{display:flex}
+.challenge-sheet{
+width:100%;max-width:390px;background:var(--bg);border-radius:var(--r-lg) var(--r-lg) 0 0;
+padding:24px 20px 40px;max-height:70vh;overflow-y:auto;
+border:1px solid var(--card-border);border-bottom:none;
+}
+.challenge-title{font-size:18px;font-weight:800;margin-bottom:16px;text-align:center}
+.challenge-opponent{
+display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px;
+border-radius:var(--r-btn);background:var(--card);border:1px solid var(--card-border);min-height:52px;
+}
+.challenge-opponent-info{flex:1}
+.challenge-opponent-name{font-weight:700;font-size:14px}
+.challenge-opponent-role{font-size:11px;color:var(--text-sec)}
+.challenge-fight-btn{
+padding:8px 16px;border-radius:var(--r-btn);
+background:linear-gradient(135deg,var(--flame),#FF8C42);color:#fff;font-weight:700;font-size:13px;
+}
+.challenge-close{
+width:100%;padding:14px;border-radius:var(--r-btn);background:var(--card);
+border:1px solid var(--card-border);color:var(--text-sec);font-weight:600;font-size:14px;margin-top:12px;
+}
+
+.tutorial-overlay{
+position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.8);
+display:flex;align-items:center;justify-content:center;
+backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.tutorial-card{
+width:90%;max-width:360px;padding:32px 24px;border-radius:var(--r-lg);
+background:linear-gradient(135deg,rgba(15,25,35,0.98),rgba(30,40,55,0.98));
+border:1px solid rgba(104,123,234,0.3);text-align:center;
+animation:scaleIn .4s ease both;
+}
+.tutorial-icon{font-size:56px;margin-bottom:16px}
+.tutorial-step-dots{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.tutorial-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15)}
+.tutorial-dot.active{background:var(--accent)}
+.tutorial-title{font-size:18px;font-weight:800;margin-bottom:10px}
+.tutorial-desc{font-size:14px;color:var(--text-sec);line-height:1.6;margin-bottom:20px}
+.tutorial-btn{
+padding:14px 32px;border-radius:var(--r-btn);font-weight:700;font-size:15px;
+background:linear-gradient(135deg,var(--accent),#8B5CF6);color:#fff;
+}
+
+.confetti-piece{
+position:fixed;top:-10px;z-index:1000;pointer-events:none;will-change:transform;
+}
+
+#chat{gap:0;padding:0;padding-top:0}
+.chat-header{
+display:flex;align-items:center;gap:12px;padding:14px 20px;padding-top:calc(env(safe-area-inset-top,14px) + 10px);
+background:rgba(28,33,51,0.95);border-bottom:1px solid rgba(255,255,255,0.06);
+position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.chat-tabs{display:flex;gap:0;flex:1;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
+.chat-tab{
+flex:1;padding:8px 0;text-align:center;font-size:12px;font-weight:600;
+color:var(--text-sec);background:none;border:none;cursor:pointer;transition:background 200ms var(--ease),color 200ms var(--ease);min-height:36px;
+}
+.chat-tab.active{background:var(--accent);color:#fff;border-radius:10px}
+.chat-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;padding-bottom:90px}
+
+.news-card{
+padding:14px;border-radius:var(--r-card);background:var(--card);
+border:1px solid var(--card-border);display:flex;gap:12px;align-items:flex-start;
+}
+.news-icon{
+width:40px;height:40px;border-radius:12px;flex-shrink:0;
+display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.news-icon.bonus{background:rgba(16,185,129,0.15)}
+.news-icon.challenge{background:rgba(104,123,234,0.15)}
+.news-icon.info{background:rgba(255,215,0,0.15)}
+.news-icon.event{background:rgba(255,107,53,0.15)}
+.news-content{flex:1;min-width:0}
+.news-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.news-desc{font-size:11px;color:var(--text-sec);line-height:1.4}
+.news-time{font-size:10px;color:var(--text-ter);margin-top:4px}
+.news-action{
+margin-top:8px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;
+background:var(--accent);color:#fff;border:none;cursor:pointer;display:inline-block;
+}
+.news-action:active{transform:scale(0.95)}
+
+.chat-msg{display:flex;gap:8px;align-items:flex-end;max-width:85%}
+.chat-msg.them{align-self:flex-start}
+.chat-msg.me{align-self:flex-end;flex-direction:row-reverse}
+.chat-msg-avatar{width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--card)}
+.chat-msg-avatar img{width:100%;height:100%;object-fit:cover}
+.chat-bubble{
+padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.4;
+}
+.chat-msg.them .chat-bubble{background:rgba(255,255,255,0.08);border-bottom-left-radius:4px;color:var(--text)}
+.chat-msg.me .chat-bubble{background:var(--accent);border-bottom-right-radius:4px;color:#fff}
+.chat-bubble-name{font-size:10px;font-weight:700;color:var(--accent-light);margin-bottom:2px}
+.chat-bubble-time{font-size:9px;color:var(--text-ter);margin-top:3px;text-align:right}
+.chat-msg.me .chat-bubble-time{color:rgba(255,255,255,0.5)}
+
+.chat-input-bar{
+position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+width:100%;max-width:390px;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0));
+background:rgba(20,24,38,0.97);border-top:1px solid rgba(255,255,255,0.06);
+display:flex;gap:8px;align-items:center;z-index:10;
+backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.chat-input{
+flex:1;padding:10px 16px;border-radius:20px;background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.08);color:var(--text);font-size:13px;
+outline:none;min-height:40px;
+}
+.chat-input::placeholder{color:var(--text-ter)}
+.chat-send-btn{
+width:40px;height:40px;border-radius:50%;background:var(--accent);
+display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;
+color:#fff;font-size:18px;flex-shrink:0;
+}
+.chat-send-btn:active{transform:scale(0.9)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="app">
+<div id="splash" class="screen active">
+<div class="splash-particles" id="splashParticles"></div>
+<div class="splash-logo-wrap">
+<div class="splash-ring"></div>
+<div class="splash-logo"><div class="splash-logo-glow"></div>&#9889;</div>
+</div>
+<div class="splash-title" id="splashTitle"></div>
+<div class="splash-tagline">Acesse. Ofere&#231;a. Realize.</div>
+<div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
+</div>
+
+<div id="login" class="screen">
+<div class="login-logo">
+<div class="login-logo-icon">&#9889;</div>
+<div class="login-title" id="loginTitle">Entrar</div>
+<div class="login-sub" id="loginSub">Entre para come&#231;ar a jogar</div>
+</div>
+<div class="login-field">
+<label>Email</label>
+<input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
+</div>
+<div class="login-field">
+<label>Senha</label>
+<input type="password" id="loginPassword" placeholder="Sua senha" autocomplete="current-password">
+</div>
+<div class="login-field" id="signupNameField" style="display:none">
+<label>Nome</label>
+<input type="text" id="loginName" placeholder="Seu nome completo" autocomplete="off">
+</div>
+<div class="login-field" id="signupRoleField" style="display:none">
+<label>Cargo</label>
+<input type="text" id="loginRole" placeholder="Personal Banker" value="Personal Banker">
+</div>
+<div class="login-error" id="loginError"></div>
+<button class="btn-primary" id="loginBtn" onclick="doLogin()">ENTRAR</button>
+<button class="login-toggle-link" onclick="toggleLoginMode()" id="loginToggle" style="background:none;border:none;color:var(--accent-light);font-size:13px;font-weight:600;margin-top:12px;cursor:pointer;width:100%;text-align:center">N&#227;o tem conta? <span style="text-decoration:underline">Criar conta</span></button>
+</div>
+
+<div id="home" class="screen with-nav"></div>
+<div id="topics" class="screen with-nav"></div>
+<div id="matchmaking" class="screen"></div>
+<div id="gameplay" class="screen"></div>
+<div id="results" class="screen"></div>
+<div id="leaderboard" class="screen with-nav"></div>
+<div id="profile" class="screen with-nav"></div>
+<div id="settings" class="screen"></div>
+<div id="chat" class="screen"></div>
+
+<div class="bottom-nav" id="bottomNav">
+<div class="nav-items">
+<button class="nav-item" data-tab="home" onclick="showScreen('home')">
+<span class="nav-icon"><img src="design/img/menu_inicio.svg" alt=""></span>In&#237;cio
+</button>
+<button class="nav-item" data-tab="topics" onclick="showScreen('topics')">
+<span class="nav-icon"><img src="design/img/menu_topicos.svg" alt=""></span>T&#243;picos
+</button>
+<button class="nav-item" data-tab="leaderboard" onclick="showScreen('leaderboard')">
+<span class="nav-icon"><img src="design/img/menu_ranking.svg" alt=""></span>Ranking
+</button>
+<button class="nav-item" data-tab="profile" onclick="showScreen('profile')">
+<span class="nav-icon"><img src="design/img/menu_perfil.svg" alt=""></span>Perfil
+</button>
+</div>
+</div>
+
+<div class="challenge-overlay" id="challengeOverlay">
+<div class="challenge-sheet" id="challengeSheet"></div>
+</div>
+</div>
+
+<script>
+// ====== SUPABASE CONFIG ======
+// IMPORTANT: Replace these with your actual Supabase project credentials
+var SUPABASE_URL = 'https://xeqwzcwysagkmyxjscxy.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlcXd6Y3d5c2Fna215eGpzY3h5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2Nzg1NzQsImV4cCI6MjA5MTI1NDU3NH0.GCydts6dqZoDNxrVVx0ISglCj_BqX4vXDaMxqN0WsBw';
+var sb = null;
+var sbUser = null;
+var _syncTimer = null;
+
+function initSupabase() {
+  if (typeof supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+}
+
+// ====== DATA LAYER ======
+const QUESTIONS={
+mercado:[
+{q:"Quais são os quatro componentes que formam o valor da parcela mensal de um consórcio?",a:["Fundo comum, taxa de administração, fundo de reserva e seguro prestamista.","Fundo comum, juros remuneratórios, taxa de adesão e IOF.","Taxa de administração, juros de mora, fundo garantidor e seguro desemprego.","Amortização, juros compostos, taxa de administração e TR."],e:"A parcela do consórcio não possui juros. Ela é composta pelo fundo comum (poupança para a carta), taxa de administração, fundo de reserva (garantia para imprevistos) e seguro prestamista.",d:2},
+{q:"Na política de crédito do Home Equity (Crédito com Garantia de Imóvel), qual é o limite máximo de LTV (Loan to Value) permitido para Casas e Apartamentos, respectivamente?",a:["Até 50% para Casas e até 60% para Apartamentos.","Até 60% para Casas e até 70% para Apartamentos.","Até 40% para Casas e até 50% para Apartamentos.","Até 70% para Casas e até 80% para Apartamentos."],e:"No Home Equity, o LTV varia conforme o tipo de imóvel: chega a até 60% para apartamentos, 50% para casas, 40% para salas comerciais e 30% para terrenos.",d:3},
+{q:"No produto Auto Equity (Crédito com garantia de veículos), qual é o percentual máximo do valor do veículo que pode ser liberado como crédito (LTV sugerido)?",a:["Até 80% do valor do veículo.","Até 100% do valor do veículo.","Até 50% do valor do veículo.","Até 60% do valor do veículo."],e:"No Auto Equity, que é o refinanciamento onde o veículo fica como garantia, o crédito máximo liberado é de até 80% do valor do veículo.",d:1},
+{q:"Para utilizar o FGTS na compra de um imóvel residencial através do Crédito Imobiliário, qual das regras abaixo é uma exigência obrigatória?",a:["Ter no mínimo 36 depósitos na conta do FGTS e não possuir financiamento ativo no SFH em nenhum lugar do país.","Ter no mínimo 12 depósitos na conta do FGTS e o imóvel deve ser obrigatoriamente novo.","O beneficiário precisa residir na cidade do imóvel há pelo menos 5 anos e ter no mínimo 24 depósitos.","Não há exigência de número mínimo de depósitos, desde que o cliente dê 20% de entrada em recursos próprios."],e:"O uso do FGTS exige no mínimo 36 depósitos, que o cliente não possua imóvel na cidade onde reside ou trabalha, e que não tenha financiamento ativo no Sistema Financeiro de Habitação (SFH).",d:2},
+{q:"Qual é uma das principais vantagens para a empresa ao oferecer o Consignado Privado para seus funcionários (CLT)?",a:["A dívida fica atrelada exclusivamente ao CPF do funcionário e nunca ao CNPJ da empresa.","A empresa recebe uma porcentagem dos juros cobrados pelo banco na operação.","A empresa passa a ser a fiadora principal do funcionário perante o banco parceiro.","Os funcionários são obrigados a abrir conta corrente na corretora que ofereceu o crédito."],e:"Uma das maiores vantagens para o RH e para a empresa na adesão ao Consignado Privado é que a dívida do empréstimo fica no CPF do colaborador, sem trazer qualquer risco para o CNPJ.",d:1},
+{q:"Como funciona a modalidade de 'Lance Embutido' no Consórcio?",a:["O consorciado utiliza parte do próprio valor da carta de crédito para potencializar o seu lance, descontando esse percentual do valor final.","O consorciado pega um empréstimo com a administradora para pagar o lance por fora, aumentando o valor da parcela.","O valor do lance é embutido e diluído nas parcelas restantes do grupo, sem reduzir o valor da carta de crédito.","É um lance pré-fixado pela administradora onde todos os participantes adimplentes dão obrigatoriamente o mesmo valor."],e:"No lance embutido, usa-se uma fatia do próprio crédito contratado para dar o lance, o que diminui o valor líquido a ser recebido no momento de utilizar a carta.",d:2},
+{q:"Qual é o principal público-alvo do Seguro de Vida em Grupo e qual sua vantagem em relação ao seguro de vida individual?",a:["É destinado a empresas a partir de 2 funcionários, com custo geralmente inferior ao do seguro individual.","É destinado exclusivamente a grandes corporações (acima de 500 funcionários) e possui um custo mais elevado devido ao risco.","É um seguro obrigatório exclusivo para grupos familiares visando apenas a proteção de crédito imobiliário.","É destinado a autônomos que desejam formar um grupo de compra fechado para obter isenção de imposto de renda."],e:"O seguro de vida em grupo visa proteger sócios, colaboradores, terceiros e suas famílias em empresas a partir de 2 vidas, possuindo um custo inferior ao individual e ajudando na retenção de talentos.",d:1},
+{q:"No processo de análise de Home Equity, certos tipos de imóveis NÃO são aceitos como garantia. Qual das alternativas apresenta apenas propriedades que são RECUSADAS neste produto?",a:["Imóveis rurais, galpões, imóveis operacionais, escolas e igrejas.","Apartamentos na planta, casas, terrenos de pessoa física e salas comerciais.","Salas comerciais, casas de praia, terrenos quitados e galpões de pequeno porte.","Imóveis urbanos, apartamentos residenciais, lotes averbados e casas em condomínio fechado."],e:"A política do Home Equity barra garantias frágeis ou difíceis de liquidar. Estão expressamente não aceitos: imóvel rural, galpões, imóveis operacionais, escolas e igrejas.",d:2},
+{q:"No portfólio de Seguros, qual é o principal objetivo da solução conhecida como 'Seguro Fiança Locatícia'?",a:["Substituir a necessidade de um fiador e facilitar o processo de locação de imóveis.","Garantir o pagamento das parcelas de um financiamento habitacional caso o cliente fique desempregado.","Cobrir eventuais danos físicos e estruturais no imóvel que foram causados por desastres ambientais.","Fornecer uma linha de crédito para que o inquilino possa antecipar as taxas de condomínio do ano."],e:"O Seguro Fiança Locatícia serve especificamente para substituir a figura do fiador tradicional, garantindo o aluguel para o proprietário e trazendo mais facilidade para quem vai alugar.",d:1},
+{q:"Quais são os três principais tipos de operações disponíveis na contratação do produto Consignado Público?",a:["Margem livre, Refinanciamento e Portabilidade.","Antecipação de recebíveis, Capital de giro e Home Equity.","Empréstimo com garantia de veículo, Financiamento e Consórcio.","Lance embutido, Saque-aniversário FGTS e Crédito pessoal sem garantia."],e:"O Consignado Público atua com três frentes principais de operação: Margem Livre (quando o cliente ainda tem parte dos 35% de limite disponível), Refinanciamento e Portabilidade de dívida.",d:2}
+],
+investimentos:[
+{q:"O que é um consórcio de acordo com o material apresentado?",a:["Uma forma de compra planejada onde pessoas se unem para autofinanciar um objetivo comum.","Um empréstimo bancário com taxas de juros reduzidas para aquisição de bens.","Uma modalidade de financiamento onde o bem é alienado ao banco até a quitação.","Um investimento de curto prazo atrelado à taxa Selic."],e:"O consórcio é definido como uma forma de compra colaborativa e planejada para autofinanciamento de um objetivo comum (como aquisição de imóvel ou veículo), caracterizando-se pela ausência de juros.",d:1},
+{q:"Quais são os quatro itens que compõem o valor da parcela mensal de um consórcio?",a:["Fundo comum, taxa de administração, fundo de reserva e seguro prestamista.","Amortização, juros, taxa de administração e IOF.","Fundo comum, taxa de juros, seguro obrigatório e comissão.","Lance embutido, fundo de reserva, juros e seguro prestamista."],e:"As parcelas do consórcio não possuem juros e são compostas exatamente por: Fundo Comum, Taxa de Administração, Fundo de Reserva e Seguro Prestamista.",d:2},
+{q:"Quais são os dois tipos de lance mencionados para tentar antecipar a contemplação no consórcio?",a:["Lance fixo e lance livre.","Lance garantido e lance condicionado.","Lance embutido e lance parcelado.","Lance obrigatório e lance voluntário."],e:"O material especifica duas modalidades de lance: o Lance Fixo, predeterminado pela administradora, e o Lance Livre, que funciona como um leilão onde vence o maior percentual ofertado.",d:1},
+{q:"Como funciona a estratégia de 'Lance Embutido' no consórcio?",a:["O consorciado utiliza parte do próprio crédito da carta para potencializar seu lance, sendo o valor descontado no recebimento.","O consorciado pega um empréstimo com a administradora para pagar o valor do lance.","O valor do lance é embutido e dividido nas parcelas restantes do grupo do consórcio.","O consorciado utiliza o saldo do FGTS para cobrir inteiramente o lance ofertado."],e:"No lance embutido, o consorciado utiliza um percentual do próprio crédito para dar o lance. Esse valor utilizado é descontado do valor total do crédito que ele receberá na contemplação.",d:2},
+{q:"Em qual situação é válido utilizar os recursos do FGTS para o pagamento de um lance no consórcio?",a:["Apenas para consórcios de imóveis, de acordo com as regras da Caixa Econômica Federal.","Para consórcios de veículos novos e seminovos comerciais.","Para qualquer tipo de consórcio, desde que o cliente possua saldo disponível.","Apenas para consórcios de serviços ou financiamento de painéis solares."],e:"O uso de recursos do FGTS para pagamento de lances é válido exclusivamente para os consórcios de imóveis, seguindo as diretrizes da Caixa Econômica Federal.",d:2},
+{q:"Sobre a utilização do crédito e a junção de cotas de consórcio, qual das afirmativas é verdadeira?",a:["É permitida a junção de cotas do mesmo produto, desde que todas estejam contempladas.","É permitida a junção de cotas de produtos diferentes, mesmo que não estejam contempladas.","A junção de cotas só é permitida exclusivamente para consórcios de automóveis.","Não é permitida a junção de cotas sob nenhuma hipótese nas administradoras parceiras."],e:"O material esclarece que é permitida a junção de cotas do mesmo produto, não importando a nomenclatura do grupo, com a condição de que todas as cotas envolvidas já estejam contempladas.",d:3},
+{q:"Existe um tempo limite para o consorciado utilizar o crédito após ser contemplado?",a:["Não há limite de tempo; se não for utilizado, o recurso fica aplicado em um fundo lastreado em títulos públicos.","Sim, o crédito deve ser obrigatoriamente utilizado em até 90 dias após a contemplação.","Sim, o limite é de 1 ano, após o qual o consorciado perde definitivamente o direito à carta.","Não há limite de tempo, mas o valor da carta sofre uma depreciação mensal de 1%."],e:"Não há limite de tempo para a utilização do crédito. Caso o consorciado não utilize imediatamente, os recursos são aplicados e rendem em um fundo lastreado em títulos públicos.",d:2},
+{q:"Um consorciado contemplado é obrigado a utilizar o valor total da carta de crédito para a compra de apenas um único bem?",a:["Não, o crédito não precisa ser utilizado de uma única vez e a mesma cota pode ser usada para comprar mais de um bem.","Sim, a regra principal do consórcio exige a aquisição de um único bem correspondente ao valor da cota.","Não, mas a compra fracionada só é permitida para consórcios de serviços e pequenas reformas.","Sim, exceto nos casos em que o consorciado faz a junção com outra cota do mesmo grupo."],e:"O crédito obtido através do consórcio não precisa ser gasto todo de uma só vez, sendo perfeitamente possível usar uma mesma cota contemplada para a compra de mais de um bem.",d:1},
+{q:"Qual o propósito do 'Fundo de Reserva' embutido na parcela do consórcio?",a:["Funciona como garantia para cobrir imprevistos do grupo, como inadimplência, e o valor não utilizado é devolvido no encerramento.","É o montante principal utilizado para formar a carta de crédito e comprar o bem dos contemplados.","Corresponde ao lucro retido pela Administradora pela gestão e manutenção administrativa do grupo.","Trata-se de um seguro obrigatório destinado a cobrir as parcelas em caso de falecimento do consorciado."],e:"O Fundo de Reserva é um percentual voltado a cobrir imprevistos, como a inadimplência ou demandas jurídicas. Ao final do grupo, se esse valor não for gasto, ele é devolvido ao consorciado.",d:2},
+{q:"Como o material exemplifica a estratégia de 'Alavancagem Patrimonial' utilizando o consórcio?",a:["Contemplar uma carta, comprar um imóvel e utilizar o valor do aluguel recebido para pagar a própria parcela do consórcio.","Vender várias cartas de consórcio antes da contemplação, cobrando ágio sobre os valores já pagos.","Pausar o pagamento das parcelas temporariamente para investir o dinheiro na bolsa de valores.","Utilizar exclusivamente lances embutidos de 100% para não precisar desembolsar valores de parcelas ao longo do grupo."],e:"A engenharia financeira (alavancagem patrimonial) explicada envolve contemplar a carta, adquirir o imóvel e alugá-lo, fazendo com que a renda do aluguel pague as parcelas do consórcio e ainda gere sobra, utilizando recursos de terceiros.",d:3}
+],
+compliance:[
+{q:"Na análise de crédito para empresas (PME), quais são os principais motivos ligados à conformidade e histórico financeiro que geram recusa da operação?",a:["Vencidos, prejuízo e Bacen zerado, alavancagem, CNPJ comprado, alteração de atividade recente e problemas judiciais.","Faturamento acima de 50 milhões no último ano e falta de imóveis operacionais registrados.","Apenas a falta de um avalista com patrimônio líquido superior ao dobro do crédito solicitado.","Venda de produtos exclusivamente para pessoa física e ausência de máquina de cartão própria."],e:"Conforme as regras de Crédito para Empresas, motivos de recusa incluem Bacen zerado, CNPJ comprado, histórico de prejuízo, alavancagem e problemas judiciais.",d:2},
+{q:"Para a utilização do FGTS na compra de um imóvel residencial, qual é a regra estipulada em relação à quantidade de depósitos e a financiamentos ativos?",a:["É necessário ter no mínimo 36 depósitos na conta FGTS e não possuir financiamento habitacional ativo no SFH em nenhum lugar do país.","É necessário ter 24 depósitos contínuos e não possuir mais de um financiamento ativo no SFH na mesma cidade.","É exigido apenas ter saldo suficiente, sem limite mínimo de depósitos, contanto que o imóvel seja novo.","É necessário ter 48 depósitos e o vendedor não pode ter utilizado o FGTS na compra daquele imóvel nos últimos cinco anos."],e:"As diretrizes exigem no mínimo 36 depósitos, nenhum financiamento SFH ativo no país e que o imóvel se enquadre nas regras do SFH.",d:3},
+{q:"Dentro das regras regulatórias para uso do FGTS na aquisição de imóvel, qual a restrição sobre a posse prévia de propriedades pelo beneficiário?",a:["O beneficiário não pode ser proprietário de nenhum imóvel residencial na cidade onde trabalha ou reside, nem em municípios limítrofes.","O beneficiário pode ter até um imóvel na mesma cidade, desde que comprove que ele está alugado para terceiros.","É proibido possuir propriedades comerciais em qualquer estado, mas permite-se ter imóveis residenciais fora da cidade de residência.","Não há restrições sobre possuir outros imóveis, desde que o novo imóvel adquirido com FGTS passe a ser a residência principal."],e:"Para fins de compliance e regulação do FGTS, o comprador não pode possuir imóvel residencial na cidade em que reside, trabalha ou em cidades limítrofes.",d:2},
+{q:"No contexto de seguro de vida em grupo, para quais categorias de trabalhadores o seguro é estritamente obrigatório por lei (e não apenas por convenção coletiva)?",a:["Construção civil e motoristas de transportes rodoviários.","Bares, restaurantes e indústrias em geral.","Metalúrgicas e empresas de vigilância patrimonial.","Apenas estagiários, jovens aprendizes e terceirizados de qualquer setor."],e:"Enquanto metalúrgicas, vigilantes e bares dependem de Convenção Coletiva de Trabalho (CCT), a lei obriga seguros de vida para profissionais da construção civil e motoristas rodoviários.",d:1},
+{q:"Qual é a exigência regulatória específica em relação ao status tributário do veículo nas operações de Fin Auto e Auto Equity?",a:["O veículo oferecido como garantia não pode mais conter restrição tributária no sistema do Detran.","O veículo pode conter restrição tributária, desde que o banco parceiro emita uma carta de anuência assumindo o imposto.","A restrição tributária é permitida apenas para veículos com menos de 3 anos de fabricação.","Veículos com restrição tributária têm o LTV (Loan to Value) reduzido obrigatoriamente para 50%."],e:"O material especifica claramente nas condições de Fin Auto e Auto Equity que o veículo não pode mais conter restrição tributária no sistema do Detran para ser aceito na operação.",d:3},
+{q:"Na jornada de contratação do Crédito com Garantia de Imóvel (Home Equity), em que momento o Aceite Bacen do proponente deve ser fornecido à mesa?",a:["Na etapa de Lead/Checklist, logo após a solicitação, para que o analista confira os documentos e faça o enquadramento técnico.","Na etapa de Desembolso, devendo ser assinado no cartório junto com o registro da alienação.","Apenas após a etapa de Laudo de Avaliação e Análise Jurídica completa do imóvel.","O Aceite Bacen não é necessário para Home Equity, sendo exclusivo para financiamentos de veículos leves."],e:"A linha do tempo (D+2) indica que a mesa recebe a solicitação e já exige o envio do checklist e do Aceite Bacen na fase inicial (Lead/Checklist) para a devida verificação.",d:2},
+{q:"No que diz respeito ao compliance na contratação de Consignado Privado, quais são os requisitos comerciais básicos sobre a constituição e receita da empresa conveniada?",a:["A empresa deve ter no mínimo 2 anos da data de constituição e a sua receita deve ser advinda da iniciativa privada.","A empresa precisa estar constituída há no máximo 1 ano e apresentar receita majoritária advinda de licitações públicas.","Não há exigência mínima de tempo de constituição, desde que a empresa comprove ter pelo menos 50 funcionários registrados.","A empresa deve ter no mínimo 5 anos de constituição e capital aberto na Bolsa de Valores."],e:"As condições do Consignado Privado exigem 2 anos de data de constituição da empresa e que ela possua receita advinda da iniciativa privada.",d:1},
+{q:"Qual documentação fiscal é obrigatória no checklist básico de Crédito Imobiliário para atestar a regularidade quando o comprador ou vendedor for Pessoa Jurídica (PJ)?",a:["CRF do FGTS e Certidão Conjunta da Receita Federal e INSS.","Declaração de Imposto de Renda Pessoa Física dos sócios e IPTU da sede da empresa quitado.","Certidão Negativa de Débitos Municipais e alvará de funcionamento válido para o ano corrente.","Apenas o Contrato Social consolidado, sendo dispensadas quaisquer certidões de regularidade tributária."],e:"O checklist básico para PJ exige a apresentação do CRF do FGTS e a Certidão conjunta (Receita Federal e INSS) para assegurar a regularidade da empresa envolvida na transação.",d:1},
+{q:"Segundo as políticas de crédito do Home Equity, quais tipos de imóveis não são elegíveis e não podem ser aceitos como garantia na operação?",a:["Imóvel rural, galpões, imóvel operacional, escolas e igrejas.","Apartamentos padrão, casas em condomínio fechado e salas comerciais.","Terrenos em áreas urbanas regularizadas e lajes corporativas.","Apenas imóveis cujo LTV solicitado pela operação de crédito seja superior a 20%."],e:"O material de Home Equity aponta expressamente em 'Qualidade do cliente' os imóveis que não são aceitos: imóvel rural, galpões, imóvel operacional, escolas e igrejas.",d:1},
+{q:"No contexto da regulação dos Consórcios, qual é a regra aplicável à utilização do FGTS para o pagamento de lances?",a:["O uso do FGTS é válido apenas para Consórcios de Imóveis, devendo respeitar as regras estabelecidas pela Caixa Econômica Federal (CEF).","É permitido utilizar o FGTS para consórcios de automóveis de passeio, desde que sejam veículos novos (zero km).","Pode ser utilizado para qualquer tipo de consórcio (veículos, bens ou imóveis), com limite de saque de até 30% do saldo total da conta.","O uso de FGTS é estritamente proibido para pagamentos de lances, sendo liberado apenas na modalidade de financiamento imobiliário direto."],e:"No material explicativo sobre consórcios, fica detalhado que o lance com FGTS é 'Válido para Consórcios de Imóveis, de acordo com as regras da CEF'.",d:2}
+],
+atendimento:[
+{q:"Qual é o LTV (Loan-to-Value) máximo permitido para a garantia de um apartamento nas operações de Home Equity?",a:["Até 60%","Até 50%","Até 40%","Até 30%"],e:"A política de crédito estipula que apartamentos podem ter um LTV de até 60% do valor do imóvel.",d:1},
+{q:"Quais tipos de imóveis NÃO são aceitos como garantia na modalidade de Home Equity?",a:["Imóvel rural, galpões, imóvel operacional, escolas e igrejas","Casa, apartamento e terrenos PF","Salas comerciais e escritórios","Terrenos PJ e apartamentos"],e:"A apresentação lista explicitamente imóvel rural, galpões, imóveis operacionais, escolas e igrejas como imóveis que não são aceitos.",d:1},
+{q:"De acordo com a política de crédito para Home Equity, qual é o LTV máximo permitido para casas e salas comerciais, respectivamente?",a:["Até 50% para casas e até 40% para salas comerciais","Até 60% para casas e até 50% para salas comerciais","Até 40% para casas e até 30% para salas comerciais","Até 60% para casas e até 40% para salas comerciais"],e:"A política define LTV de até 50% para casas e até 40% para salas comerciais.",d:2},
+{q:"Quem pode ser o proponente para um Crédito com Garantia de Imóvel (Home Equity)?",a:["Pessoa Física (PF) e Pessoa Jurídica (PJ), sendo permitidos múltiplos proponentes","Apenas Pessoa Física (PF)","Apenas Pessoa Jurídica (PJ) com mais de 2 anos de CNPJ","Apenas servidores públicos e aposentados"],e:"O perfil do cliente engloba tanto Pessoa Física quanto Pessoa Jurídica, e é possível ter múltiplos proponentes na operação.",d:2},
+{q:"Na jornada de contratação, qual é o prazo estimado para a etapa de 'Laudo de avaliação e análise jurídica' após a etapa do Parceiro?",a:["D+7","D+2","D+5","D+3"],e:"A linha do tempo estima o prazo de D+7 para o Laudo de avaliação e análise jurídica.",d:3},
+{q:"Qual é a principal característica dos prazos e taxas de juros no Crédito com Garantia de Imóvel?",a:["Prazos alongados com taxas de juros menores","Prazos curtos com taxas de juros menores","Prazos alongados com taxas de juros maiores","Prazos curtos sem a cobrança de juros"],e:"Por possuir a garantia real do imóvel, a modalidade oferece a vantagem de prazos alongados combinados com taxas de juros menores.",d:1},
+{q:"O que é recomendado incluir em uma boa 'Defesa de Crédito' para aumentar as chances de aprovação da proposta?",a:["Informações detalhadas como empresa, cargo, tempo de admissão, patrimônio, carteira de investimentos e fontes de renda extra","Apenas a matrícula atualizada do imóvel e um comprovante de residência simples","Ocultar a finalidade do crédito para que a análise foque apenas no valor da garantia","Apenas o nome completo do cliente e a assinatura digital"],e:"Uma boa defesa de crédito, que pode aumentar a chance de aprovação em 30%, inclui justificar o motivo do crédito e fornecer detalhes sobre renda extra, patrimônio e vínculos empregatícios.",d:2},
+{q:"Com base nos dados da ABECIP de 2024 na apresentação, como está dividido percentualmente o Sistema de Amortização dos contratos em carteira?",a:["TP com 56,1% e SAC com 43,9%","SAC com 56,1% e TP com 43,9%","TP com 50,0% e SAC com 50,0%","TP com 60,0% e SAC com 40,0%"],e:"Os dados de saldo em carteira demonstram que a Tabela Price (TP) representa 56,1% e o SAC 43,9% dos sistemas de amortização.",d:3},
+{q:"Como funciona a composição de renda na etapa de Pré-análise do Home Equity?",a:["O sistema leva em conta a soma da renda de todos os participantes informados (múltiplos proponentes e cônjuges)","É considerada apenas a renda da pessoa em cujo nome o imóvel está registrado","Apenas a renda do proponente com o maior salário é contabilizada","A composição de renda não é analisada, pois apenas o valor do imóvel serve como garantia"],e:"O sistema automaticamente leva em conta a renda de todos os participantes e cônjuges, validando se a soma da renda é compatível com o valor solicitado.",d:2},
+{q:"Quando ocorre o desembolso do recurso aprovado para o cliente na jornada do Home Equity?",a:["Em estimado D+3, mas apenas após o registro da garantia no Cartório de Imóveis, que pode levar até 30 dias","Imediatamente após a aprovação da análise jurídica, antes da assinatura do contrato","No mesmo dia da assinatura do contrato, de forma antecipada pelo parceiro","Junto com a emissão do laudo de avaliação do imóvel em D+7"],e:"O desembolso do recurso (estimado em D+3 nesta etapa final) ocorre somente após o registro da garantia no Cartório de Imóveis, cujo prazo pode se estender a até 30 dias após o protocolo.",d:3}
+],
+cambio:[
+{q:"Quais são os bancos parceiros da Franq para operações de Crédito Imobiliário listados no material?",a:["Santander, Inter, Itaú e Bradesco.","Caixa, Banco do Brasil, Itaú e Nubank.","Santander, Bradesco, C6 Bank e Banco Bari.","Itaú, Creditas, Porto Bank e BV."],e:"O material indica que a Franq opera com Santander, Inter, Itaú e Bradesco para o Crédito Imobiliário.",d:1},
+{q:"Quais são as condições máximas de prazo e comprometimento de renda estipuladas para o financiamento de imóveis residenciais?",a:["Prazo de até 420 meses e comprometimento de renda de até 35%.","Prazo de até 240 meses e comprometimento de renda de até 25%.","Prazo de até 360 meses e comprometimento de renda de até 30%.","Prazo de até 420 meses e comprometimento de renda de até 25%."],e:"Para residenciais, o prazo pode chegar a 420 vezes com comprometimento de até 35% da renda do cliente.",d:2},
+{q:"No financiamento de terrenos, qual é a peculiaridade em relação aos parceiros bancários e seguros obrigatórios citada nas condições comerciais?",a:["É feito somente pelo Bradesco e exige apenas o seguro MIP, além do IOF.","É feito por todos os parceiros e exige seguros MIP e DFI obrigatórios.","É feito apenas pelo Itaú e não exige seguros obrigatórios.","É feito pelo Santander e Inter, exigindo os seguros MIP e DFI."],e:"O financiamento de terreno possui restrição de ser feito somente pelo Bradesco, exigindo apenas o seguro MIP e cobrança de IOF.",d:3},
+{q:"Qual é o LTV (Loan to Value) máximo permitido para o financiamento de imóveis comerciais?",a:["Até 70%.","Até 90%.","Até 50%.","Até 80%."],e:"As condições comerciais estipulam um LTV de até 70% para a aquisição de imóveis comerciais.",d:1},
+{q:"Quais documentos compõem o 'Checklist I' essencial para a etapa de avaliação do imóvel?",a:["Matrícula do imóvel, espelho do IPTU, proposta de financiamento modelo Banco e DPS (declaração pessoal de saúde).","Matrícula do imóvel, holerites dos últimos 3 meses, certidão de casamento e proposta.","Contrato social, certidão conjunta, espelho do IPTU e matrícula do imóvel.","Matrícula do imóvel, laudo de vistoria prévio, fotos do imóvel e certidão negativa de débitos."],e:"O Checklist I de avaliação do imóvel exige especificamente a Matrícula, Espelho do IPTU (áreas do imóvel), Proposta do banco e a DPS.",d:2},
+{q:"Em relação ao uso do FGTS na aquisição de imóvel residencial, qual regra o comprador e o vendedor devem cumprir para que o recurso seja liberado?",a:["O comprador não pode ter financiamento ativo no SFH no país e o vendedor não pode ter usado FGTS para comprar este mesmo imóvel nos últimos 3 anos.","O comprador deve ter no mínimo 24 meses de depósitos e o vendedor não precisa seguir regras do SFH.","O comprador pode ter outro financiamento no SFH, desde que não seja na mesma cidade do novo imóvel.","O comprador não pode ser proprietário de imóvel comercial na cidade e o vendedor deve quitar a dívida antes da venda."],e:"A regra do FGTS veta financiamento ativo no Sistema Financeiro de Habitação (SFH) em qualquer lugar do país para o comprador, e exige que o vendedor não tenha utilizado FGTS neste bem nos últimos três anos.",d:3},
+{q:"De acordo com o Acordo de Nível de Serviço (S.L.A) do produto, qual é o prazo estipulado para a Análise Jurídica a partir da entrega do Checklist II?",a:["Até 10 dias.","Até 3 dias úteis.","Em média 30 dias.","De 1 a 3 dias úteis."],e:"O S.L.A informa que a análise jurídica da operação ocorre em até 10 dias após a entrega completa do checklist II.",d:2},
+{q:"Segundo o material de apresentação, quais são as destinações permitidas para a operação de Crédito Imobiliário na Franq?",a:["Exclusivamente para aquisição de imóveis residenciais, comerciais ou terrenos.","Exclusivamente para reforma, construção e aquisição de imóveis comerciais.","Exclusivamente para aquisição de veículos pesados, terrenos e casas rurais.","Exclusivamente para refinanciamento de dívidas e compra de galpões logísticos."],e:"O documento define claramente que o crédito é utilizado exclusivamente para a aquisição de imóveis residenciais, comerciais ou terrenos.",d:1},
+{q:"Qual banco parceiro apresenta a restrição específica de só dar seguimento na avaliação do imóvel após a recepção da documentação completa (pasta completa)?",a:["Banco Itaú.","Banco Santander.","Banco Bradesco.","Banco Inter."],e:"O material enfatiza explicitamente em sua observação que, para o Banco Itaú, a pasta da operação deverá estar completa para que ocorra a avaliação do imóvel.",d:3},
+{q:"Na contratação de financiamento de um imóvel comercial, quais são os seguros obrigatórios incidentes na operação?",a:["Seguro MIP e DFI.","Apenas Seguro MIP.","Apenas Seguro DFI.","Seguro Prestamista e Seguro Fiança."],e:"Para o financiamento de imóveis comerciais, o material aponta os seguros MIP e DFI como obrigatórios (além do IOF).",d:2}
+],
+previdencia:[
+{q:"Qual a idade mínima e máxima permitida para um cliente Pessoa Física (PF) solicitar o financiamento de veículos (Fin Auto)?",a:["Mínimo 18 anos e máximo 70 anos.","Mínimo 21 anos e máximo 65 anos.","Mínimo 18 anos e máximo 65 anos.","Mínimo 21 anos e máximo 75 anos."],e:"As condições gerais do Fin Auto estipulam claramente que a idade do cliente PF deve ser de no mínimo 18 anos e no máximo 70 anos.",d:1},
+{q:"Qual foi a modalidade de financiamento de veículos com maior representatividade no mercado em dezembro de 2024?",a:["CDC, representando 85,7% das modalidades.","Consórcio, representando 85,7% das modalidades.","Leasing, representando 13,5% das modalidades.","Outros (Reserva de Domínio), representando 16,0% das modalidades."],e:"O CDC (Crédito Direto ao Consumidor) foi a modalidade de financiamento com maior representatividade em dezembro de 2024, compondo 85,7% do mercado, seguido por consórcio com 13,5%.",d:1},
+{q:"No Fin Auto, qual é o limite de LTV (Loan to Value) e o prazo recomendado para o financiamento de um veículo com até 03 anos de fabricação?",a:["LTV de 100% com prazo recomendado de 60 meses.","LTV de 80% com prazo recomendado de 60 meses.","LTV de 60% com prazo recomendado de 48 meses.","LTV de 100% com prazo recomendado de 48 meses."],e:"A tabela de variáveis importantes do Fin Auto sugere que para garantias de até 03 anos, o LTV pode ser de 100% e o prazo recomendado é de 60 meses.",d:2},
+{q:"Como funciona a modalidade de crédito conhecida como Auto Equity?",a:["O cliente oferece o próprio carro como garantia do empréstimo para obter taxas menores, mantendo a posse do veículo.","O cliente compra um carro novo diretamente da fábrica sem juros e o banco retém o documento até a quitação.","É uma modalidade exclusiva para Pessoas Jurídicas (PJ) adquirirem frotas de veículos pesados com desconto.","O cliente aluga um carro do banco com a opção de comprá-lo pagando o valor residual no final do contrato."],e:"O Auto Equity é um empréstimo com garantia de veículos (refinanciamento) onde o solicitante obtém crédito com taxas reduzidas e continua com a posse do carro, que fica vinculado ao banco como garantia.",d:2},
+{q:"Segundo as condições do Auto Equity, quais são os limites sugeridos de LTV e prazo para veículos com mais de 10 anos de fabricação?",a:["LTV de 50% e prazo recomendado de 36 meses.","LTV de 50% e prazo recomendado de 48 meses.","LTV de 60% e prazo recomendado de 48 meses.","LTV de 80% e prazo recomendado de 60 meses."],e:"Para a modalidade Auto Equity, veículos acima de 10 anos possuem um LTV sugerido de 50% e prazo recomendado restrito a 36 meses.",d:3},
+{q:"Durante a jornada do Auto Equity, como funciona o processo e os prazos da auto vistoria do veículo?",a:["O link enviado ao cliente tem validade de 72 horas, e a vistoriadora tem 3 horas para gerar o laudo após a finalização do cliente.","O link tem validade de 24 horas, e a vistoriadora tem 24 horas para gerar o laudo após o envio das fotos.","O link tem validade de 72 horas, e o laudo de aprovação é gerado instantaneamente por inteligência artificial.","O link tem validade de 48 horas, e a vistoriadora tem 6 horas para avaliar e aprovar as fotos do veículo."],e:"O material especifica que o link enviado via WhatsApp/SMS tem validade de 72 horas e, após o cliente finalizar a auto vistoria, a vistoriadora tem 3 horas para gerar o laudo.",d:2},
+{q:"Um cliente pode financiar diretamente um Motor home, uma lancha ou máquinas agrícolas pelo Fin Auto?",a:["Não, mas ele pode utilizar a modalidade de Auto Equity para refinanciar um carro de sua propriedade e usar o dinheiro para comprá-los.","Sim, desde que o valor total financiado seja superior a R$ 200.000,00 e o cliente tenha renda mínima.","Sim, mas os bancos aceitam apenas máquinas e tratores agrícolas diretamente pelo Fin Auto.","Não, a política bancária proíbe tanto o financiamento direto quanto a utilização de crédito de refinanciamento para estes fins."],e:"O guia Tira Dúvidas orienta que o financiamento direto para Motor home, lanchas e máquinas não é feito, mas o cliente pode refinanciar outro bem do seu patrimônio (veículos) para fazer a aquisição.",d:3},
+{q:"Qual é a idade máxima de fabricação aceita para veículos de passeio tanto na modalidade Fin Auto quanto no Auto Equity?",a:["Até 20 anos de fabricação.","Até 10 anos de fabricação.","Até 06 anos de fabricação.","Até 15 anos de fabricação."],e:"As condições gerais de ambas as modalidades (Fin Auto e Auto Equity) destacam que são aceitos veículos de passeio com até 20 anos de fabricação.",d:1},
+{q:"É possível realizar o refinanciamento (Auto Equity) de um veículo que ainda possui uma dívida em aberto?",a:["Sim, alguns bancos aceitam, geralmente considerando até 80% de LTV, e o saldo devedor não pode ser maior que o saldo liberado.","Não, o veículo deve estar integralmente quitado e sem qualquer tipo de restrição ou dívida atrelada.","Sim, os bancos aceitam financiar com 100% de LTV independentemente do valor da dívida remanescente.","Sim, mas exclusivamente para veículos pesados ou comerciais com no máximo 3 anos de uso."],e:"O FAQ confirma que é possível (sujeito a análise), e os parceiros consideram em média até 80% de LTV, desde que a dívida em aberto não seja superior ao novo crédito liberado.",d:2},
+{q:"Qual foi a penetração de financiamentos sobre as vendas especificamente de veículos usados no acumulado do ano de 2024 (YTD'24)?",a:["29,6%.","35,0%.","52,9%.","85,7%."],e:"A tabela 'Financiamentos vs. Vendas | Veículos Usados' mostra que a penetração de financiamentos para veículos usados no acumulado do ano de 2024 (YTD'24) foi de 29,6%.",d:3}
+]
+};
+
+
+const TOPICS_META={
+mercado:{name:"Tópico Surpresa",icon:"\u2753",svgIcon:"design/img/icon_surpresa.svg",homeOrder:0},
+investimentos:{name:"Consórcios",icon:"\u{1F91D}",svgIcon:"design/img/icon_consorcio.svg",homeOrder:1},
+compliance:{name:"Compliance",icon:"\u2696\uFE0F",svgIcon:"design/img/icon_compliance.svg",homeOrder:2},
+atendimento:{name:"Home Equity",icon:"\u{1F4B0}",svgIcon:"design/img/icon_he.svg",homeOrder:3},
+cambio:{name:"Crédito Imobiliário",icon:"\u{1F3E0}",svgIcon:"design/img/icon_ci.svg",homeOrder:4},
+previdencia:{name:"Auto",icon:"\u{1F697}",svgIcon:"design/img/icon_auto.svg",homeOrder:5},
+};
+
+const OPPONENTS=[
+{name:"Francisco Tavares",role:"Personal Banker",avatar:"\u{1F469}\u200D\u{1F4BC}",photo:"design/img/profile_francisco.jpg",rankTitle:"Nivel Pro"},
+{name:"Karen Lopes",role:"Personal Banker",avatar:"\u{1F468}\u200D\u{1F4BC}",photo:"design/img/profile_karen.jpg",rankTitle:"Nivel Pro"},
+{name:"Marcio Godoy",role:"Analista de Investimentos",avatar:"\u{1F469}\u200D\u{1F4BB}",photo:"design/img/profile_marcio.jpg",rankTitle:"Nivel Senior"},
+{name:"Rafael Costa",role:"Assessor Financeiro",avatar:"\u{1F9D1}\u200D\u{1F4BC}",photo:null,rankTitle:"Nivel Pro"},
+{name:"Juliana Lima",role:"Personal Banker",avatar:"\u{1F469}\u200D\u{1F9B0}",photo:null,rankTitle:"Nivel II"},
+{name:"Pedro Almeida",role:"Gerente de Carteira",avatar:"\u{1F468}\u200D\u{1F9B1}",photo:null,rankTitle:"Nivel Senior"},
+{name:"Fernanda Rocha",role:"Especialista Private",avatar:"\u{1F469}\u200D\u{1F3EB}",photo:null,rankTitle:"Nivel Pro"},
+{name:"Lucas Mendes",role:"Personal Banker",avatar:"\u{1F468}\u200D\u{1F4BB}",photo:null,rankTitle:"Nivel II"},
+{name:"Beatriz Ferreira",role:"Analista de Compliance",avatar:"\u{1F469}\u200D\u2696\uFE0F",photo:null,rankTitle:"Nivel Pro"},
+{name:"Thiago Souza",role:"Consultor de Câmbio",avatar:"\u{1F9D1}\u200D\u2708\uFE0F",photo:null,rankTitle:"Nivel Senior"}
+];
+
+const RANKS=[
+{minLevel:1,title:"Estagiário Franq",emoji:"\u{1F393}",color:"#8290EF"},
+{minLevel:2,title:"Assessor",emoji:"\u{1F4CB}",color:"#687BEA"},
+{minLevel:3,title:"Especialista",emoji:"\u{1F4BC}",color:"#3B82F6"},
+{minLevel:4,title:"Sênior",emoji:"\u2B50",color:"#10B981"},
+{minLevel:5,title:"Master Franq",emoji:"\u{1F451}",color:"#FFD700"},
+{minLevel:7,title:"Lenda Franq",emoji:"\u{1F3C6}",color:"#FF6B35"}
+];
+
+const MEDAL_DEFS=[
+{icon:"\u{1F3AF}",name:"Primeira Vitória",check:function(s){return s.wins>=1}},
+{icon:"\u{1F525}",name:"5 Vitórias",check:function(s){return s.wins>=5}},
+{icon:"\u2B50",name:"10 Partidas",check:function(s){return s.gamesPlayed>=10}},
+{icon:"\u{1F48E}",name:"500 Pontos",check:function(s){return s.totalPoints>=500}},
+{icon:"\u{1F451}",name:"Nível 5",check:function(s){return s.level>=5}},
+{icon:"\u{1F3C6}",name:"Partida Perfeita",check:function(s){return s.hasPerfectMatch}},
+{icon:"\u{1F396}\uFE0F",name:"Top 3 Ranking",check:function(s){var p=getPlayerLeaderboardPos('geral');return p>=1&&p<=3}},
+{icon:"\u{1F4B0}",name:"100 Moedas",check:function(s){return s.coins>=100}},
+{icon:"\u{1F525}",name:"Streak 7 Dias",check:function(s){return s.streak.count>=7}},
+{icon:"\u26A1",name:"Combo x3",check:function(s){return s.hasComboX3}}
+];
+
+const MISSION_POOL=[
+{id:"win1",name:"Vencer 1 partida",icon:"\u{1F3C6}",target:1,key:"dailyWins"},
+{id:"combo5",name:"Combo de 5 acertos",icon:"\u{1F525}",target:5,key:"dailyMaxCombo"},
+{id:"play2",name:"Jogar 2 partidas",icon:"\u{1F3AE}",target:2,key:"dailyPlayed"},
+{id:"perfect",name:"Partida perfeita (5/5)",icon:"\u2B50",target:1,key:"dailyPerfects"},
+{id:"correct8",name:"8 respostas corretas",icon:"\u2705",target:8,key:"dailyCorrects"}
+];
+
+// ====== STATE MANAGEMENT ======
+var state;
+function defaultState(){
+return{
+name:"",role:"Personal Banker",avatar:"\u{1F9D1}\u200D\u{1F4BC}",photo:"design/img/profile_daniel.jpeg",
+level:1,xp:0,coins:50,totalPoints:0,
+wins:0,gamesPlayed:0,
+hasPerfectMatch:false,hasComboX3:false,
+streak:{count:0,lastDate:null},
+settings:{sfx:true,music:false,vibration:true,notifications:true,privateProfile:false},
+topicStats:{},
+dailyMissions:[],dailyMissionDate:null,
+dailyWins:0,dailyPlayed:0,dailyCorrects:0,dailyMaxCombo:0,dailyPerfects:0,
+dailyAllComplete:false,
+leaderboard:null,lbResetDate:null,
+tutorialSeen:false
+};
+}
+function loadState(){
+try{
+var s=localStorage.getItem('franqQuizV3');
+if(s){state=JSON.parse(s);if(state.tutorialSeen===undefined)state.tutorialSeen=false;if(!state.photo)state.photo="design/img/profile_picture.jpg";return true}
+}catch(e){}
+state=defaultState();
+return false;
+}
+function saveState(){
+try{localStorage.setItem('franqQuizV3',JSON.stringify(state))}catch(e){}
+syncToSupabase();
+}
+function syncToSupabase(){
+if(!sb||!sbUser)return;
+if(_syncTimer)clearTimeout(_syncTimer);
+_syncTimer=setTimeout(function(){
+sb.from('profiles').update({
+  level:state.level,xp:state.xp,coins:state.coins,
+  total_points:state.totalPoints,wins:state.wins,
+  games_played:state.gamesPlayed,
+  has_perfect_match:state.hasPerfectMatch,
+  has_combo_x3:state.hasComboX3,
+  max_combo:state.dailyMaxCombo||0,
+  streak_count:state.streak?state.streak.count:0,
+  streak_last_date:state.streak?state.streak.lastDate:null,
+  settings:state.settings,tutorial_seen:state.tutorialSeen
+}).eq('id',sbUser.id).then(function(){});
+},500);
+}
+async function loadProfileFromSupabase(){
+if(!sb||!sbUser)return false;
+var res=await sb.from('profiles').select('*').eq('id',sbUser.id).single();
+if(res.error||!res.data)return false;
+var p=res.data;
+state.name=p.name;state.role=p.role;state.avatar=p.avatar;
+state.photo=p.photo_url||'design/img/profile_picture.jpg';
+state.level=p.level;state.xp=p.xp;state.coins=p.coins;
+state.totalPoints=p.total_points;state.wins=p.wins;
+state.gamesPlayed=p.games_played;
+state.hasPerfectMatch=p.has_perfect_match;
+state.hasComboX3=p.has_combo_x3;
+state.streak={count:p.streak_count,lastDate:p.streak_last_date};
+state.settings=p.settings||state.settings;
+state.tutorialSeen=p.tutorial_seen;
+// Load topic stats
+var tsRes=await sb.from('topic_stats').select('*').eq('user_id',sbUser.id);
+if(tsRes.data){
+  state.topicStats={};
+  tsRes.data.forEach(function(ts){
+    state.topicStats[ts.topic_key]={points:ts.points,played:ts.played};
+  });
+}
+saveStateLocal();
+return true;
+}
+function saveStateLocal(){try{localStorage.setItem('franqQuizV3',JSON.stringify(state))}catch(e){}}
+
+async function persistMatchToSupabase(result,pointsEarned,coinsEarned){
+if(!sb||!sbUser||!game)return;
+try{
+  // Insert match record
+  await sb.from('matches').insert({
+    user_id:sbUser.id,
+    topic_key:game.topic,
+    opponent_name:(game.opponent&&game.opponent.name)||'Oponente',
+    player_score:game.playerScore,
+    opponent_score:game.opponentScore,
+    correct_count:game.correctCount,
+    max_combo:game.maxCombo||0,
+    result:result,
+    points_earned:pointsEarned,
+    coins_earned:coinsEarned
+  });
+  // Upsert topic stats
+  var topicPts=state.topicStats[game.topic]?state.topicStats[game.topic].points:0;
+  var topicPlayed=state.topicStats[game.topic]?state.topicStats[game.topic].played:0;
+  await sb.from('topic_stats').upsert({
+    user_id:sbUser.id,
+    topic_key:game.topic,
+    points:topicPts,
+    played:topicPlayed
+  },{onConflict:'user_id,topic_key'});
+  // Refresh leaderboard views
+  sb.rpc('refresh_leaderboards').then(function(){});
+  // Check for achievement notifications
+  checkAndCreateNotifications(result);
+}catch(e){console.warn('Match persist error:',e)}
+}
+
+async function checkAndCreateNotifications(matchResult){
+if(!sb||!sbUser)return;
+var notifs=[];
+if(state.wins===1)notifs.push({type:'achievement',title:'🎯 Primeira Vitória!',body:'Parabéns pela sua primeira vitória no Franq Quiz!'});
+if(state.wins===5)notifs.push({type:'achievement',title:'🔥 5 Vitórias!',body:'Você já venceu 5 partidas. Continue assim!'});
+if(state.gamesPlayed===10)notifs.push({type:'achievement',title:'⭐ 10 Partidas!',body:'Você completou 10 partidas. Dedicação!'});
+if(state.totalPoints>=500&&state.totalPoints-game.playerScore<500)notifs.push({type:'achievement',title:'💎 500 Pontos!',body:'Meio milhar de pontos. Impressionante!'});
+if(state.level>=5&&state.level===5)notifs.push({type:'achievement',title:'👑 Nível 5!',body:'Você alcançou o nível Master Franq!'});
+if(state.hasPerfectMatch&&game.correctCount===5)notifs.push({type:'achievement',title:'🏆 Partida Perfeita!',body:'5/5 corretas! Você mandou muito bem!'});
+if(state.coins>=100&&state.coins-game.playerScore<100)notifs.push({type:'achievement',title:'💰 100 Moedas!',body:'Sua carteira está recheada!'});
+if(state.streak&&state.streak.count===7)notifs.push({type:'achievement',title:'🔥 Streak 7 Dias!',body:'Uma semana seguida jogando. Comprometimento!'});
+if(game.maxCombo>=3&&!state.hasComboX3){state.hasComboX3=true;notifs.push({type:'achievement',title:'⚡ Combo x3!',body:'Três acertos seguidos com multiplicador!'});}
+
+for(var i=0;i<notifs.length;i++){
+  try{
+    await sb.from('notifications').insert({
+      user_id:sbUser.id,type:notifs[i].type,title:notifs[i].title,body:notifs[i].body
+    });
+  }catch(e){}
+}
+if(notifs.length>0)updateNotificationBadge();
+}
+
+// ====== AUDIO ENGINE ======
+var audioCtx=null;
+function initAudio(){
+if(!audioCtx){
+try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
+}
+if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+}
+function playTone(freq,dur,type,gain,freqEnd){
+if(!state||!state.settings.sfx||!audioCtx)return;
+type=type||'sine';gain=gain||0.15;
+try{
+var o=audioCtx.createOscillator();
+var g=audioCtx.createGain();
+o.type=type;
+o.frequency.setValueAtTime(freq,audioCtx.currentTime);
+if(freqEnd)o.frequency.linearRampToValueAtTime(freqEnd,audioCtx.currentTime+dur/1000);
+g.gain.setValueAtTime(gain,audioCtx.currentTime);
+g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur/1000);
+o.connect(g);g.connect(audioCtx.destination);
+o.start();o.stop(audioCtx.currentTime+dur/1000);
+}catch(e){}
+}
+function sfxClick(){playTone(800,30,'sine',0.15)}
+function sfxCorrect(){playTone(523,150,'sine',0.2,784)}
+function sfxWrong(){playTone(400,200,'sawtooth',0.15,200)}
+function sfxTimerWarn(){playTone(880,100,'square',0.2)}
+function sfxCountdown(){playTone(600,80,'sine',0.15)}
+function sfxVictory(){
+playTone(523,100,'sine',0.2);
+setTimeout(function(){playTone(659,100,'sine',0.2)},120);
+setTimeout(function(){playTone(784,100,'sine',0.2)},240);
+}
+function sfxDefeat(){
+playTone(784,150,'sine',0.15);
+setTimeout(function(){playTone(659,150,'sine',0.15)},170);
+setTimeout(function(){playTone(523,150,'sine',0.15)},340);
+}
+function sfxPowerup(){playTone(400,200,'sine',0.2,1200)}
+function sfxCombo(n){playTone(600+n*100,100,'sine',0.15)}
+
+// ====== HAPTICS ======
+function vibrate(pattern){
+if(!state||!state.settings.vibration)return;
+try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}
+}
+
+// ====== UTILITY ======
+function shuffle(arr){
+var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a;
+}
+function getRank(level){
+var r=RANKS[0];
+for(var i=0;i<RANKS.length;i++){if(level>=RANKS[i].minLevel)r=RANKS[i]}
+return r;
+}
+function xpForLevel(lv){return Math.round(100*Math.pow(1.3,lv-1))}
+function getPlayerLeaderboardPos(filter){
+var lb=buildLeaderboard(filter);
+for(var i=0;i<lb.length;i++){if(lb[i].isPlayer)return i+1}
+return 999;
+}
+function todayStr(){return new Date().toISOString().slice(0,10)}
+
+function selectQuestionsForMatch(topicKey){
+var all=QUESTIONS[topicKey].slice();
+var easy=shuffle(all.filter(function(q){return q.d===1}));
+var med=shuffle(all.filter(function(q){return q.d===2}));
+var hard=shuffle(all.filter(function(q){return q.d===3}));
+var selected=[];
+function pick(pool,count){
+var c=0;
+while(c<count&&pool.length>0){selected.push(pool.pop());c++}
+}
+pick(easy,2);
+pick(med,2);
+pick(hard,1);
+while(selected.length<5){
+if(med.length>0)selected.push(med.pop());
+else if(easy.length>0)selected.push(easy.pop());
+else if(hard.length>0)selected.push(hard.pop());
+else break;
+}
+selected.sort(function(a,b){return a.d-b.d});
+return selected;
+}
+
+// ====== LEADERBOARD DATA ======
+var _lbCache={data:null,filter:null,ts:0};
+
+function generateLeaderboard(){
+var names=["Francisco Tavares","Karen Lopes","Marcio Godoy","Rafael Costa","Juliana Lima",
+"Pedro Almeida","Fernanda Rocha","Lucas Mendes","Beatriz Ferreira","Thiago Souza",
+"Gabriel Nunes","Isabela Cruz","Matheus Ribeiro","Camila Dias","Rodrigo Pinto",
+"Larissa Moura","Felipe Araújo","Amanda Teixeira","Bruno Cardoso","Patrícia Vieira"];
+var lb=names.map(function(n,i){
+var opp=OPPONENTS.find(function(o){return o.name===n});
+return{
+name:n,avatar:opp?opp.avatar:OPPONENTS[i%OPPONENTS.length].avatar,
+points:Math.floor(Math.random()*1800+100),isPlayer:false,
+topicPoints:{}
+};
+});
+var topicKeys=Object.keys(TOPICS_META);
+lb.forEach(function(e){
+topicKeys.forEach(function(t){e.topicPoints[t]=Math.floor(Math.random()*200+10)});
+});
+state.leaderboard=lb;
+state.lbResetDate=getNextMonday();
+saveStateLocal();
+}
+function getNextMonday(){
+var d=new Date();d.setDate(d.getDate()+(7-d.getDay()+1)%7||7);d.setHours(0,0,0,0);
+return d.getTime();
+}
+function buildLeaderboard(filter){
+if(!state.leaderboard)generateLeaderboard();
+var lb=state.leaderboard.map(function(e){return Object.assign({},e)});
+var playerEntry={
+name:state.name,avatar:state.avatar,
+points:filter==='geral'?state.totalPoints:(state.topicStats[filter]?state.topicStats[filter].points:0)||0,
+isPlayer:true,topicPoints:{}
+};
+Object.keys(TOPICS_META).forEach(function(t){
+playerEntry.topicPoints[t]=state.topicStats[t]?state.topicStats[t].points:0;
+});
+if(filter!=='geral'){
+lb.forEach(function(e){e.points=e.topicPoints[filter]||0});
+playerEntry.points=(state.topicStats[filter]?state.topicStats[filter].points:0)||0;
+}else{
+playerEntry.points=state.totalPoints;
+}
+lb.push(playerEntry);
+lb.sort(function(a,b){return b.points-a.points});
+return lb.slice(0,20);
+}
+
+async function fetchLeaderboardFromSupabase(filter){
+if(!sb)return null;
+try{
+  var entries=[];
+  if(filter==='geral'){
+    // Query profiles directly for freshest data
+    var res=await sb.from('profiles').select('id,name,role,avatar,photo_url,level,total_points').order('total_points',{ascending:false}).limit(20);
+    if(res.error)return null;
+    entries=res.data.map(function(r){return{
+      name:r.name,avatar:r.avatar,photo:r.photo_url,
+      points:r.total_points,level:r.level,role:r.role,
+      isPlayer:sbUser&&r.id===sbUser.id,userId:r.id
+    }});
+  }else{
+    var res=await sb.from('topic_stats').select('user_id,topic_key,points,profiles(name,role,avatar,photo_url,level)').eq('topic_key',filter).order('points',{ascending:false}).limit(20);
+    if(res.error)return null;
+    entries=res.data.map(function(r){var p=r.profiles||{};return{
+      name:p.name,avatar:p.avatar,photo:p.photo_url,
+      points:r.points,level:p.level,role:p.role,
+      isPlayer:sbUser&&r.user_id===sbUser.id,userId:r.user_id
+    }});
+  }
+  // Add current player if not in the list
+  var hasPlayer=entries.some(function(e){return e.isPlayer});
+  if(!hasPlayer&&state.name){
+    var playerPts=filter==='geral'?state.totalPoints:(state.topicStats[filter]?state.topicStats[filter].points:0)||0;
+    entries.push({name:state.name,avatar:state.avatar,photo:state.photo,points:playerPts,level:state.level,role:state.role,isPlayer:true});
+    entries.sort(function(a,b){return b.points-a.points});
+    entries=entries.slice(0,20);
+  }
+  return entries;
+}catch(e){return null}
+}
+
+// ====== DAILY MISSIONS ======
+function checkDailyMissions(){
+var today=todayStr();
+if(state.dailyMissionDate!==today){
+state.dailyMissionDate=today;
+state.dailyWins=0;state.dailyPlayed=0;state.dailyCorrects=0;
+state.dailyMaxCombo=0;state.dailyPerfects=0;state.dailyAllComplete=false;
+var pool=shuffle(MISSION_POOL);
+state.dailyMissions=pool.slice(0,3).map(function(m){return m.id});
+saveState();
+}
+}
+function getMissionProgress(m){
+return Math.min(state[m.key]||0,m.target);
+}
+function allMissionsComplete(){
+return state.dailyMissions.every(function(id){
+var m=MISSION_POOL.find(function(x){return x.id===id});
+return getMissionProgress(m)>=m.target;
+});
+}
+
+// ====== NAVIGATION ======
+var currentScreen='splash';
+var navScreens=['home','topics','leaderboard','profile'];
+
+function showScreen(id){
+sfxClick();vibrate(30);
+var screens=document.querySelectorAll('.screen');
+for(var i=0;i<screens.length;i++)screens[i].classList.remove('active');
+document.getElementById(id).classList.add('active');
+var nav=document.getElementById('bottomNav');
+if(navScreens.indexOf(id)>=0){
+nav.classList.add('visible');
+var items=document.querySelectorAll('.nav-item');
+for(var i=0;i<items.length;i++)items[i].classList.toggle('active',items[i].dataset.tab===id);
+}else{
+nav.classList.remove('visible');
+}
+currentScreen=id;
+if(id==='home')renderHome();
+if(id==='topics')renderTopics();
+if(id==='leaderboard')renderLeaderboard();
+if(id==='profile')renderProfile();
+if(id==='settings')renderSettings();
+if(id==='chat')renderChat();
+}
+
+// ====== TUTORIAL ======
+var tutorialStep=0;
+function showTutorial(){
+tutorialStep=0;
+renderTutorialStep();
+}
+function renderTutorialStep(){
+var steps=[
+{icon:"\u{1F4DA}",title:"Bem-vindo ao Franq Quiz!",desc:"Escolha um tópico e enfrente um oponente em 5 rodadas de perguntas."},
+{icon:"\u23F1\uFE0F",title:"Responda Rápido!",desc:"Quanto mais rápido, mais pontos. Acerte seguidas para combos!"},
+{icon:"\u{1F3C6}",title:"Suba de Nível!",desc:"Use power-ups, suba de nível e conquiste o topo do ranking!"}
+];
+var s=steps[tutorialStep];
+var isLast=tutorialStep===steps.length-1;
+var dots='';
+for(var i=0;i<steps.length;i++){
+dots+='<div class="tutorial-dot'+(i===tutorialStep?' active':'')+'"></div>';
+}
+var overlay=document.createElement('div');
+overlay.className='tutorial-overlay';
+overlay.id='tutorialOverlay';
+overlay.innerHTML='<div class="tutorial-card">'+
+'<div class="tutorial-step-dots">'+dots+'</div>'+
+'<div class="tutorial-icon">'+s.icon+'</div>'+
+'<div class="tutorial-title">'+s.title+'</div>'+
+'<div class="tutorial-desc">'+s.desc+'</div>'+
+'<button class="tutorial-btn" onclick="nextTutorialStep()">'+(isLast?'Vamos jogar!':'Próximo')+'</button>'+
+'</div>';
+var existing=document.getElementById('tutorialOverlay');
+if(existing)existing.remove();
+document.body.appendChild(overlay);
+}
+function nextTutorialStep(){
+tutorialStep++;
+if(tutorialStep>=3){
+var el=document.getElementById('tutorialOverlay');
+if(el)el.remove();
+state.tutorialSeen=true;
+saveState();
+}else{
+renderTutorialStep();
+}
+}
+
+// ====== SPLASH ======
+function runSplash(){
+// Floating emoji particles
+var particles=document.getElementById('splashParticles');
+var emojis=['🧠','💡','🎯','⭐','🏆','📚','🔥','💎','❓','✨'];
+for(var i=0;i<14;i++){
+var p=document.createElement('div');
+p.className='splash-particle';
+p.textContent=emojis[i%emojis.length];
+p.style.left=(Math.random()*80+10)+'%';
+p.style.top=(60+Math.random()*40)+'%';
+p.style.fontSize=(16+Math.random()*14)+'px';
+p.style.animationDuration=(4+Math.random()*4)+'s';
+p.style.animationDelay=(Math.random()*2)+'s';
+particles.appendChild(p);
+}
+// Staggered title letters
+var title=document.getElementById('splashTitle');
+var text='FRANQ QUIZ';
+for(var j=0;j<text.length;j++){
+var span=document.createElement('span');
+if(text[j]===' '){span.className='letter space'}
+else{span.className='letter';span.textContent=text[j]}
+span.style.animationDelay=(0.3+j*0.055)+'s';
+title.appendChild(span);
+}
+// Progress bar
+initSupabase();
+var pct=0;
+var bar=document.getElementById('splashBar');
+var iv=setInterval(function(){
+pct+=2;bar.style.width=pct+'%';
+if(pct>=100){clearInterval(iv);setTimeout(async function(){
+// Try Supabase session restore first
+if(sb){
+  try{
+    var sess=await sb.auth.getSession();
+    if(sess.data&&sess.data.session&&sess.data.session.user){
+      sbUser=sess.data.session.user;
+      state=defaultState();
+      var loaded=await loadProfileFromSupabase();
+      if(loaded&&state.name){showScreen('home');return}
+    }
+  }catch(e){}
+}
+// Fallback to localStorage
+if(loadState()&&state.name){showScreen('home')}
+else{state=defaultState();showScreen('login')}
+},400)}
+},50);
+}
+
+// ====== LOGIN ======
+var isSignupMode=false;
+
+function toggleLoginMode(){
+isSignupMode=!isSignupMode;
+document.getElementById('signupNameField').style.display=isSignupMode?'block':'none';
+document.getElementById('signupRoleField').style.display=isSignupMode?'block':'none';
+document.getElementById('loginTitle').textContent=isSignupMode?'Criar Conta':'Entrar';
+document.getElementById('loginSub').textContent=isSignupMode?'Crie sua conta para jogar':'Entre para começar a jogar';
+document.getElementById('loginBtn').textContent=isSignupMode?'CRIAR CONTA':'ENTRAR';
+document.getElementById('loginToggle').innerHTML=isSignupMode
+  ?'Já tem conta? <span style="text-decoration:underline">Entrar</span>'
+  :'Não tem conta? <span style="text-decoration:underline">Criar conta</span>';
+document.getElementById('loginError').textContent='';
+document.getElementById('loginPassword').setAttribute('autocomplete',isSignupMode?'new-password':'current-password');
+}
+
+async function doLogin(){
+var email=(document.getElementById('loginEmail').value||'').trim();
+var password=(document.getElementById('loginPassword').value||'').trim();
+var err=document.getElementById('loginError');
+var btn=document.getElementById('loginBtn');
+
+if(!email){err.textContent='Por favor, insira seu email.';return}
+if(!password||password.length<6){err.textContent='Senha deve ter pelo menos 6 caracteres.';return}
+err.textContent='';
+btn.disabled=true;btn.textContent=isSignupMode?'CRIANDO...':'ENTRANDO...';
+
+try{
+  if(!sb){
+    // Fallback: no Supabase configured, use local mode
+    if(!loadState()||!state.name){state=defaultState()}
+    var name=(document.getElementById('loginName').value||'').trim()||email.split('@')[0];
+    var role=(document.getElementById('loginRole').value||'').trim()||'Personal Banker';
+    state.name=name;state.role=role;
+    saveStateLocal();
+    sfxClick();showScreen('home');
+    if(!state.tutorialSeen)showTutorial();
+    return;
+  }
+
+  var result;
+  if(isSignupMode){
+    var name=(document.getElementById('loginName').value||'').trim();
+    var role=(document.getElementById('loginRole').value||'').trim()||'Personal Banker';
+    if(!name){err.textContent='Por favor, insira seu nome.';btn.disabled=false;btn.textContent='CRIAR CONTA';return}
+    result=await sb.auth.signUp({
+      email:email,password:password,
+      options:{data:{name:name,role:role}}
+    });
+    // If signup succeeded but no session (email confirmation enabled), try signing in
+    if(!result.error&&result.data.user&&!result.data.session){
+      result=await sb.auth.signInWithPassword({email:email,password:password});
+    }
+  }else{
+    result=await sb.auth.signInWithPassword({email:email,password:password});
+  }
+
+  if(result.error){
+    var msg=result.error.message;
+    if(msg.includes('Invalid login'))msg='Email ou senha incorretos.';
+    else if(msg.includes('already registered'))msg='Este email já está cadastrado. Faça login.';
+    else if(msg.includes('valid email'))msg='Email inválido.';
+    else if(msg.includes('at least'))msg='Senha deve ter pelo menos 6 caracteres.';
+    else if(msg.includes('not confirmed'))msg='Email não confirmado. Verifique sua caixa de entrada.';
+    err.textContent=msg;
+    btn.disabled=false;btn.textContent=isSignupMode?'CRIAR CONTA':'ENTRAR';
+    return;
+  }
+
+  sbUser=result.data.user;
+  state=defaultState();
+  var loaded=await loadProfileFromSupabase();
+  if(!loaded&&isSignupMode){
+    state.name=(document.getElementById('loginName').value||'').trim();
+    state.role=(document.getElementById('loginRole').value||'').trim()||'Personal Banker';
+  }
+  saveStateLocal();
+  sfxClick();showScreen('home');
+  if(!state.tutorialSeen)showTutorial();
+}catch(e){
+  err.textContent='Erro de conexão. Tente novamente.';
+}finally{
+  btn.disabled=false;btn.textContent=isSignupMode?'CRIAR CONTA':'ENTRAR';
+}
+}
+
+// ====== HOME ======
+async function renderHome(){
+checkDailyMissions();
+setTimeout(function(){updateNotificationBadge()},100);
+var rank=getRank(state.level);
+var topicKeys=Object.keys(TOPICS_META);
+topicKeys.sort(function(a,b){return(TOPICS_META[a].homeOrder||0)-(TOPICS_META[b].homeOrder||0)});
+var homeTopics=topicKeys.filter(function(k){return TOPICS_META[k].svgIcon});
+var lb=await fetchLeaderboardFromSupabase('geral');
+if(!lb)lb=buildLeaderboard('geral');
+var topRanking=lb.slice(0,5);
+var playerPos=0;
+for(var i=0;i<lb.length;i++){if(lb[i].isPlayer){playerPos=i+1;break}}
+
+var profilePhoto=state.photo?'<img src="'+state.photo+'" alt="">':state.avatar;
+var rankLabel='Nível '+toRoman(state.level);
+
+var topicsHtml=homeTopics.map(function(key){
+var t=TOPICS_META[key];
+return '<div class="topic-card-home" onclick="startMatch(\''+key+'\')">'+
+'<div class="topic-bg"><img src="design/img/small_button.png" alt=""></div>'+
+'<div class="topic-content">'+
+'<img class="topic-icon-img" src="'+t.svgIcon+'" alt="'+t.name+'">'+
+'<div class="topic-name">'+t.name+'</div>'+
+'</div>'+
+'</div>';
+}).join('');
+
+var rankingHtml=topRanking.map(function(e,i){
+var opp=OPPONENTS.find(function(o){return o.name===e.name});
+var photoHtml=e.photo?'<img src="'+e.photo+'" alt="">':
+opp&&opp.photo?'<img src="'+opp.photo+'" alt="">':
+'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,var(--accent),#8B5CF6)">'+(e.avatar||'🧑‍💼')+'</div>';
+var roleLabel=e.isPlayer?state.role:opp?opp.role+' | '+(opp.rankTitle||''):(e.role||'');
+return '<div class="ranking-row'+(e.isPlayer?' me':'')+'">'+
+'<div class="ranking-pos">'+(i+1)+'</div>'+
+'<div class="ranking-avatar">'+photoHtml+'</div>'+
+'<div class="ranking-info">'+
+'<div class="ranking-name">'+e.name+'</div>'+
+'<div class="ranking-role">'+roleLabel+'</div>'+
+'</div>'+
+'<div class="ranking-score">'+e.points+'</div>'+
+'<button class="ranking-challenge-btn" onclick="event.stopPropagation();challengeFromRanking(\''+e.name+'\')">DESAFIAR</button>'+
+'</div>';
+}).join('');
+
+var playerInTop=playerPos<=5;
+var playerRowHtml='';
+if(!playerInTop){
+playerRowHtml='<div class="ranking-row me">'+
+'<div class="ranking-pos">'+playerPos+'</div>'+
+'<div class="ranking-avatar">'+(state.photo?'<img src="'+state.photo+'" alt="">':'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,var(--accent),#8B5CF6)">'+state.avatar+'</div>')+'</div>'+
+'<div class="ranking-info">'+
+'<div class="ranking-name">Você</div>'+
+'<div class="ranking-role">'+state.role+' | '+rankLabel+'</div>'+
+'</div>'+
+'<div class="ranking-score">'+state.totalPoints+'</div>'+
+'<div style="width:62px"></div>'+
+'</div>';
+}
+
+document.getElementById('home').innerHTML=
+'<div class="home-header anim-fiu">'+
+'<div class="home-profile" onclick="showScreen(\'settings\')" style="cursor:pointer">'+
+'<div class="avatar">'+profilePhoto+'</div>'+
+'<div>'+
+'<div class="home-name">'+state.name+'</div>'+
+'<div class="home-role">'+state.role+' | '+rankLabel+'</div>'+
+'</div>'+
+'</div>'+
+'<div class="home-actions">'+
+'<button class="notif-btn" onclick="toggleNotifications()" style="width:38px;height:38px;border-radius:12px;background:none;border:none;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;font-size:20px">\uD83D\uDD14<span class="notif-badge" id="notifBadge" style="display:none;position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:var(--danger);font-size:9px;font-weight:700;color:#fff;display:none;align-items:center;justify-content:center">0</span></button>'+
+'<button class="chat-btn" onclick="showScreen(\'chat\')"><img src="design/img/chat_button.svg" alt="Chat"></button>'+
+'</div>'+
+'</div>'+
+'<div class="play-buttons anim-fiu" style="animation-delay:.1s">'+
+'<button class="play-btn" onclick="quickPlay()">'+
+'<div class="play-bg"><img src="design/img/big_button.png" alt=""></div>'+
+'<div class="play-content">'+
+'<img class="play-icon-img" src="design/img/icon_jogar.svg" alt="Jogar">'+
+'<div class="play-label">JOGAR</div>'+
+'<div class="play-sub">Partida rápida</div>'+
+'</div>'+
+'</button>'+
+'<button class="play-btn" onclick="openChallenge()">'+
+'<div class="play-bg"><img src="design/img/big_button.png" alt=""></div>'+
+'<div class="play-content">'+
+'<img class="play-icon-img" src="design/img/icon_desafiar.svg" alt="Desafiar">'+
+'<div class="play-label">DESAFIAR</div>'+
+'<div class="play-sub">Escolha um oponente</div>'+
+'</div>'+
+'</button>'+
+'</div>'+
+'<div class="anim-fiu" style="animation-delay:.2s">'+
+'<div class="section-header">'+
+'<div class="section-title">Tópicos</div>'+
+'<button class="section-link" onclick="showScreen(\'topics\')">Ver todos \u2192</button>'+
+'</div>'+
+'<div class="topics-grid-home">'+topicsHtml+'</div>'+
+'</div>'+
+'<div class="anim-fiu" style="animation-delay:.3s">'+
+'<div class="section-header">'+
+'<div class="section-title">Ranking</div>'+
+'<button class="section-link" onclick="showScreen(\'leaderboard\')">Ver todos \u2192</button>'+
+'</div>'+
+'<div class="ranking-list">'+rankingHtml+playerRowHtml+'</div>'+
+'</div>';
+}
+
+function toRoman(num){
+var vals=[10,9,5,4,1];
+var syms=['X','IX','V','IV','I'];
+var r='';
+for(var i=0;i<vals.length;i++){while(num>=vals[i]){r+=syms[i];num-=vals[i]}}
+return r;
+}
+
+function challengeFromRanking(name){
+var opp=OPPONENTS.find(function(o){return o.name===name});
+if(opp){
+var topicKey=shuffle(Object.keys(TOPICS_META))[0];
+startMatch(topicKey,opp);
+}else{
+openChallenge();
+}
+}
+
+function claimFlameToken(){
+state.coins+=25;state.dailyAllComplete=true;saveState();
+sfxVictory();vibrate(50);renderHome();
+}
+
+// ====== TOPICS ======
+function renderTopics(){
+var topicKeys=Object.keys(TOPICS_META);
+topicKeys.sort(function(a,b){return(TOPICS_META[a].homeOrder||0)-(TOPICS_META[b].homeOrder||0)});
+var gridHtml=topicKeys.map(function(key){
+var t=TOPICS_META[key];
+var ts=state.topicStats[key]||{points:0,played:0};
+var iconHtml=t.svgIcon?'<img class="topic-icon-img" src="'+t.svgIcon+'" alt="'+t.name+'">':'<div class="topic-icon">'+t.icon+'</div>';
+var bgHtml=t.svgIcon?'<div class="topic-bg"><img src="design/img/small_button.png" alt=""></div>':'';
+var fallbackStyle=t.svgIcon?'':'style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--r-card);padding:16px 10px"';
+return '<div class="topic-card anim-fiu" onclick="startMatch(\''+key+'\')" '+fallbackStyle+'>'+
+bgHtml+
+'<div class="topic-content">'+
+iconHtml+
+'<div class="topic-name">'+t.name+'</div>'+
+'<div class="topic-meta">'+(ts.points||0)+' pts \u00B7 '+(ts.played||0)+' jogos</div>'+
+'</div>'+
+'</div>';
+}).join('');
+document.getElementById('topics').innerHTML=
+'<div class="topics-header">'+
+'<button class="back-btn" onclick="showScreen(\'home\')">\u2190</button>'+
+'<div class="screen-title">Tópicos</div>'+
+'</div>'+
+'<div class="topics-grid">'+gridHtml+'</div>';
+}
+
+// ====== CHALLENGE ======
+function openChallenge(){
+sfxClick();
+var overlay=document.getElementById('challengeOverlay');
+var sheet=document.getElementById('challengeSheet');
+var opps=shuffle(OPPONENTS).slice(0,5);
+var oppsHtml=opps.map(function(o){
+var photoHtml=o.photo?'<img src="'+o.photo+'" alt="">':o.avatar;
+return '<div class="challenge-opponent">'+
+'<div class="avatar sm">'+photoHtml+'</div>'+
+'<div class="challenge-opponent-info">'+
+'<div class="challenge-opponent-name">'+o.name+'</div>'+
+'<div class="challenge-opponent-role">'+o.role+'</div>'+
+'</div>'+
+'<button class="challenge-fight-btn" onclick="challengeStart(\''+o.name+'\')">DESAFIAR</button>'+
+'</div>';
+}).join('');
+sheet.innerHTML=
+'<div class="challenge-title">\u2694\uFE0F Escolha seu Oponente</div>'+
+oppsHtml+
+'<button class="challenge-close" onclick="closeChallenge()">Cancelar</button>';
+overlay.classList.add('show');
+}
+function closeChallenge(){document.getElementById('challengeOverlay').classList.remove('show')}
+function challengeStart(oppName){
+closeChallenge();
+var opp=OPPONENTS.find(function(o){return o.name===oppName});
+var topicKey=shuffle(Object.keys(TOPICS_META))[0];
+startMatch(topicKey,opp);
+}
+
+// ====== QUICK PLAY ======
+function quickPlay(){
+var topicKey=shuffle(Object.keys(TOPICS_META))[0];
+startMatch(topicKey);
+}
+
+// ====== MATCHMAKING ======
+var matchTimeout;
+function startMatch(topicKey,forceOpp){
+if(topicKey==='mercado'){topicKey=shuffle(Object.keys(TOPICS_META).filter(function(k){return k!=='mercado'}))[0]}
+var topic=TOPICS_META[topicKey];
+var opponent=forceOpp||shuffle(OPPONENTS)[0];
+showScreen('matchmaking');
+var el=document.getElementById('matchmaking');
+var playerPhotoHtml=state.photo?'<img src="'+state.photo+'" alt="">':state.avatar;
+el.innerHTML=
+'<div class="match-topic anim-fi">'+topic.name+'</div>'+
+'<div class="match-vs anim-fi">'+
+'<div class="match-player">'+
+'<div class="avatar lg">'+playerPhotoHtml+'</div>'+
+'<div class="match-player-name">'+state.name+'</div>'+
+'<div class="match-player-role">'+state.role+'</div>'+
+'</div>'+
+'<div class="vs-text">VS</div>'+
+'<div class="match-player" id="matchOpp">'+
+'<div class="avatar lg" style="background:rgba(255,255,255,0.1)">?</div>'+
+'<div class="match-player-name">???</div>'+
+'<div class="match-player-role">Buscando...</div>'+
+'</div>'+
+'</div>'+
+'<div class="match-status" id="matchStatus">Buscando oponente<span id="dots">...</span></div>'+
+'<button class="match-cancel" id="matchCancel" onclick="cancelMatch()">Cancelar</button>';
+var dotCount=0;
+var dotIv=setInterval(function(){
+dotCount=(dotCount+1)%4;
+var d=document.getElementById('dots');
+if(d){var s='';for(var i=0;i<=dotCount;i++)s+='.';d.textContent=s}
+},400);
+
+matchTimeout=setTimeout(function(){
+clearInterval(dotIv);
+vibrate(100);
+var oppPhotoHtml=opponent.photo?'<img src="'+opponent.photo+'" alt="">':opponent.avatar;
+document.getElementById('matchOpp').innerHTML=
+'<div class="avatar lg anim-bi">'+oppPhotoHtml+'</div>'+
+'<div class="match-player-name anim-fiu">'+opponent.name+'</div>'+
+'<div class="match-player-role anim-fiu">'+opponent.role+'</div>';
+document.getElementById('matchStatus').textContent='Oponente encontrado!';
+document.getElementById('matchCancel').style.display='none';
+setTimeout(function(){startCountdown(topicKey,opponent)},1000);
+},2000);
+}
+
+function cancelMatch(){
+clearTimeout(matchTimeout);
+showScreen('home');
+}
+
+function startCountdown(topicKey,opponent){
+var el=document.getElementById('matchStatus');
+var count=3;
+el.innerHTML='<div class="match-countdown">'+count+'</div>';
+sfxCountdown();
+var iv=setInterval(function(){
+count--;
+if(count>0){
+el.innerHTML='<div class="match-countdown">'+count+'</div>';
+sfxCountdown();
+}else{
+clearInterval(iv);
+el.innerHTML='<div class="match-countdown" style="font-size:36px">VAI!</div>';
+sfxClick();
+setTimeout(function(){beginGame(topicKey,opponent)},500);
+}
+},1000);
+}
+
+// ====== GAMEPLAY ======
+var game={};
+var timerRAF=null;
+
+function beginGame(topicKey,opponent){
+var qs=selectQuestionsForMatch(topicKey);
+game={
+topic:topicKey,
+topicMeta:TOPICS_META[topicKey],
+opponent:opponent,
+questions:qs,
+round:0,
+playerScore:0,
+opponentScore:0,
+combo:0,
+maxCombo:0,
+correctCount:0,
+powerups:{tempo:false,fiftyFifty:false,double:false},
+matchDouble:false,
+answered:false,
+timeLeft:10,
+timerWarnPlayed:false,
+quit:false,
+roundHistory:[]
+};
+showScreen('gameplay');
+showRoundOverlay(game.round+1,function(){playRound()});
+}
+
+function showRoundOverlay(roundNum,cb){
+var ov=document.createElement('div');
+ov.className='round-overlay';
+ov.innerHTML='<div class="round-overlay-text">Rodada '+roundNum+'</div>';
+document.body.appendChild(ov);
+setTimeout(function(){
+ov.style.opacity='0';ov.style.transition='opacity .3s';
+setTimeout(function(){ov.remove();if(cb)cb()},300);
+},800);
+}
+
+function playRound(){
+game.answered=false;
+game.matchDouble=false;
+game.timerWarnPlayed=false;
+game.timeLeft=10;
+var q=game.questions[game.round];
+var isR5=game.round===4;
+
+var correct=q.a[0];
+var shuffled=shuffle(q.a);
+var correctIdx=shuffled.indexOf(correct);
+game.currentCorrectIdx=correctIdx;
+game.currentShuffled=shuffled;
+game.currentQuestion=q;
+
+var letters=['A','B','C','D'];
+var totalScore=game.playerScore+game.opponentScore||1;
+var pBar=Math.round(game.playerScore/totalScore*100);
+var oBar=100-pBar;
+var isHot=game.topicMeta.hot;
+
+var answersHtml=shuffled.map(function(a,i){
+return '<button class="answer-btn anim-fiu" style="animation-delay:'+(i*0.06)+'s" onclick="selectAnswer('+i+')" id="ans'+i+'">'+
+'<span class="letter">'+letters[i]+'</span><span>'+a+'</span>'+
+'</button>';
+}).join('');
+
+var comboDots='';
+for(var i=1;i<=5;i++){comboDots+='<div class="combo-dot'+(i<=game.combo?' active':'')+'"></div>'}
+var comboMult='';
+if(game.combo>=4)comboMult='x3';
+else if(game.combo>=3)comboMult='x2';
+else if(game.combo>=2)comboMult='x1.5';
+
+document.getElementById('gameplay').innerHTML=
+'<div class="game-topbar">'+
+'<div class="game-topic">'+game.topicMeta.icon+' '+game.topicMeta.name+'</div>'+
+'<div class="game-round">Rodada '+(game.round+1)+'/5'+(isR5?' \u2B502x':'')+(isHot?' \u{1F525}2x':'')+'</div>'+
+'<button class="game-quit" onclick="quitGame()">Sair</button>'+
+'</div>'+
+'<div class="game-scores">'+
+'<div class="game-player">'+
+'<div class="avatar sm">'+state.avatar+'</div>'+
+'<div>'+
+'<div class="game-player-name">'+state.name+'</div>'+
+'<div class="game-player-score" id="pScore">'+game.playerScore+'</div>'+
+'</div>'+
+'</div>'+
+'<div class="game-player right">'+
+'<div class="avatar sm">'+game.opponent.avatar+'</div>'+
+'<div>'+
+'<div class="game-player-name">'+game.opponent.name+'</div>'+
+'<div class="game-player-score" id="oScore">'+game.opponentScore+'</div>'+
+'</div>'+
+'</div>'+
+'</div>'+
+'<div class="score-bar-wrap">'+
+'<div class="score-bar-left" style="width:'+pBar+'%"></div>'+
+'<div class="score-bar-right" style="width:'+oBar+'%"></div>'+
+'</div>'+
+'<div class="timer-bar-wrap" id="timerWrap"><div class="timer-bar green" id="timerBar" style="width:100%"></div></div>'+
+'<div class="timer-number green" id="timerNum">10.0</div>'+
+'<div class="question-text anim-fiu">'+q.q+'</div>'+
+'<div class="answers" id="answersDiv">'+answersHtml+'</div>'+
+'<div id="explanationArea"></div>'+
+'<div class="powerups" id="powerupsDiv">'+
+'<button class="powerup-btn'+(game.powerups.tempo?' used':state.coins<10?' locked':'')+'" id="puTempo" onclick="usePowerup(\'tempo\')">'+
+'<span class="pu-icon">\u23F1\uFE0F</span>Tempo Extra<br><span class="pu-cost">10 \u{1FA99}</span>'+
+'</button>'+
+'<button class="powerup-btn'+(game.powerups.fiftyFifty?' used':state.coins<15?' locked':'')+'" id="puFifty" onclick="usePowerup(\'fiftyFifty\')">'+
+'<span class="pu-icon">\u2702\uFE0F</span>50/50<br><span class="pu-cost">15 \u{1FA99}</span>'+
+'</button>'+
+'<button class="powerup-btn'+(game.powerups.double?' used':state.coins<20?' locked':'')+'" id="puDouble" onclick="usePowerup(\'double\')">'+
+'<span class="pu-icon">2\uFE0F\u20E3</span>Pontos x2<br><span class="pu-cost">20 \u{1FA99}</span>'+
+'</button>'+
+'</div>'+
+'<div class="combo-indicator" id="comboInd">'+
+comboDots+(comboMult?'<div class="combo-badge">'+comboMult+'</div>':'')+
+'</div>';
+startTimer();
+}
+
+function startTimer(){
+if(timerRAF)cancelAnimationFrame(timerRAF);
+var lastTime=performance.now();
+function timerLoop(now){
+if(game.answered)return;
+var dt=(now-lastTime)/1000;
+lastTime=now;
+game.timeLeft=Math.max(0,game.timeLeft-dt);
+var pct=(game.timeLeft/10)*100;
+var bar=document.getElementById('timerBar');
+var num=document.getElementById('timerNum');
+var wrap=document.getElementById('timerWrap');
+if(!bar)return;
+bar.style.width=pct+'%';
+num.textContent=game.timeLeft.toFixed(1);
+if(pct>50){bar.className='timer-bar green';num.className='timer-number green';if(wrap)wrap.classList.remove('timer-danger')}
+else if(pct>25){bar.className='timer-bar yellow';num.className='timer-number yellow';if(wrap)wrap.classList.remove('timer-danger')}
+else{bar.className='timer-bar red';num.className='timer-number red';if(wrap)wrap.classList.add('timer-danger')}
+if(game.timeLeft<=3&&!game.timerWarnPlayed){game.timerWarnPlayed=true;sfxTimerWarn()}
+if(game.timeLeft<=0){
+game.answered=true;
+timeUp();
+return;
+}
+timerRAF=requestAnimationFrame(timerLoop);
+}
+timerRAF=requestAnimationFrame(timerLoop);
+}
+
+function timeUp(){
+game.combo=0;
+highlightCorrect();
+sfxWrong();vibrate([50,30,50]);
+showExplanation();
+game.roundHistory.push({q:game.currentQuestion,chosen:-1,correctIdx:game.currentCorrectIdx,shuffled:game.currentShuffled,wasCorrect:false});
+aiAnswer();
+setTimeout(nextRound,2000);
+}
+
+function selectAnswer(idx){
+if(game.answered)return;
+game.answered=true;
+if(timerRAF)cancelAnimationFrame(timerRAF);
+sfxClick();vibrate(30);
+
+var isCorrect=idx===game.currentCorrectIdx;
+var btn=document.getElementById('ans'+idx);
+
+if(isCorrect){
+btn.classList.add('correct');
+sfxCorrect();
+game.combo++;
+if(game.combo>game.maxCombo)game.maxCombo=game.combo;
+if(game.maxCombo>=3)state.hasComboX3=true;
+game.correctCount++;
+state.dailyCorrects++;
+sfxCombo(game.combo);
+
+var pts=Math.max(5,Math.round(game.timeLeft*2));
+if(game.combo>=4)pts=Math.round(pts*3);
+else if(game.combo>=3)pts=Math.round(pts*2);
+else if(game.combo>=2)pts=Math.round(pts*1.5);
+if(game.round===4)pts*=2;
+if(game.topicMeta.hot)pts*=2;
+if(game.matchDouble)pts*=2;
+
+game.playerScore+=pts;
+state.coins+=2;
+document.getElementById('pScore').textContent=game.playerScore;
+}else{
+btn.classList.add('wrong');
+game.combo=0;
+sfxWrong();vibrate([50,30,50]);
+highlightCorrect();
+}
+
+for(var i=0;i<4;i++){
+var b=document.getElementById('ans'+i);
+if(b&&i!==idx&&i!==game.currentCorrectIdx)b.classList.add('dimmed');
+}
+
+var pus=document.querySelectorAll('.powerup-btn');
+for(var i=0;i<pus.length;i++)pus[i].classList.add('used');
+
+updateComboDisplay();
+showExplanation();
+game.roundHistory.push({q:game.currentQuestion,chosen:idx,correctIdx:game.currentCorrectIdx,shuffled:game.currentShuffled,wasCorrect:isCorrect});
+aiAnswer();
+setTimeout(nextRound,2000);
+}
+
+function highlightCorrect(){
+var btn=document.getElementById('ans'+game.currentCorrectIdx);
+if(btn)btn.classList.add('correct');
+}
+
+function showExplanation(){
+var area=document.getElementById('explanationArea');
+if(!area)return;
+var q=game.currentQuestion;
+if(q&&q.e){
+area.innerHTML='<div class="explanation-card"><strong>\u{1F4A1} Sabia?</strong> '+q.e+'</div>';
+}
+}
+
+function aiAnswer(){
+var aiCorrect=Math.random()<0.55;
+if(aiCorrect){
+var pts=Math.floor(Math.random()*15+5);
+game.opponentScore+=pts;
+var el=document.getElementById('oScore');
+if(el)el.textContent=game.opponentScore;
+}
+}
+
+function updateComboDisplay(){
+var ind=document.getElementById('comboInd');
+if(!ind)return;
+var mult='';
+if(game.combo>=4)mult='x3';
+else if(game.combo>=3)mult='x2';
+else if(game.combo>=2)mult='x1.5';
+var dots='';
+for(var i=1;i<=5;i++){dots+='<div class="combo-dot'+(i<=game.combo?' active':'')+'"></div>'}
+ind.innerHTML=dots+(mult?'<div class="combo-badge">'+mult+'</div>':'');
+}
+
+function nextRound(){
+game.round++;
+if(game.round>=5){
+endMatch();
+}else{
+showRoundOverlay(game.round+1,function(){playRound()});
+}
+}
+
+function usePowerup(type){
+if(game.answered)return;
+if(type==='tempo'&&!game.powerups.tempo&&state.coins>=10){
+game.powerups.tempo=true;state.coins-=10;
+game.timeLeft=Math.min(15,game.timeLeft+5);
+sfxPowerup();vibrate(50);
+document.getElementById('puTempo').classList.add('used');
+}else if(type==='fiftyFifty'&&!game.powerups.fiftyFifty&&state.coins>=15){
+game.powerups.fiftyFifty=true;state.coins-=15;
+sfxPowerup();vibrate(50);
+document.getElementById('puFifty').classList.add('used');
+var removed=0;
+for(var i=0;i<4&&removed<2;i++){
+if(i!==game.currentCorrectIdx){
+var b=document.getElementById('ans'+i);
+if(b){b.classList.add('removed');removed++}
+}
+}
+}else if(type==='double'&&!game.powerups.double&&state.coins>=20){
+game.powerups.double=true;game.matchDouble=true;state.coins-=20;
+sfxPowerup();vibrate(50);
+document.getElementById('puDouble').classList.add('used');
+}
+saveState();
+}
+
+function quitGame(){
+if(timerRAF)cancelAnimationFrame(timerRAF);
+game.quit=true;
+state.gamesPlayed++;state.dailyPlayed++;
+saveState();
+showScreen('home');
+}
+
+// ====== END MATCH / RESULTS ======
+function endMatch(){
+if(timerRAF)cancelAnimationFrame(timerRAF);
+state.gamesPlayed++;state.dailyPlayed++;
+
+var won=game.playerScore>game.opponentScore;
+var draw=game.playerScore===game.opponentScore;
+var perfect=game.correctCount===5;
+
+if(perfect){state.hasPerfectMatch=true;state.dailyPerfects++}
+if(game.maxCombo>state.dailyMaxCombo)state.dailyMaxCombo=game.maxCombo;
+
+var rewardPts=0,rewardCoins=0;
+var rewards=[];
+
+rewardPts+=50;rewardCoins+=10;
+rewards.push({label:'Conclusão da partida',pts:50,coins:10});
+
+if(won){
+rewardPts+=50;rewardCoins+=5;
+rewards.push({label:'Bônus de vitória',pts:50,coins:5});
+state.wins++;state.dailyWins++;
+var today=todayStr();
+if(state.streak.lastDate){
+var last=new Date(state.streak.lastDate);
+var now=new Date(today);
+var diff=Math.round((now-last)/(1000*60*60*24));
+if(diff===1)state.streak.count++;
+else if(diff>1)state.streak.count=1;
+}else{state.streak.count=1}
+state.streak.lastDate=today;
+if(state.streak.count===7){rewardCoins+=50;rewards.push({label:'Bônus streak 7 dias!',pts:0,coins:50})}
+}
+
+if(perfect){
+rewardPts+=50;rewardCoins+=2;
+rewards.push({label:'Partida perfeita (5/5)',pts:50,coins:2});
+}
+
+if(game.maxCombo>=3){
+var comboPts=game.maxCombo*10;
+rewardPts+=comboPts;
+rewards.push({label:'Bônus combo (max '+game.maxCombo+')',pts:comboPts,coins:0});
+}
+
+var totalPts=game.playerScore+rewardPts;
+state.totalPoints+=totalPts;
+state.coins+=rewardCoins;
+
+if(!state.topicStats[game.topic])state.topicStats[game.topic]={points:0,played:0};
+state.topicStats[game.topic].points+=totalPts;
+state.topicStats[game.topic].played++;
+
+var oldLevel=state.level;
+state.xp+=totalPts;
+while(state.xp>=xpForLevel(state.level)){
+state.xp-=xpForLevel(state.level);
+state.level++;
+state.coins+=10;
+}
+
+saveState();
+persistMatchToSupabase(won?'win':draw?'draw':'loss',totalPts,rewardCoins);
+
+showScreen('results');
+var resultType=won?'win':draw?'draw':'loss';
+var bannerText=won?'VITÓRIA!':draw?'EMPATE':'DERROTA';
+var rank=getRank(state.level);
+var xpNeeded=xpForLevel(state.level);
+var xpPct=Math.round(state.xp/xpNeeded*100);
+
+if(won)sfxVictory();else sfxDefeat();
+if(won)spawnConfetti();
+
+var rewardsHtml=rewards.map(function(r){
+return '<div class="reward-row">'+
+'<span class="reward-label">'+r.label+'</span>'+
+'<span class="reward-val">'+(r.pts?'+'+r.pts+' pts':'')+(r.pts&&r.coins?' \u00B7 ':'')+(r.coins?'+'+r.coins+' \u{1FA99}':'')+'</span>'+
+'</div>';
+}).join('');
+
+var reviewBtnHtml='<button class="review-toggle" onclick="toggleReview()" id="reviewToggle">\u{1F4D6} Revisar Perguntas</button>';
+
+document.getElementById('results').innerHTML=
+'<div class="result-banner '+resultType+' anim-bi">'+bannerText+'</div>'+
+'<div class="result-score-compare anim-fiu">'+
+'<span style="color:var(--accent)" id="animPlayerScore">0</span>'+
+'<span class="vs-x">VS</span>'+
+'<span style="color:var(--flame)" id="animOppScore">0</span>'+
+'</div>'+
+'<div class="card rewards-list anim-fiu" style="animation-delay:.1s">'+
+'<div class="section-title">\u{1F4CB} Recompensas</div>'+
+rewardsHtml+
+'<div class="reward-row" style="border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;margin-top:4px">'+
+'<span class="reward-label" style="font-weight:700;color:var(--text)">Pontos da partida</span>'+
+'<span class="reward-val" style="font-size:15px">+'+game.playerScore+' pts</span>'+
+'</div>'+
+'</div>'+
+'<div class="result-coins anim-fiu" style="animation-delay:.2s"><span class="coin-bounce">\u{1FA99}</span> '+state.coins+' moedas</div>'+
+'<div class="xp-section anim-fiu" style="animation-delay:.3s">'+
+'<div class="xp-label">'+
+'<span>'+rank.emoji+' Nível '+state.level+' \u2014 '+rank.title+'</span>'+
+'<span>'+state.xp+'/'+xpNeeded+' XP</span>'+
+'</div>'+
+'<div class="xp-bar-wrap"><div class="xp-bar" style="width:'+xpPct+'%"></div></div>'+
+'</div>'+
+(state.level>oldLevel?'<div class="level-up-flash" onclick="this.remove()">\u{1F389} NÍVEL '+state.level+'!</div>':'')+
+'<div class="review-section anim-fiu" style="animation-delay:.35s">'+
+reviewBtnHtml+
+'<div id="reviewList" style="display:none"></div>'+
+'</div>'+
+'<div class="result-actions anim-fiu" style="animation-delay:.4s">'+
+'<button class="btn-primary" onclick="startMatch(\''+game.topic+'\')">\u{1F504} Revanche</button>'+
+'<button class="btn-secondary" style="width:100%" onclick="showScreen(\'topics\')">\u{1F4DA} Novo Tópico</button>'+
+'<button class="btn-secondary" style="width:100%" onclick="showScreen(\'home\')">\u{1F3E0} Início</button>'+
+'</div>';
+
+animateScoreCountUp('animPlayerScore',game.playerScore,800);
+animateScoreCountUp('animOppScore',game.opponentScore,800);
+}
+
+function animateScoreCountUp(elId,target,duration){
+var el=document.getElementById(elId);
+if(!el)return;
+var start=performance.now();
+function step(now){
+var elapsed=now-start;
+var progress=Math.min(elapsed/duration,1);
+var eased=1-Math.pow(1-progress,3);
+el.textContent=Math.round(target*eased);
+if(progress<1)requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+}
+
+function toggleReview(){
+var list=document.getElementById('reviewList');
+var btn=document.getElementById('reviewToggle');
+if(!list)return;
+if(list.style.display==='none'){
+list.style.display='block';
+btn.textContent='\u{1F4D6} Ocultar Revisão';
+var letters=['A','B','C','D'];
+var html=game.roundHistory.map(function(h,ri){
+var answersHtml=h.shuffled.map(function(a,ai){
+var cls='neutral';
+if(ai===h.correctIdx)cls='correct-answer';
+else if(ai===h.chosen&&!h.wasCorrect)cls='wrong-answer';
+var marker='';
+if(ai===h.chosen&&ai===h.correctIdx)marker='\u2705 ';
+else if(ai===h.chosen&&ai!==h.correctIdx)marker='\u274C ';
+else if(ai===h.correctIdx)marker='\u2705 ';
+return '<div class="review-answer '+cls+'">'+marker+letters[ai]+'. '+a+'</div>';
+}).join('');
+return '<div class="review-item anim-fiu" style="animation-delay:'+(ri*0.08)+'s">'+
+'<div class="review-q">Rodada '+(ri+1)+': '+h.q.q+'</div>'+
+answersHtml+
+(h.q.e?'<div class="review-explanation">\u{1F4A1} '+h.q.e+'</div>':'')+
+'</div>';
+}).join('');
+list.innerHTML='<div class="review-list">'+html+'</div>';
+}else{
+list.style.display='none';
+btn.textContent='\u{1F4D6} Revisar Perguntas';
+}
+}
+
+function spawnConfetti(){
+var colors=['#687BEA','#8B5CF6','#10B981','#FFD700','#FF6B35','#EF4444','#EC4899'];
+for(var i=0;i<40;i++){
+var el=document.createElement('div');
+el.className='confetti-piece';
+var size=4+Math.random()*8;
+var x=Math.random()*100;
+var delay=Math.random()*1.5;
+var dur=2+Math.random()*1.5;
+var rot=Math.random()*720;
+var rotEnd=rot+360+Math.random()*360;
+el.style.cssText='left:'+x+'vw;width:'+size+'px;height:'+size+'px;'+
+'background:'+colors[Math.floor(Math.random()*colors.length)]+';'+
+'border-radius:'+(Math.random()>0.5?'50%':'2px')+';'+
+'animation:none;opacity:1;top:-10px;';
+document.body.appendChild(el);
+animateConfettiPiece(el,x,delay,dur,rot,rotEnd,size);
+}
+}
+function animateConfettiPiece(el,x,delay,dur,rotStart,rotEnd,size){
+var startTime=null;
+var totalDur=(delay+dur)*1000;
+function step(now){
+if(!startTime)startTime=now;
+var elapsed=now-startTime;
+if(elapsed<delay*1000){requestAnimationFrame(step);return}
+var t=Math.min((elapsed-delay*1000)/(dur*1000),1);
+var y=-10+t*(window.innerHeight+20);
+var gravity=t*t*50;
+var sway=Math.sin(t*6)*20;
+var rot=rotStart+(rotEnd-rotStart)*t;
+var opacity=t>0.8?1-(t-0.8)/0.2:1;
+el.style.transform='translateY('+y+'px) translateX('+sway+'px) rotate('+rot+'deg)';
+el.style.opacity=opacity;
+el.style.top='0px';
+el.style.left=(x+sway/window.innerWidth*100)+'vw';
+if(t<1){requestAnimationFrame(step)}else{el.remove()}
+}
+requestAnimationFrame(step);
+}
+
+// ====== LEADERBOARD ======
+var lbFilter='geral';
+async function renderLeaderboard(){
+var now=Date.now();
+var reset=getNextMonday();
+var diff=Math.max(0,reset-now);
+var days=Math.floor(diff/(1000*60*60*24));
+var hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+
+var tabs=['geral'].concat(Object.keys(TOPICS_META));
+
+// Try Supabase first, fallback to local
+var lb=await fetchLeaderboardFromSupabase(lbFilter);
+if(!lb)lb=buildLeaderboard(lbFilter);
+
+var tabsHtml=tabs.map(function(t){
+var label=t==='geral'?'Geral':TOPICS_META[t].name;
+return '<button class="lb-tab'+(t===lbFilter?' active':'')+'" onclick="lbFilter=\''+t+'\';renderLeaderboard()">'+label+'</button>';
+}).join('');
+
+var listHtml=lb.map(function(e,i){
+var pos=i+1;
+var opp=OPPONENTS.find(function(o){return o.name===e.name});
+var photoHtml=e.photo?'<img src="'+e.photo+'" alt="">':
+opp&&opp.photo?'<img src="'+opp.photo+'" alt="">':
+e.isPlayer&&state.photo?'<img src="'+state.photo+'" alt="">':
+'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:15px;background:linear-gradient(135deg,var(--accent),#8B5CF6)">'+(e.avatar||'🧑‍💼')+'</div>';
+var roleLabel=e.isPlayer?state.role+' | Nível '+toRoman(state.level):
+opp?(opp.role+' | '+(opp.rankTitle||'')):(e.role||'')+' | Nível '+(e.level?toRoman(e.level):'I');
+var cls=e.isPlayer?' me':pos===1?' top1':pos===2?' top2':pos===3?' top3':'';
+var challengeBtn=e.isPlayer?'':'<button class="lb-challenge-btn" onclick="event.stopPropagation();challengeFromRanking(\''+e.name+'\')">DESAFIAR</button>';
+return '<div class="lb-entry'+cls+'">'+
+'<div class="lb-rank">'+pos+'</div>'+
+'<div class="lb-entry-avatar">'+photoHtml+'</div>'+
+'<div class="lb-entry-info">'+
+'<div class="lb-entry-name">'+e.name+(e.isPlayer?' (Você)':'')+'</div>'+
+'<div class="lb-entry-role">'+roleLabel+'</div>'+
+'</div>'+
+'<div class="lb-entry-pts">'+e.points+'</div>'+
+challengeBtn+
+'</div>';
+}).join('');
+
+document.getElementById('leaderboard').innerHTML=
+'<div class="screen-title anim-fiu" style="margin-bottom:8px">Ranking</div>'+
+'<div class="lb-tabs">'+tabsHtml+'</div>'+
+'<div class="lb-reset">Reseta em '+days+'d '+hours+'h</div>'+
+'<div class="lb-list">'+listHtml+'</div>';
+}
+
+// ====== PROFILE ======
+function renderProfile(){
+var rank=getRank(state.level);
+var xpNeeded=xpForLevel(state.level);
+var xpPct=Math.round(state.xp/xpNeeded*100);
+var winRate=state.gamesPlayed?Math.round(state.wins/state.gamesPlayed*100):0;
+var profilePhoto=state.photo?'<img src="'+state.photo+'" alt="">':state.avatar;
+var rankLabel='Nível '+toRoman(state.level);
+
+var medalsHtml=MEDAL_DEFS.map(function(m){
+var earned=m.check(state);
+return '<div class="medal'+(earned?'':' locked')+'">'+
+'<div>'+m.icon+'</div>'+
+'<div class="medal-name">'+m.name+'</div>'+
+'</div>';
+}).join('');
+
+document.getElementById('profile').innerHTML=
+'<div class="avatar xl anim-bi">'+profilePhoto+'</div>'+
+'<div class="profile-name anim-fiu">'+state.name+'</div>'+
+'<div class="profile-role anim-fiu">'+state.role+' | '+rankLabel+'</div>'+
+'<div class="rank-pill profile-rank anim-fiu" style="color:'+rank.color+';border:1px solid '+rank.color+'33;font-size:13px;padding:5px 14px">'+
+rank.emoji+' '+rank.title+
+'</div>'+
+'<div class="profile-level anim-fiu">'+
+'<div class="profile-level-label">'+
+'<span>'+rankLabel+'</span>'+
+'<span>'+state.xp+'/'+xpNeeded+' XP</span>'+
+'</div>'+
+'<div class="profile-xp-bar"><div class="profile-xp-fill" style="width:'+xpPct+'%"></div></div>'+
+'</div>'+
+'<div class="stats-grid anim-fiu">'+
+'<div class="stat-box"><div class="stat-val">'+state.gamesPlayed+'</div><div class="stat-label">Partidas</div></div>'+
+'<div class="stat-box"><div class="stat-val">'+winRate+'%</div><div class="stat-label">Vitórias</div></div>'+
+'<div class="stat-box"><div class="stat-val">'+state.totalPoints+'</div><div class="stat-label">Pontos</div></div>'+
+'<div class="stat-box"><div class="stat-val">'+state.coins+'</div><div class="stat-label">Moedas</div></div>'+
+'<div class="stat-box"><div class="stat-val">'+state.wins+'</div><div class="stat-label">Wins</div></div>'+
+'<div class="stat-box"><div class="stat-val">'+state.level+'</div><div class="stat-label">Nível</div></div>'+
+'</div>'+
+'<div class="medals-section anim-fiu">'+
+'<div class="section-title">Medalhas</div>'+
+'<div class="medals-grid">'+medalsHtml+'</div>'+
+'</div>';
+}
+
+// ====== SETTINGS ======
+function renderSettings(){
+var s=state.settings;
+document.getElementById('settings').innerHTML=
+'<div class="topics-header">'+
+'<button class="back-btn" onclick="showScreen(\'home\')">\u2190</button>'+
+'<div class="screen-title">Configurações</div>'+
+'</div>'+
+'<div class="card">'+
+'<div class="setting-row">'+
+'<span class="setting-label">\u{1F50A} Efeitos Sonoros</span>'+
+'<button class="toggle'+(s.sfx?' on':'')+'" onclick="toggleSetting(\'sfx\',this)"></button>'+
+'</div>'+
+'<div class="setting-row">'+
+'<span class="setting-label">\u{1F3B5} Música</span>'+
+'<button class="toggle'+(s.music?' on':'')+'" onclick="toggleSetting(\'music\',this)"></button>'+
+'</div>'+
+'<div class="setting-row">'+
+'<span class="setting-label">\u{1F4F3} Vibração</span>'+
+'<button class="toggle'+(s.vibration?' on':'')+'" onclick="toggleSetting(\'vibration\',this)"></button>'+
+'</div>'+
+'<div class="setting-row">'+
+'<span class="setting-label">\u{1F514} Notificações</span>'+
+'<button class="toggle'+(s.notifications?' on':'')+'" onclick="toggleSetting(\'notifications\',this)"></button>'+
+'</div>'+
+'<div class="setting-row">'+
+'<span class="setting-label">\u{1F512} Perfil Privado</span>'+
+'<button class="toggle'+(s.privateProfile?' on':'')+'" onclick="toggleSetting(\'privateProfile\',this)"></button>'+
+'</div>'+
+'</div>'+
+'<button class="btn-feedback" onclick="alert(\'Obrigado pelo feedback!\')">\u{1F4E9} Enviar Feedback</button>'+
+'<button class="btn-danger" onclick="doLogout()">Sair da Conta</button>';
+}
+
+function toggleSetting(key,el){
+state.settings[key]=!state.settings[key];
+el.classList.toggle('on');
+sfxClick();saveState();
+}
+
+async function doLogout(){
+if(sb){try{await sb.auth.signOut()}catch(e){}}
+sbUser=null;
+localStorage.removeItem('franqQuizV3');
+state=defaultState();
+isSignupMode=false;
+showScreen('login');
+}
+
+// ====== NOTIFICATIONS ======
+var notifOpen=false;
+var notifData=[];
+
+async function updateNotificationBadge(){
+if(!sb||!sbUser)return;
+try{
+  var res=await sb.from('notifications').select('id',{count:'exact',head:true}).eq('user_id',sbUser.id).eq('read',false);
+  var count=res.count||0;
+  var badge=document.getElementById('notifBadge');
+  if(badge){
+    if(count>0){badge.style.display='flex';badge.textContent=count>9?'9+':count}
+    else{badge.style.display='none'}
+  }
+}catch(e){}
+}
+
+async function toggleNotifications(){
+notifOpen=!notifOpen;
+var existing=document.getElementById('notifDropdown');
+if(existing){existing.remove();notifOpen=false;return}
+
+if(!sb||!sbUser){
+  // Show a simple local notification panel
+  showLocalNotifPanel();
+  return;
+}
+
+try{
+  var res=await sb.from('notifications').select('*').eq('user_id',sbUser.id).order('created_at',{ascending:false}).limit(10);
+  notifData=res.data||[];
+}catch(e){notifData=[]}
+
+var html=notifData.length===0
+  ?'<div style="text-align:center;padding:20px;color:var(--text-ter);font-size:13px">Nenhuma notificação</div>'
+  :notifData.map(function(n){
+    var icon=n.type==='achievement'?'\uD83C\uDFC6':n.type==='system'?'\uD83D\uDCE2':'\u2728';
+    var readCls=n.read?'opacity:0.5':'';
+    return '<div style="display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);'+readCls+'">'+
+    '<div style="font-size:18px;flex-shrink:0;margin-top:2px">'+icon+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+    '<div style="font-size:13px;font-weight:600">'+n.title+'</div>'+
+    '<div style="font-size:11px;color:var(--text-sec);margin-top:2px">'+n.body+'</div>'+
+    '</div>'+
+    '</div>';
+  }).join('');
+
+var panel=document.createElement('div');
+panel.id='notifDropdown';
+panel.style.cssText='position:fixed;top:70px;right:calc(50% - 175px);width:300px;max-height:350px;overflow-y:auto;background:rgba(28,33,51,0.98);border:1px solid rgba(255,255,255,0.1);border-radius:16px;z-index:300;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4)';
+panel.innerHTML='<div style="padding:12px 14px;font-size:14px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.08)">Notificações</div>'+html;
+document.body.appendChild(panel);
+
+// Mark all as read
+if(notifData.length>0){
+  var unreadIds=notifData.filter(function(n){return!n.read}).map(function(n){return n.id});
+  if(unreadIds.length>0){
+    sb.from('notifications').update({read:true}).in('id',unreadIds).then(function(){
+      updateNotificationBadge();
+    });
+  }
+}
+
+// Close on outside click
+setTimeout(function(){
+  document.addEventListener('click',function closeNotif(e){
+    var dd=document.getElementById('notifDropdown');
+    if(dd&&!dd.contains(e.target)){dd.remove();notifOpen=false;document.removeEventListener('click',closeNotif)}
+  });
+},100);
+}
+
+function showLocalNotifPanel(){
+var existing=document.getElementById('notifDropdown');
+if(existing){existing.remove();return}
+var panel=document.createElement('div');
+panel.id='notifDropdown';
+panel.style.cssText='position:fixed;top:70px;right:calc(50% - 175px);width:300px;max-height:350px;overflow-y:auto;background:rgba(28,33,51,0.98);border:1px solid rgba(255,255,255,0.1);border-radius:16px;z-index:300;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4)';
+panel.innerHTML='<div style="padding:12px 14px;font-size:14px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.08)">Notificações</div>'+
+'<div style="text-align:center;padding:20px;color:var(--text-ter);font-size:13px">Conecte-se para ver notificações</div>';
+document.body.appendChild(panel);
+setTimeout(function(){
+  document.addEventListener('click',function closeNotif(e){
+    var dd=document.getElementById('notifDropdown');
+    if(dd&&!dd.contains(e.target)){dd.remove();document.removeEventListener('click',closeNotif)}
+  });
+},100);
+}
+
+// ====== CHAT ======
+var chatTab='news';
+var chatMessages=[];
+var chatSubscription=null;
+var chatLoaded=false;
+
+// Local fallback messages
+var localChatMessages=[
+{from:'Francisco Tavares',photo:'design/img/profile_francisco.jpg',text:'Alguém mais viu as novas perguntas de Compliance?',time:'14:32'},
+{from:'Karen Lopes',photo:'design/img/profile_karen.jpg',text:'Sim! Estão bem mais difíceis agora 😅',time:'14:35'},
+{from:'Marcio Godoy',photo:'design/img/profile_marcio.jpg',text:'Consegui 4/5 na primeira tentativa. Quem topa um desafio?',time:'14:38'}
+];
+
+async function loadChatHistory(){
+if(!sb){chatMessages=localChatMessages.slice();chatLoaded=true;return}
+try{
+  var res=await sb.from('chat_messages').select('*').order('created_at',{ascending:true}).limit(50);
+  if(res.data&&res.data.length>0){
+    chatMessages=res.data.map(function(m){
+      var t=new Date(m.created_at);
+      var timeStr=t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0');
+      return{
+        from:sbUser&&m.user_id===sbUser.id?'me':m.user_name,
+        photo:m.user_photo,text:m.message,time:timeStr,userId:m.user_id
+      };
+    });
+  }else{
+    chatMessages=localChatMessages.slice();
+  }
+  chatLoaded=true;
+}catch(e){chatMessages=localChatMessages.slice();chatLoaded=true}
+}
+
+function subscribeToChatRealtime(){
+if(!sb||chatSubscription)return;
+chatSubscription=sb.channel('chat-realtime')
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages'},function(payload){
+    var m=payload.new;
+    // Skip own messages (already added optimistically)
+    if(sbUser&&m.user_id===sbUser.id)return;
+    var t=new Date(m.created_at);
+    var timeStr=t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0');
+    chatMessages.push({
+      from:m.user_name,
+      photo:m.user_photo,text:m.message,time:timeStr,userId:m.user_id
+    });
+    if(currentScreen==='chat'&&chatTab==='chat'){
+      var body=document.getElementById('chatBody');
+      if(body){body.innerHTML=renderChatTab();body.scrollTop=body.scrollHeight}
+    }
+  })
+  .subscribe();
+}
+
+async function renderChat(){
+// Load chat history on first open
+if(!chatLoaded)await loadChatHistory();
+subscribeToChatRealtime();
+
+var backBtn='<button class="back-btn" onclick="showScreen(\'home\')" style="flex-shrink:0">\u2190</button>';
+var tabsHtml=
+'<div class="chat-tabs">'+
+'<button class="chat-tab'+(chatTab==='news'?' active':'')+'" onclick="chatTab=\'news\';renderChat()">Novidades</button>'+
+'<button class="chat-tab'+(chatTab==='chat'?' active':'')+'" onclick="chatTab=\'chat\';renderChat()">Chat Bankers</button>'+
+'</div>';
+
+var bodyHtml='';
+if(chatTab==='news'){
+bodyHtml=renderNewsTab();
+}else{
+bodyHtml=renderChatTab();
+}
+
+var inputBar=chatTab==='chat'?
+'<div class="chat-input-bar">'+
+'<input class="chat-input" id="chatInput" placeholder="Escreva uma mensagem..." autocomplete="off" onkeydown="if(event.key===\'Enter\')sendChatMsg()">'+
+'<button class="chat-send-btn" onclick="sendChatMsg()">\u27A4</button>'+
+'</div>':'';
+
+document.getElementById('chat').innerHTML=
+'<div class="chat-header">'+backBtn+tabsHtml+'</div>'+
+'<div class="chat-body" id="chatBody">'+bodyHtml+'</div>'+
+inputBar;
+
+if(chatTab==='chat'){
+var body=document.getElementById('chatBody');
+if(body)body.scrollTop=body.scrollHeight;
+}
+}
+
+function renderNewsTab(){
+var news=[
+{icon:'\u{1F381}',type:'bonus',title:'Bônus de Boas-Vindas!',desc:'Complete 3 partidas hoje e ganhe 50 moedas extras. Oferta válida até meia-noite!',time:'Agora',action:'quickPlay()',actionText:'Jogar Agora'},
+{icon:'\u2694\uFE0F',type:'challenge',title:'Desafio da Semana',desc:'Francisco Tavares desafiou você! Aceite e mostre quem é o melhor em Compliance.',time:'Há 2h',action:'challengeFromRanking(\'Francisco Tavares\')',actionText:'Aceitar Desafio'},
+{icon:'\u{1F4E2}',type:'info',title:'Novos Tópicos Disponíveis',desc:'Home Equity e Crédito Imobiliário agora têm novas perguntas atualizadas. Teste seus conhecimentos!',time:'Há 5h',action:null,actionText:null},
+{icon:'\u{1F525}',type:'event',title:'Evento: Semana da Compliance',desc:'Todas as partidas de Compliance valem pontos em dobro esta semana! Aproveite para subir no ranking.',time:'Há 1d',action:'startMatch(\'compliance\')',actionText:'Jogar Compliance'},
+{icon:'\u{1F3C6}',type:'info',title:'Ranking Semanal Resetado',desc:'O ranking foi zerado. É sua chance de conquistar o topo! Os 3 primeiros ganham badges exclusivos.',time:'Há 1d',action:'showScreen(\'leaderboard\')',actionText:'Ver Ranking'},
+{icon:'\u{1F4B0}',type:'bonus',title:'Recompensa de Streak',desc:'Você manteve uma sequência de 3 dias! Continue jogando para multiplicar suas moedas.',time:'Há 2d',action:null,actionText:null}
+];
+
+return news.map(function(n){
+var actionHtml=n.action?'<button class="news-action" onclick="'+n.action+'">'+n.actionText+'</button>':'';
+return '<div class="news-card anim-fiu">'+
+'<div class="news-icon '+n.type+'">'+n.icon+'</div>'+
+'<div class="news-content">'+
+'<div class="news-title">'+n.title+'</div>'+
+'<div class="news-desc">'+n.desc+'</div>'+
+'<div class="news-time">'+n.time+'</div>'+
+actionHtml+
+'</div>'+
+'</div>';
+}).join('');
+}
+
+function renderChatTab(){
+return chatMessages.map(function(m){
+var isMe=m.from==='me';
+var avatarHtml='';
+if(!isMe){
+avatarHtml='<div class="chat-msg-avatar">'+(m.photo?'<img src="'+m.photo+'" alt="">':m.from.charAt(0))+'</div>';
+}
+var nameHtml=isMe?'':'<div class="chat-bubble-name">'+m.from+'</div>';
+return '<div class="chat-msg '+(isMe?'me':'them')+'">'+
+avatarHtml+
+'<div class="chat-bubble">'+
+nameHtml+
+m.text+
+'<div class="chat-bubble-time">'+m.time+'</div>'+
+'</div>'+
+'</div>';
+}).join('');
+}
+
+async function sendChatMsg(){
+var input=document.getElementById('chatInput');
+if(!input)return;
+var text=input.value.trim();
+if(!text)return;
+input.value='';
+
+if(sb&&sbUser){
+  // Optimistic UI: add message locally immediately
+  var now=new Date();
+  var timeStr=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  chatMessages.push({from:'me',text:text,time:timeStr,userId:sbUser.id});
+  var body=document.getElementById('chatBody');
+  if(body){body.innerHTML=renderChatTab();body.scrollTop=body.scrollHeight}
+  // Persist to Supabase (realtime will not re-add because we check userId)
+  try{
+    await sb.from('chat_messages').insert({
+      user_id:sbUser.id,
+      user_name:state.name,
+      user_photo:state.photo,
+      message:text
+    });
+  }catch(e){console.warn('Chat send error:',e)}
+}else{
+  // Local fallback
+  var now=new Date();
+  var timeStr=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  chatMessages.push({from:'me',text:text,time:timeStr});
+  renderChat();
+  // Simulate a reply
+  setTimeout(function(){
+    var replies=['Boa! Vamos jogar depois?','Concordo totalmente!','Haha, mandou bem!',
+    'Alguém quer fazer um desafio de Consórcios?','Estou subindo no ranking, cuidado!','Ótima dica, vou testar isso.'];
+    var responder=shuffle(OPPONENTS.filter(function(o){return o.photo}));
+    if(responder.length>0){
+      chatMessages.push({from:responder[0].name,photo:responder[0].photo,text:replies[Math.floor(Math.random()*replies.length)],time:timeStr});
+      renderChat();
+    }
+  },1500+Math.random()*2000);
+}
+}
+
+// ====== INITIALIZATION ======
+document.addEventListener('click',function(){initAudio()},{once:true});
+document.addEventListener('touchstart',function(){initAudio()},{once:true});
+loadState();
+runSplash();
+</script>
+</body>
+</html>
