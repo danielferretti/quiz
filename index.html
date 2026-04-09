@@ -3070,71 +3070,84 @@ notifOpen=!notifOpen;
 var existing=document.getElementById('notifDropdown');
 if(existing){existing.remove();notifOpen=false;return}
 
-if(!sb||!sbUser){
-  // Show a simple local notification panel
-  showLocalNotifPanel();
-  return;
+// Fetch DB notifications
+var dbNotifs=[];
+if(sb&&sbUser){
+  try{
+    var res=await sb.from('notifications').select('*').eq('user_id',sbUser.id).order('created_at',{ascending:false}).limit(10);
+    dbNotifs=res.data||[];
+  }catch(e){}
 }
 
-try{
-  var res=await sb.from('notifications').select('*').eq('user_id',sbUser.id).order('created_at',{ascending:false}).limit(10);
-  notifData=res.data||[];
-}catch(e){notifData=[]}
+// Novidades (news) section
+var newsHtml=renderNewsTab();
 
-var html=notifData.length===0
-  ?'<div style="text-align:center;padding:20px;color:var(--text-ter);font-size:13px">Nenhuma notificação</div>'
-  :notifData.map(function(n){
-    var icon=n.type==='achievement'?'\uD83C\uDFC6':n.type==='system'?'\uD83D\uDCE2':'\u2728';
+// DB notifications section
+var notifsHtml='';
+if(dbNotifs.length>0){
+  notifsHtml=dbNotifs.map(function(n){
     var readCls=n.read?'opacity:0.5':'';
+    var iconSvg=n.type==='achievement'
+      ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>'
+      :n.type==='system'
+      ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>'
+      :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
     return '<div style="display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);'+readCls+'">'+
-    '<div style="font-size:18px;flex-shrink:0;margin-top:2px">'+icon+'</div>'+
+    '<div style="flex-shrink:0;margin-top:2px">'+iconSvg+'</div>'+
     '<div style="flex:1;min-width:0">'+
-    '<div style="font-size:13px;font-weight:600">'+n.title+'</div>'+
+    '<div style="font-size:12px;font-weight:600">'+n.title+'</div>'+
     '<div style="font-size:11px;color:var(--text-sec);margin-top:2px">'+n.body+'</div>'+
     '</div>'+
     '</div>';
   }).join('');
+}
 
 var panel=document.createElement('div');
 panel.id='notifDropdown';
-panel.style.cssText='position:fixed;top:70px;right:calc(50% - 175px);width:300px;max-height:350px;overflow-y:auto;background:rgba(28,33,51,0.98);border:1px solid rgba(255,255,255,0.1);border-radius:16px;z-index:300;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4)';
-panel.innerHTML='<div style="padding:12px 14px;font-size:14px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.08)">Notificações</div>'+html;
+panel.style.cssText='position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;padding:0;animation:fadeIn .2s ease';
+panel.innerHTML=
+'<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;padding-top:calc(env(safe-area-inset-top,14px) + 10px);background:rgba(22,27,46,0.95);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)">'+
+'<button onclick="toggleNotifications()" style="width:44px;height:44px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);border:1px solid var(--card-border);cursor:pointer">\u2190</button>'+
+'<div style="font-family:var(--font-display);font-size:17px;font-weight:700">Notificações</div>'+
+'</div>'+
+'<div style="padding:16px 20px">'+
+'<div style="font-size:12px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Novidades</div>'+
+newsHtml+
+(notifsHtml?
+'<div style="font-size:12px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:0.5px;margin:20px 0 10px">Suas Notificações</div>'+
+notifsHtml:'')+
+'</div>';
 document.body.appendChild(panel);
 
 // Mark all as read
-if(notifData.length>0){
-  var unreadIds=notifData.filter(function(n){return!n.read}).map(function(n){return n.id});
-  if(unreadIds.length>0){
+if(dbNotifs.length>0){
+  var unreadIds=dbNotifs.filter(function(n){return!n.read}).map(function(n){return n.id});
+  if(unreadIds.length>0&&sb){
     sb.from('notifications').update({read:true}).in('id',unreadIds).then(function(){
       updateNotificationBadge();
     });
   }
 }
-
-// Close on outside click
-setTimeout(function(){
-  document.addEventListener('click',function closeNotif(e){
-    var dd=document.getElementById('notifDropdown');
-    if(dd&&!dd.contains(e.target)){dd.remove();notifOpen=false;document.removeEventListener('click',closeNotif)}
-  });
-},100);
 }
 
 function showLocalNotifPanel(){
 var existing=document.getElementById('notifDropdown');
-if(existing){existing.remove();return}
+if(existing){existing.remove();notifOpen=false;return}
+// Show full-screen with just Novidades
+var newsHtml=renderNewsTab();
 var panel=document.createElement('div');
 panel.id='notifDropdown';
-panel.style.cssText='position:fixed;top:70px;right:calc(50% - 175px);width:300px;max-height:350px;overflow-y:auto;background:rgba(28,33,51,0.98);border:1px solid rgba(255,255,255,0.1);border-radius:16px;z-index:300;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4)';
-panel.innerHTML='<div style="padding:12px 14px;font-size:14px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.08)">Notificações</div>'+
-'<div style="text-align:center;padding:20px;color:var(--text-ter);font-size:13px">Conecte-se para ver notificações</div>';
+panel.style.cssText='position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;padding:0;animation:fadeIn .2s ease';
+panel.innerHTML=
+'<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;padding-top:calc(env(safe-area-inset-top,14px) + 10px);background:rgba(22,27,46,0.95);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)">'+
+'<button onclick="toggleNotifications()" style="width:44px;height:44px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);border:1px solid var(--card-border);cursor:pointer">\u2190</button>'+
+'<div style="font-family:var(--font-display);font-size:17px;font-weight:700">Notificações</div>'+
+'</div>'+
+'<div style="padding:16px 20px">'+
+'<div style="font-size:12px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Novidades</div>'+
+newsHtml+
+'</div>';
 document.body.appendChild(panel);
-setTimeout(function(){
-  document.addEventListener('click',function closeNotif(e){
-    var dd=document.getElementById('notifDropdown');
-    if(dd&&!dd.contains(e.target)){dd.remove();document.removeEventListener('click',closeNotif)}
-  });
-},100);
 }
 
 // ====== CHAT ======
@@ -3197,34 +3210,23 @@ if(!chatLoaded)await loadChatHistory();
 subscribeToChatRealtime();
 
 var backBtn='<button class="back-btn" onclick="showScreen(\'home\')" style="flex-shrink:0">\u2190</button>';
-var tabsHtml=
-'<div class="chat-tabs">'+
-'<button class="chat-tab'+(chatTab==='news'?' active':'')+'" onclick="chatTab=\'news\';renderChat()">Novidades</button>'+
-'<button class="chat-tab'+(chatTab==='chat'?' active':'')+'" onclick="chatTab=\'chat\';renderChat()">Chat Bankers</button>'+
-'</div>';
+var titleHtml='<div style="font-family:var(--font-display);font-size:17px;font-weight:700">Chat Bankers</div>';
 
-var bodyHtml='';
-if(chatTab==='news'){
-bodyHtml=renderNewsTab();
-}else{
-bodyHtml=renderChatTab();
-}
+var bodyHtml=renderChatTab();
 
-var inputBar=chatTab==='chat'?
+var inputBar=
 '<div class="chat-input-bar">'+
 '<input class="chat-input" id="chatInput" placeholder="Escreva uma mensagem..." autocomplete="off" onkeydown="if(event.key===\'Enter\')sendChatMsg()">'+
 '<button class="chat-send-btn" onclick="sendChatMsg()">\u27A4</button>'+
-'</div>':'';
+'</div>';
 
 document.getElementById('chat').innerHTML=
-'<div class="chat-header">'+backBtn+tabsHtml+'</div>'+
+'<div class="chat-header">'+backBtn+titleHtml+'</div>'+
 '<div class="chat-body" id="chatBody">'+bodyHtml+'</div>'+
 inputBar;
 
-if(chatTab==='chat'){
 var body=document.getElementById('chatBody');
 if(body)body.scrollTop=body.scrollHeight;
-}
 }
 
 function renderNewsTab(){
