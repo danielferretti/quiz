@@ -1343,6 +1343,36 @@ avatarBubble(target.name,target.photo,'lg')+
 '<button class="btn-secondary" onclick="cancelPvpChallenge()" style="margin-top:10px;padding:10px 24px;border-radius:12px;background:var(--card);color:var(--text-sec);font-size:13px;font-weight:600">Cancelar</button>'+
 '</div>';
 
+// Challenger joins match channel early to listen for accept
+pvpMatchChannel=sb.channel('pvp-match:'+pvpMatchId);
+pvpMatchChannel.on('broadcast',{event:'match:accepted'},function(p){
+  console.log('Challenge accepted via match channel');
+  if(pvpChallengeTimer){clearInterval(pvpChallengeTimer);pvpChallengeTimer=null}
+  pvpWaitingForAccept=false;
+  if(p.payload&&p.payload.acceptor)pvpOpponentInfo=p.payload.acceptor;
+  // Now transition to the ready phase
+  startPvpMatchReady(pvpMatchId,pvpTopicKey,pvpSeed,pvpOpponentInfo);
+});
+pvpMatchChannel.on('broadcast',{event:'match:ready'},function(p){
+  if(p.payload&&p.payload.userId!==sbUser.id){
+    pvpReadyReceived=true;
+    if(pvpReadyInterval){clearInterval(pvpReadyInterval);pvpReadyInterval=null}
+    if(!pvpCountdownStarted){
+      pvpCountdownStarted=true;
+      startPvpCountdown(pvpTopicKey,pvpSeed,pvpOpponentInfo);
+    }
+  }
+});
+pvpMatchChannel.on('broadcast',{event:'match:round-result'},function(p){
+  handleOpponentRoundResult(p.payload);
+});
+pvpMatchChannel.on('broadcast',{event:'match:finished'},function(p){
+  handleOpponentFinished(p.payload);
+});
+pvpMatchChannel.subscribe(function(status){
+  console.log('Challenger match channel:',status);
+});
+
 // 20-second timeout
 var timeLeft=20;
 pvpChallengeTimer=setInterval(function(){
@@ -1354,6 +1384,7 @@ pvpChallengeTimer=setInterval(function(){
   if(timeLeft<=0){
     clearInterval(pvpChallengeTimer);pvpChallengeTimer=null;
     pvpWaitingForAccept=false;
+    cleanupPvpMatch();
     showScreen('home');
     showToast('Desafio expirado');
   }
@@ -1432,23 +1463,51 @@ if(!pvpIncomingChallenge)return;
 var data=pvpIncomingChallenge;
 dismissIncomingChallenge();
 
-// Send accept to challenger
-var ch=sb.channel('pvp-user:'+data.challenger.userId);
-ch.subscribe(function(s){
-  if(s==='SUBSCRIBED'){
-    ch.send({type:'broadcast',event:'challenge:accept',payload:{
-      matchId:data.matchId,
-      acceptor:{userId:sbUser.id,name:state.name,role:state.role,avatar:state.avatar,photo:state.photo,level:state.level}
-    }});
-    sb.removeChannel(ch);
-  }
-});
-
-// Start the match from acceptor's side
 pvpMatchId=data.matchId;
 pvpSeed=data.seed;
+pvpTopicKey=data.topicKey;
 pvpOpponentInfo=data.challenger;
-startPvpMatch(data.matchId,data.topicKey,data.seed,data.challenger);
+pvpMode=true;pvpMyFinished=false;pvpOpponentFinished=false;pvpReadyReceived=false;pvpCountdownStarted=false;
+
+// Show matchmaking screen
+showScreen('matchmaking');
+document.getElementById('matchmaking').innerHTML=
+'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:20px;padding:20px">'+
+'<div style="font-size:16px;font-weight:700;color:var(--text)">Preparando partida...</div>'+
+'<div style="display:flex;align-items:center;gap:30px">'+
+avatarBubble(state.name,state.photo,'lg')+
+'<div style="font-size:24px;font-weight:800;color:var(--text-ter)">VS</div>'+
+avatarBubble(data.challenger.name,data.challenger.photo,'lg')+
+'</div>'+
+'<div style="font-size:13px;color:var(--text-sec)">'+data.challenger.name+'</div>'+
+'</div>';
+
+// Join match channel — challenger is already listening on it
+pvpMatchChannel=sb.channel('pvp-match:'+data.matchId);
+pvpMatchChannel.on('broadcast',{event:'match:ready'},function(p){
+  if(p.payload&&p.payload.userId!==sbUser.id){
+    pvpReadyReceived=true;
+    if(pvpReadyInterval){clearInterval(pvpReadyInterval);pvpReadyInterval=null}
+    if(!pvpCountdownStarted){pvpCountdownStarted=true;startPvpCountdown(pvpTopicKey,pvpSeed,pvpOpponentInfo)}
+  }
+});
+pvpMatchChannel.on('broadcast',{event:'match:round-result'},function(p){handleOpponentRoundResult(p.payload)});
+pvpMatchChannel.on('broadcast',{event:'match:finished'},function(p){handleOpponentFinished(p.payload)});
+pvpMatchChannel.subscribe(function(status){
+  console.log('Acceptor match channel:',status);
+  if(status==='SUBSCRIBED'){
+    // Send accept (challenger listens for match:accepted)
+    pvpMatchChannel.send({type:'broadcast',event:'match:accepted',payload:{
+      acceptor:{userId:sbUser.id,name:state.name,role:state.role,avatar:state.avatar,photo:state.photo,level:state.level}
+    }});
+    // Send ready repeatedly
+    pvpMatchChannel.send({type:'broadcast',event:'match:ready',payload:{userId:sbUser.id}});
+    pvpReadyInterval=setInterval(function(){
+      if(pvpReadyReceived){clearInterval(pvpReadyInterval);pvpReadyInterval=null;return}
+      if(pvpMatchChannel)pvpMatchChannel.send({type:'broadcast',event:'match:ready',payload:{userId:sbUser.id}});
+    },500);
+  }
+});
 }
 
 function declinePvpChallenge(){
@@ -1473,11 +1532,7 @@ pvpIncomingChallenge=null;
 }
 
 function handleChallengeAccepted(data){
-if(!pvpWaitingForAccept)return;
-if(pvpChallengeTimer){clearInterval(pvpChallengeTimer);pvpChallengeTimer=null}
-pvpWaitingForAccept=false;
-pvpOpponentInfo=data.acceptor;
-startPvpMatch(pvpMatchId,pvpTopicKey,pvpSeed,data.acceptor);
+// Legacy handler — accept now comes via match channel (match:accepted event)
 }
 
 function handleChallengeDeclined(data){
@@ -1502,6 +1557,38 @@ setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s';setTi
 var pvpTopicKey=null;
 var pvpReadyInterval=null;
 var pvpCountdownStarted=false;
+
+function startPvpMatchReady(matchId,topicKey,seed,opponentInfo){
+// Called by challenger when acceptor sends match:accepted
+// Challenger is already on the match channel, just start ready signals
+pvpMode=true;pvpMyFinished=false;pvpOpponentFinished=false;pvpReadyReceived=false;pvpCountdownStarted=false;
+
+showScreen('matchmaking');
+document.getElementById('matchmaking').innerHTML=
+'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:20px;padding:20px">'+
+'<div style="font-size:16px;font-weight:700;color:var(--text)">Preparando partida...</div>'+
+'<div style="display:flex;align-items:center;gap:30px">'+
+avatarBubble(state.name,state.photo,'lg')+
+'<div style="font-size:24px;font-weight:800;color:var(--text-ter)">VS</div>'+
+avatarBubble(opponentInfo.name,opponentInfo.photo,'lg')+
+'</div>'+
+'<div style="font-size:13px;color:var(--text-sec)">'+opponentInfo.name+'</div>'+
+'</div>';
+
+// Send ready repeatedly — acceptor is also sending ready
+pvpMatchChannel.send({type:'broadcast',event:'match:ready',payload:{userId:sbUser.id}});
+pvpReadyInterval=setInterval(function(){
+  if(pvpReadyReceived){clearInterval(pvpReadyInterval);pvpReadyInterval=null;return}
+  if(pvpMatchChannel)pvpMatchChannel.send({type:'broadcast',event:'match:ready',payload:{userId:sbUser.id}});
+},500);
+
+setTimeout(function(){
+  if(pvpMode&&!pvpReadyReceived){
+    if(pvpReadyInterval){clearInterval(pvpReadyInterval);pvpReadyInterval=null}
+    showToast('Oponente não respondeu');cleanupPvpMatch();showScreen('home');
+  }
+},15000);
+}
 
 function startPvpMatch(matchId,topicKey,seed,opponentInfo){
 pvpMode=true;pvpMyFinished=false;pvpOpponentFinished=false;pvpOpponentFinalScore=0;
