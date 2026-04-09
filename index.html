@@ -1093,24 +1093,31 @@ if(notifs.length>0)updateNotificationBadge();
 
 // ====== AUDIO ENGINE ======
 var audioCtx=null;
-var audioReady=false;
-function initAudio(){
-if(!audioCtx){
+var audioUnlocked=false;
+
+function unlockAudio(){
+if(audioUnlocked)return;
 try{
-  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  audioReady=(audioCtx.state==='running');
-  audioCtx.onstatechange=function(){audioReady=(audioCtx.state==='running')};
-}catch(e){return}}
-if(audioCtx&&audioCtx.state==='suspended'){
-  audioCtx.resume().then(function(){audioReady=true}).catch(function(){});
-}else if(audioCtx){audioReady=(audioCtx.state==='running')}
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended')audioCtx.resume();
+  // Play a silent buffer to unlock audio on iOS/mobile
+  var buf=audioCtx.createBuffer(1,1,22050);
+  var src=audioCtx.createBufferSource();
+  src.buffer=buf;
+  src.connect(audioCtx.destination);
+  src.start(0);
+  src.onended=function(){audioUnlocked=true};
+  // Also mark as unlocked after a short delay as fallback
+  setTimeout(function(){
+    if(audioCtx&&audioCtx.state==='running')audioUnlocked=true;
+  },100);
+}catch(e){}
 }
+
 function playTone(freq,dur,type,gain,freqEnd){
 if(!state||!state.settings||!state.settings.sfx)return;
-if(!audioCtx){initAudio()}
-if(!audioCtx)return;
-// Try to resume if suspended (will work on next call after user gesture)
-if(audioCtx.state==='suspended'){audioCtx.resume().catch(function(){});return}
+if(!audioCtx||!audioUnlocked)return;
+if(audioCtx.state==='suspended'){try{audioCtx.resume()}catch(e){};return}
 if(audioCtx.state!=='running')return;
 type=type||'sine';gain=gain||0.12;dur=dur||100;
 try{
@@ -1123,7 +1130,7 @@ g.gain.setValueAtTime(gain,audioCtx.currentTime);
 g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur/1000);
 o.connect(g);g.connect(audioCtx.destination);
 o.start();o.stop(audioCtx.currentTime+dur/1000+0.05);
-}catch(e){console.warn('Audio error:',e)}
+}catch(e){}
 }
 function sfxClick(){playTone(1200,25,'sine',0.08)}
 function sfxCorrect(){playTone(587,80,'sine',0.12,880);setTimeout(function(){playTone(880,120,'sine',0.1)},90)}
@@ -3334,15 +3341,10 @@ if(sb&&sbUser){
 }
 
 // ====== INITIALIZATION ======
-// Init audio on first interaction, keep resuming on subsequent ones
-document.addEventListener('click',function(){
-  if(!audioCtx)initAudio();
-  else if(audioCtx.state==='suspended')audioCtx.resume().catch(function(){});
-});
-document.addEventListener('touchstart',function(){
-  if(!audioCtx)initAudio();
-  else if(audioCtx.state==='suspended')audioCtx.resume().catch(function(){});
-});
+// Unlock audio on every user gesture (required for mobile browsers)
+document.addEventListener('touchstart',unlockAudio,{passive:true});
+document.addEventListener('touchend',unlockAudio,{passive:true});
+document.addEventListener('click',unlockAudio);
 window.addEventListener('beforeunload',function(){
   if(pvpMode&&pvpMatchChannel){
     pvpMatchChannel.send({type:'broadcast',event:'match:finished',payload:{
