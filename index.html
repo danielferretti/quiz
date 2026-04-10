@@ -921,14 +921,23 @@ const OPPONENTS=[
 {name:"Francisco Tavares",role:"Personal Banker",avatar:"\u{1F469}\u200D\u{1F4BC}",photo:"design/img/profile_francisco.jpg",rankTitle:"Nivel Pro"},
 {name:"Karen Lopes",role:"Personal Banker",avatar:"\u{1F468}\u200D\u{1F4BC}",photo:"design/img/profile_karen.jpg",rankTitle:"Nivel Pro"},
 {name:"Marcio Godoy",role:"Analista de Investimentos",avatar:"\u{1F469}\u200D\u{1F4BB}",photo:"design/img/profile_marcio.jpg",rankTitle:"Nivel Senior"},
-{name:"Rafael Costa",role:"Assessor Financeiro",avatar:"\u{1F9D1}\u200D\u{1F4BC}",photo:null,rankTitle:"Nivel Pro"},
-{name:"Juliana Lima",role:"Personal Banker",avatar:"\u{1F469}\u200D\u{1F9B0}",photo:null,rankTitle:"Nivel II"},
-{name:"Pedro Almeida",role:"Gerente de Carteira",avatar:"\u{1F468}\u200D\u{1F9B1}",photo:null,rankTitle:"Nivel Senior"},
-{name:"Fernanda Rocha",role:"Especialista Private",avatar:"\u{1F469}\u200D\u{1F3EB}",photo:null,rankTitle:"Nivel Pro"},
-{name:"Lucas Mendes",role:"Personal Banker",avatar:"\u{1F468}\u200D\u{1F4BB}",photo:null,rankTitle:"Nivel II"},
-{name:"Beatriz Ferreira",role:"Analista de Compliance",avatar:"\u{1F469}\u200D\u2696\uFE0F",photo:null,rankTitle:"Nivel Pro"},
-{name:"Thiago Souza",role:"Consultor de Câmbio",avatar:"\u{1F9D1}\u200D\u2708\uFE0F",photo:null,rankTitle:"Nivel Senior"}
+{name:"Rafael Costa",role:"Assessor Financeiro",avatar:"RC",photo:"design/img/profile_rafael.png",rankTitle:"Nivel Pro"},
+{name:"Juliana Lima",role:"Personal Banker",avatar:"JL",photo:"design/img/profile_juliana.png",rankTitle:"Nivel II"},
+{name:"Pedro Almeida",role:"Gerente de Carteira",avatar:"PA",photo:"design/img/profile_pedro.png",rankTitle:"Nivel Senior"},
+{name:"Fernanda Rocha",role:"Especialista Private",avatar:"FR",photo:"design/img/profile_fernanda.png",rankTitle:"Nivel Pro"},
+{name:"Lucas Mendes",role:"Personal Banker",avatar:"LM",photo:"design/img/profile_lucas.png",rankTitle:"Nivel II"},
+{name:"Beatriz Ferreira",role:"Analista de Compliance",avatar:"BF",photo:"design/img/profile_beatriz.png",rankTitle:"Nivel Pro"},
+{name:"Thiago Souza",role:"Consultor de Câmbio",avatar:"TS",photo:"design/img/profile_thiago.png",rankTitle:"Nivel Senior"}
 ];
+
+// Extra seed profile photos (not in OPPONENTS but appear in leaderboard)
+var SEED_PHOTOS={
+'Ana Carolina':'design/img/profile_ana.png',
+'Roberto Nunes':'design/img/profile_roberto.png',
+'Camila Vieira':'design/img/profile_camila.png',
+'Diego Santos':'design/img/profile_diego.png',
+'Mariana Oliveira':'design/img/profile_mariana.png'
+};
 
 const RANKS=[
 {minLevel:1,title:"Estagiário Franq",emoji:"\u{1F393}",color:"#8290EF"},
@@ -1169,6 +1178,12 @@ return '<div class="avatar '+size+'" style="background:linear-gradient(135deg,va
 }
 function avatarInner(name,photo){
 if(photo&&photo.indexOf('profile_picture')===-1)return '<img src="'+photo+'" alt="">';
+// Check known profiles for photo fallback
+if(!photo&&name){
+  var opp=OPPONENTS.find(function(o){return o.name===name});
+  if(opp&&opp.photo)return '<img src="'+opp.photo+'" alt="">';
+  if(SEED_PHOTOS[name])return '<img src="'+SEED_PHOTOS[name]+'" alt="">';
+}
 var initials=getInitials(name);
 return '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),#8B5CF6);border-radius:50%">'+initials+'</div>';
 }
