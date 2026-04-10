@@ -2703,7 +2703,7 @@ var won=game.playerScore>game.opponentScore;
 var draw=game.playerScore===game.opponentScore;
 var perfect=game.correctCount===5;
 
-if(perfect){state.hasPerfectMatch=true;state.dailyPerfects++}
+if(perfect){state.hasPerfectMatch=true;state.dailyPerfects++;vibrate([60,30,60,30,60,30,150])}
 if(game.maxCombo>state.dailyMaxCombo)state.dailyMaxCombo=game.maxCombo;
 
 var rewardPts=0,rewardCoins=0;
@@ -2769,8 +2769,9 @@ var rank=getRank(state.level);
 var xpNeeded=xpForLevel(state.level);
 var xpPct=Math.round(state.xp/xpNeeded*100);
 
-if(won)sfxVictory();else sfxDefeat();
-if(won)spawnConfetti();
+if(won){sfxVictory();vibrate([50,30,50,30,100]);spawnConfetti()}
+else{sfxDefeat();vibrate([100,50,100])}
+if(state.level>oldLevel){vibrate([80,40,80,40,80,40,200]);} // Level up!
 
 var rewardsHtml=rewards.map(function(r){
 return '<div class="reward-row">'+
@@ -3080,24 +3081,24 @@ try{
 }catch(e){}
 }
 
-async function toggleNotifications(){
-notifOpen=!notifOpen;
+var notifTab='notifs'; // 'notifs' or 'news'
+
+async function toggleNotifications(tab){
 var existing=document.getElementById('notifDropdown');
-if(existing){existing.remove();notifOpen=false;return}
+if(existing&&!tab){existing.remove();notifOpen=false;return}
+if(tab)notifTab=tab;
+notifOpen=true;
 
 // Fetch DB notifications
 var dbNotifs=[];
 if(sb&&sbUser){
   try{
-    var res=await sb.from('notifications').select('*').eq('user_id',sbUser.id).order('created_at',{ascending:false}).limit(10);
+    var res=await sb.from('notifications').select('*').eq('user_id',sbUser.id).order('created_at',{ascending:false}).limit(15);
     dbNotifs=res.data||[];
   }catch(e){}
 }
 
-// Novidades (news) section
-var newsHtml=renderNewsTab();
-
-// DB notifications section
+// Build notification items
 var notifsHtml='';
 if(dbNotifs.length>0){
   notifsHtml=dbNotifs.map(function(n){
@@ -3107,7 +3108,7 @@ if(dbNotifs.length>0){
       :n.type==='system'
       ?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>'
       :'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-    return '<div style="display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);'+readCls+'">'+
+    return '<div style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);'+readCls+'">'+
     '<div style="flex-shrink:0;margin-top:2px">'+iconSvg+'</div>'+
     '<div style="flex:1;min-width:0">'+
     '<div style="font-size:12px;font-weight:600">'+n.title+'</div>'+
@@ -3115,23 +3116,32 @@ if(dbNotifs.length>0){
     '</div>'+
     '</div>';
   }).join('');
+}else{
+  notifsHtml='<div style="text-align:center;padding:30px 0;color:var(--text-ter);font-size:13px">Nenhuma notificação ainda</div>';
 }
+
+var newsHtml=renderNewsTab();
+
+var bodyHtml=notifTab==='notifs'?notifsHtml:newsHtml;
+
+// Remove existing panel if switching tabs
+if(existing)existing.remove();
 
 var panel=document.createElement('div');
 panel.id='notifDropdown';
-panel.style.cssText='position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;padding:0;animation:fadeIn .2s ease';
+panel.style.cssText='position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;padding:0;animation:fadeIn .15s ease';
 panel.innerHTML=
-'<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;padding-top:calc(env(safe-area-inset-top,14px) + 10px);background:rgba(22,27,46,0.95);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)">'+
-'<button onclick="toggleNotifications()" style="width:44px;height:44px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);border:1px solid var(--card-border);cursor:pointer">\u2190</button>'+
+'<div style="background:rgba(22,27,46,0.95);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">'+
+'<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;padding-top:calc(env(safe-area-inset-top,14px) + 10px)">'+
+'<button onclick="toggleNotifications()" style="width:36px;height:36px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text);border:1px solid var(--card-border);cursor:pointer">\u2190</button>'+
 '<div style="font-family:var(--font-display);font-size:17px;font-weight:700">Notificações</div>'+
 '</div>'+
-'<div style="padding:16px 20px">'+
-'<div style="font-size:12px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Novidades</div>'+
-newsHtml+
-(notifsHtml?
-'<div style="font-size:12px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:0.5px;margin:20px 0 10px">Suas Notificações</div>'+
-notifsHtml:'')+
-'</div>';
+'<div style="display:flex;padding:0 20px 0;gap:0;background:rgba(255,255,255,0.04);margin:0 20px;border-radius:10px;overflow:hidden">'+
+'<button onclick="toggleNotifications(\'notifs\')" style="flex:1;padding:10px 0;text-align:center;font-size:12px;font-weight:600;border:none;cursor:pointer;background:'+(notifTab==='notifs'?'var(--accent)':'transparent')+';color:'+(notifTab==='notifs'?'#fff':'var(--text-sec)')+';border-radius:10px;min-height:36px">Notificações</button>'+
+'<button onclick="toggleNotifications(\'news\')" style="flex:1;padding:10px 0;text-align:center;font-size:12px;font-weight:600;border:none;cursor:pointer;background:'+(notifTab==='news'?'var(--accent)':'transparent')+';color:'+(notifTab==='news'?'#fff':'var(--text-sec)')+';border-radius:10px;min-height:36px">Novidades</button>'+
+'</div>'+
+'</div>'+
+'<div style="padding:16px 20px">'+bodyHtml+'</div>';
 document.body.appendChild(panel);
 
 // Mark all as read
@@ -3146,23 +3156,9 @@ if(dbNotifs.length>0){
 }
 
 function showLocalNotifPanel(){
-var existing=document.getElementById('notifDropdown');
-if(existing){existing.remove();notifOpen=false;return}
-// Show full-screen with just Novidades
-var newsHtml=renderNewsTab();
-var panel=document.createElement('div');
-panel.id='notifDropdown';
-panel.style.cssText='position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;padding:0;animation:fadeIn .2s ease';
-panel.innerHTML=
-'<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;padding-top:calc(env(safe-area-inset-top,14px) + 10px);background:rgba(22,27,46,0.95);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)">'+
-'<button onclick="toggleNotifications()" style="width:44px;height:44px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);border:1px solid var(--card-border);cursor:pointer">\u2190</button>'+
-'<div style="font-family:var(--font-display);font-size:17px;font-weight:700">Notificações</div>'+
-'</div>'+
-'<div style="padding:16px 20px">'+
-'<div style="font-size:12px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Novidades</div>'+
-newsHtml+
-'</div>';
-document.body.appendChild(panel);
+// Redirect to main toggleNotifications with news tab
+notifTab='news';
+toggleNotifications('news');
 }
 
 // ====== CHAT ======
