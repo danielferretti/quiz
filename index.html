@@ -1712,7 +1712,7 @@ game={
   questions:qs,round:0,playerScore:0,opponentScore:0,
   combo:0,maxCombo:0,correctCount:0,
   powerups:{tempo:false,fiftyFifty:false,double:false},
-  matchDouble:false,answered:false,timeLeft:10,timerWarnPlayed:false,
+  matchDouble:false,answered:false,timeLeft:20,timerWarnPlayed:false,
   quit:false,roundHistory:[],pvpMode:true,pvpSeed:seed
 };
 showScreen('gameplay');
@@ -2428,7 +2428,7 @@ correctCount:0,
 powerups:{tempo:false,fiftyFifty:false,double:false},
 matchDouble:false,
 answered:false,
-timeLeft:10,
+timeLeft:20,
 timerWarnPlayed:false,
 quit:false,
 roundHistory:[]
@@ -2452,7 +2452,7 @@ function playRound(){
 game.answered=false;
 game.matchDouble=false;
 game.timerWarnPlayed=false;
-game.timeLeft=10;
+game.timeLeft=20;
 var q=game.questions[game.round];
 var isR5=game.round===4;
 
@@ -2538,7 +2538,7 @@ if(game.answered)return;
 var dt=(now-lastTime)/1000;
 lastTime=now;
 game.timeLeft=Math.max(0,game.timeLeft-dt);
-var pct=(game.timeLeft/10)*100;
+var pct=(game.timeLeft/20)*100;
 var bar=document.getElementById('timerBar');
 var num=document.getElementById('timerNum');
 var wrap=document.getElementById('timerWrap');
@@ -2673,7 +2673,7 @@ function usePowerup(type){
 if(game.answered)return;
 if(type==='tempo'&&!game.powerups.tempo&&state.coins>=10){
 game.powerups.tempo=true;state.coins-=10;
-game.timeLeft=Math.min(15,game.timeLeft+5);
+game.timeLeft=Math.min(25,game.timeLeft+5);
 sfxPowerup();vibrate(50);
 document.getElementById('puTempo').classList.add('used');
 }else if(type==='fiftyFifty'&&!game.powerups.fiftyFifty&&state.coins>=15){
