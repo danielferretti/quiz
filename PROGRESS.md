@@ -9,6 +9,9 @@ FORMAT:
 - <what shipped / what changed / what's blocked>
 -->
 
+## 2026-07-22 (theme)
+- Added light/dark theme, **light now the default** (aligns with franq.com.br's light-first language). Split color tokens into `:root` (light, Franq-site-derived: #F5F7FB bg, white cards, deep-periwinkle text, lima) + `:root[data-theme="dark"]` (the prior dark). Flipped all hardcoded white-alpha tracks/glass/borders and the 5 lima-as-text spots to theme-aware tokens. "Modo escuro" toggle in Settings, persisted in state.settings.theme + synced to Supabase; flash-free apply via a pre-paint `<head>` script. Verified both themes across home/gameplay/settings, no console errors.
+
 ## 2026-07-22 (later)
 - Fixed iOS-only gameplay/chat text overlap: added `-webkit-text-size-adjust:100%` (Safari was inflating question glyphs past their box on iPhone 15 Pro Max) + `flex:0 0 auto` safety on gameplay question/answers. Centered the JOGAR card text so it clears its giant-corner shape.
 - Added game-feel layer: floating "+N" on correct, player-score count-up, correct/wrong screen flash, combo escalation glow (lima at x4), correct-chip pop, richer countdown pop, results coin count-up, "Perfeito!" flourish on 5/5 — plus new SFX (coin ching, level-up arpeggio, round-start swoosh, combo-break). All gated on the sound + reduced-motion settings; effect nodes auto-remove (no leaks).
