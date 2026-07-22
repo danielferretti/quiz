@@ -184,7 +184,8 @@ background:var(--card);border:1px solid var(--border);border-radius:var(--r-card
 .splash-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .splash-particle{position:absolute;opacity:0;animation:particleDrift linear infinite;will-change:transform,opacity}
 .splash-logo-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:120px;height:120px}
-.splash-ring{position:absolute;inset:2px;border-radius:26px;border:2px solid transparent;border-top-color:var(--primary);border-right-color:rgba(139,155,255,0.35);animation:spin 3s linear infinite}
+.splash-ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--lima);box-shadow:0 0 18px rgba(220,255,121,0.28),inset 0 0 14px rgba(220,255,121,0.10);animation:ringPulse 2.2s ease-in-out infinite}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.06);opacity:0.9}}
 .splash-logo{
 width:96px;height:96px;border-radius:22px 22px 22px 40px;background:var(--card);border:1px solid var(--glass-border);
 display:flex;align-items:center;justify-content:center;color:var(--primary-soft);
@@ -200,6 +201,8 @@ box-shadow:0 8px 30px rgba(0,0,0,0.4);animation:logoEntrance .8s var(--ease-spri
 @keyframes letterPop{0%{opacity:0;transform:translateY(16px) scale(0.5)}70%{transform:translateY(-2px) scale(1.05)}100%{opacity:1;transform:translateY(0) scale(1)}}
 .splash-tagline{font-size:14px;color:var(--text-sec);font-weight:400;letter-spacing:0.3px;opacity:0;animation:fadeInUp .5s var(--ease-enter) .9s both}
 .splash-bar-wrap{width:200px;height:4px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;opacity:0;animation:fadeIn .3s var(--ease) 1s both}
+.splash-footer{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0) + 30px);text-align:center;font-size:12px;color:var(--text-ter);letter-spacing:0.02em;opacity:0;animation:fadeIn .5s var(--ease) 1.2s both}
+.splash-footer strong{color:var(--primary-soft);font-weight:600}
 .splash-bar{height:100%;width:0;border-radius:4px;background:var(--lima);box-shadow:0 0 12px rgba(220,255,121,0.5);transition:width .1s linear}
 
 /* ===== login ===== */
@@ -333,7 +336,7 @@ transition:transform 150ms var(--ease),border-color 150ms var(--ease);
 .match-cancel{padding:13px 32px;border-radius:var(--r-pill);background:var(--glass);border:1px solid var(--glass-border);color:var(--text-sec);font-weight:600;font-size:14px}
 
 /* ===== gameplay ===== */
-#gameplay{gap:8px;padding:12px 16px;padding-top:calc(env(safe-area-inset-top,14px) + 8px);touch-action:manipulation;background:var(--bg-deep)}
+#gameplay{gap:8px;padding:12px 16px;padding-top:calc(env(safe-area-inset-top,14px) + 8px);padding-bottom:calc(env(safe-area-inset-bottom,0) + 14px);touch-action:manipulation;background:var(--bg-deep)}
 .game-topbar{display:flex;align-items:center;justify-content:space-between}
 .game-topic{font-size:11px;font-weight:600;color:var(--primary-soft);text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:5px}
 .game-topic svg{width:14px;height:14px;stroke:currentColor;fill:none}
@@ -384,7 +387,7 @@ font-size:13px;line-height:1.5;color:var(--text-sec);animation:slideUp .3s var(-
 }
 .explanation-card strong{color:var(--text);font-weight:700}
 .explanation-card svg{width:15px;height:15px;stroke:var(--primary-soft);fill:none;vertical-align:-2px;margin-right:4px}
-.powerups{display:flex;gap:8px;justify-content:center;margin-top:2px}
+.powerups{display:flex;gap:8px;justify-content:center;margin-top:auto}
 .powerup-btn{
 flex:1;padding:8px 4px;border-radius:var(--r-chip);background:var(--glass);
 border:1px solid var(--glass-border);text-align:center;font-size:10px;font-weight:600;
@@ -604,6 +607,7 @@ color:var(--text-sec);max-width:110px;min-height:44px;backdrop-filter:blur(8px);
 <div class="splash-title" id="splashTitle"></div>
 <div class="splash-tagline">Acesse. Ofere&#231;a. Realize.</div>
 <div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
+<div class="splash-footer">Uma iniciativa <strong>Franq Educa&#231;&#227;o</strong></div>
 </div>
 
 <div id="login" class="screen">
