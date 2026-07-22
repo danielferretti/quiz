@@ -50,6 +50,7 @@ html,body{
 font-family:var(--font-sans);background:var(--bg);color:var(--text);
 overflow-x:hidden;-webkit-tap-highlight-color:transparent;
 height:100%;overscroll-behavior:none;-webkit-font-smoothing:antialiased;
+-webkit-text-size-adjust:100%;text-size-adjust:100%;
 }
 body{display:flex;justify-content:center;min-height:100%;-webkit-touch-callout:none}
 ::-webkit-scrollbar{display:none}
@@ -146,6 +147,22 @@ background:var(--card);border:1px solid var(--border);border-radius:var(--r-card
 @keyframes countUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes glowPulse{0%,100%{opacity:0.25;transform:scale(1)}50%{opacity:0.5;transform:scale(1.1)}}
 @keyframes particleDrift{0%{opacity:0;transform:translateY(0) rotate(0)}12%{opacity:0.22}88%{opacity:0.22}100%{opacity:0;transform:translateY(-100vh) rotate(160deg)}}
+/* ===== game-feel fx ===== */
+@keyframes countdownPop{0%{transform:scale(0.5)}55%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes pointsFloat{0%{opacity:0;transform:translate(-50%,0) scale(0.8)}18%{opacity:1;transform:translate(-50%,-8px) scale(1)}100%{opacity:0;transform:translate(-50%,-48px) scale(1)}}
+@keyframes fxFlash{0%{opacity:0}25%{opacity:.35}100%{opacity:0}}
+@keyframes comboGlow{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+@keyframes chipPop{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes perfectFlash{0%{opacity:0;transform:scale(0.6)}25%{opacity:1;transform:scale(1.08)}75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+.points-float{position:fixed;pointer-events:none;z-index:350;font-family:var(--font-serif);font-weight:500;font-size:30px;color:var(--primary-soft);text-shadow:0 2px 12px rgba(0,0,0,0.5);animation:pointsFloat .8s var(--ease-enter) forwards;will-change:transform,opacity}
+.points-float.big{color:var(--lima)}
+.fx-flash{position:fixed;inset:0;pointer-events:none;z-index:350;opacity:0;animation:fxFlash .5s var(--ease) forwards}
+.fx-flash.correct{background:radial-gradient(circle at 50% 55%,rgba(6,163,122,0.55),transparent 65%)}
+.fx-flash.wrong{background:radial-gradient(circle at 50% 55%,rgba(220,47,91,0.5),transparent 65%)}
+.combo-glow{position:fixed;inset:0;pointer-events:none;z-index:350;opacity:0;box-shadow:inset 0 0 60px rgba(139,155,255,0.85);animation:comboGlow .6s var(--ease) forwards}
+.combo-glow.hot{box-shadow:inset 0 0 70px rgba(220,255,121,0.9)}
+.answer-btn.correct .letter{animation:chipPop .35s var(--ease-spring)}
+.perfect-flash{position:fixed;inset:0;z-index:950;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:var(--font-serif);font-weight:500;font-size:52px;color:var(--lima);text-shadow:0 4px 24px rgba(0,0,0,0.55);animation:perfectFlash 1.2s var(--ease) forwards}
 .anim-fiu{animation:fadeInUp .42s var(--ease-enter) both;will-change:transform,opacity}
 .anim-fi{animation:fadeIn .3s var(--ease-enter) both}
 .anim-bi{animation:bounceIn .5s var(--ease-spring) both}
@@ -226,8 +243,8 @@ display:flex;flex-direction:column;justify-content:flex-end;
 }
 .play-btn.primary{background:var(--primary);border-radius:var(--r-giant)}
 .play-btn.ghost{background:var(--card);border:1px solid var(--border)}
-.play-btn .play-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:16px 16px 18px}
-.play-btn .play-icon{display:flex;align-items:center;justify-content:center;width:34px;height:34px;margin-bottom:auto;color:#fff}
+.play-btn .play-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;height:100%;text-align:center}
+.play-btn .play-icon{display:flex;align-items:center;justify-content:center;width:38px;height:38px;margin-bottom:2px;color:#fff}
 .play-btn.ghost .play-icon{color:var(--primary-soft)}
 .play-btn .play-icon svg{width:26px;height:26px;stroke:currentColor;fill:none}
 .play-btn .play-label{font-family:var(--font-serif);font-weight:500;font-size:22px;letter-spacing:-0.01em;color:#fff}
@@ -312,7 +329,7 @@ transition:transform 150ms var(--ease),border-color 150ms var(--ease);
 .match-player-role{font-size:11px;color:var(--text-ter)}
 .vs-text{font-family:var(--font-serif);font-weight:500;font-size:30px;color:var(--primary-soft)}
 .match-status{font-size:15px;font-weight:600;color:var(--text-sec);text-align:center}
-.match-countdown{font-family:var(--font-serif);font-weight:500;font-size:76px;color:var(--primary-soft);animation:springBounce .4s var(--ease-spring)}
+.match-countdown{font-family:var(--font-serif);font-weight:500;font-size:76px;color:var(--primary-soft);animation:countdownPop .4s var(--ease-spring)}
 .match-cancel{padding:13px 32px;border-radius:var(--r-pill);background:var(--glass);border:1px solid var(--glass-border);color:var(--text-sec);font-weight:600;font-size:14px}
 
 /* ===== gameplay ===== */
@@ -340,8 +357,8 @@ transition:transform 150ms var(--ease),border-color 150ms var(--ease);
 .timer-number.green{color:var(--ok-text)}
 .timer-number.yellow{color:var(--warn-text)}
 .timer-number.red{color:var(--danger-text)}
-.question-text{font-size:16px;font-weight:600;line-height:1.4;text-align:center;min-height:44px;padding:6px 0;color:var(--text)}
-.answers{display:flex;flex-direction:column;gap:8px}
+.question-text{font-size:16px;font-weight:600;line-height:1.4;text-align:center;min-height:44px;padding:6px 0;color:var(--text);flex:0 0 auto}
+.answers{display:flex;flex-direction:column;gap:8px;flex:0 0 auto}
 .answer-btn{
 width:100%;padding:13px 14px;border-radius:var(--r-btn);background:var(--card);
 border:1px solid var(--border);color:var(--text);font-size:14px;font-weight:600;
@@ -1042,8 +1059,8 @@ if(audioCtx.state==='running'){
 }
 }
 function sfxClick(){playTone(1200,25,'sine',0.08)}
-function sfxCorrect(){playTone(587,80,'sine',0.12,880);setTimeout(function(){playTone(880,120,'sine',0.1)},90)}
-function sfxWrong(){playTone(330,180,'triangle',0.1,220)}
+function sfxCorrect(){playTone(660,90,'sine',0.12,990);setTimeout(function(){playTone(1320,140,'sine',0.1)},95)}
+function sfxWrong(){playTone(340,110,'triangle',0.09,240);setTimeout(function(){playTone(220,150,'triangle',0.08,150)},90)}
 function sfxTimerWarn(){playTone(740,60,'sine',0.12);setTimeout(function(){playTone(740,60,'sine',0.08)},100)}
 function sfxCountdown(){playTone(660,50,'sine',0.1,700)}
 function sfxVictory(){
@@ -1057,7 +1074,47 @@ playTone(440,180,'sine',0.1,380);
 setTimeout(function(){playTone(380,200,'sine',0.08,300)},200);
 }
 function sfxPowerup(){playTone(500,120,'sine',0.12,1000);setTimeout(function(){playTone(1000,80,'sine',0.08)},100)}
-function sfxCombo(n){playTone(660+n*80,80,'sine',0.1,660+n*120)}
+function sfxCombo(n){var base=660+n*90;playTone(base,80,'sine',0.1,base+n*150)}
+function sfxCoin(){playTone(1400,45,'sine',0.06,1700);setTimeout(function(){playTone(2000,60,'sine',0.05)},55)}
+function sfxLevelUp(){playTone(523,110,'sine',0.11);setTimeout(function(){playTone(659,110,'sine',0.11)},100);setTimeout(function(){playTone(784,120,'sine',0.12)},200);setTimeout(function(){playTone(1047,200,'sine',0.12)},310)}
+function sfxRoundStart(){playTone(300,220,'sine',0.09,700)}
+function sfxComboBreak(){playTone(440,120,'sine',0.09,300);setTimeout(function(){playTone(300,140,'sine',0.07,200)},110)}
+
+// ====== GAME-FEEL VISUAL FX (spawns; all skip when reducedMotion()) ======
+function spawnPointsFloat(pts,big){
+if(reducedMotion())return;
+var el=document.createElement('div');
+el.className='points-float'+(big?' big':'');
+el.textContent='+'+pts;
+var x=window.innerWidth/2,y=window.innerHeight*0.3;
+var anchor=document.getElementById('pScore');
+if(anchor){var r=anchor.getBoundingClientRect();x=r.left+r.width/2;y=r.top;}
+el.style.left=x+'px';el.style.top=y+'px';
+document.body.appendChild(el);
+el.addEventListener('animationend',function(){el.remove()});
+}
+function spawnFxFlash(kind){
+if(reducedMotion())return;
+var el=document.createElement('div');
+el.className='fx-flash '+kind;
+document.body.appendChild(el);
+el.addEventListener('animationend',function(){el.remove()});
+}
+function spawnComboGlow(hot){
+if(reducedMotion())return;
+var el=document.createElement('div');
+el.className='combo-glow'+(hot?' hot':'');
+document.body.appendChild(el);
+el.addEventListener('animationend',function(){el.remove()});
+}
+function spawnPerfectFlash(){
+var el=document.createElement('div');
+el.className='perfect-flash';
+el.textContent='Perfeito!';
+document.body.appendChild(el);
+if(reducedMotion()){el.style.animation='none';el.style.opacity='1';setTimeout(function(){el.remove()},1200);}
+else{el.addEventListener('animationend',function(){el.remove()});}
+}
 
 // ====== HAPTICS ======
 function vibrate(pattern){
@@ -2403,6 +2460,7 @@ var ov=document.createElement('div');
 ov.className='round-overlay';
 ov.innerHTML='<div class="round-overlay-text">Rodada '+roundNum+'</div>';
 document.body.appendChild(ov);
+sfxRoundStart();
 setTimeout(function(){
 ov.style.opacity='0';ov.style.transition='opacity .3s';
 setTimeout(function(){ov.remove();if(cb)cb()},300);
@@ -2525,9 +2583,12 @@ timerRAF=requestAnimationFrame(timerLoop);
 }
 
 function timeUp(){
+var prevCombo=game.combo;
 game.combo=0;
 highlightCorrect();
 sfxWrong();vibrate([50,30,50]);
+if(prevCombo>=3)sfxComboBreak();
+spawnFxFlash('wrong');
 showExplanation();
 game.roundHistory.push({q:game.currentQuestion,chosen:-1,correctIdx:game.currentCorrectIdx,shuffled:game.currentShuffled,wasCorrect:false});
 aiAnswer();
@@ -2563,11 +2624,17 @@ if(game.matchDouble)pts*=2;
 
 game.playerScore+=pts;
 state.coins+=2;
-document.getElementById('pScore').textContent=game.playerScore;
+animateScoreCountUp('pScore',game.playerScore,500);
+spawnPointsFloat(pts,game.combo>=4);
+spawnFxFlash('correct');
+if(game.combo>=3)spawnComboGlow(game.combo>=4);
 }else{
 btn.classList.add('wrong');
+var prevCombo=game.combo;
 game.combo=0;
 sfxWrong();vibrate([50,30,50]);
+if(prevCombo>=3)sfxComboBreak();
+spawnFxFlash('wrong');
 highlightCorrect();
 }
 
@@ -2764,7 +2831,8 @@ var xpPct=Math.round(state.xp/xpNeeded*100);
 
 if(won){sfxVictory();vibrate([50,30,50,30,100]);spawnConfetti()}
 else{sfxDefeat();vibrate([100,50,100])}
-if(state.level>oldLevel){vibrate([80,40,80,40,80,40,200]);} // Level up!
+if(perfect)spawnPerfectFlash();
+if(state.level>oldLevel){vibrate([80,40,80,40,80,40,200]);setTimeout(function(){sfxLevelUp()},550);} // Level up!
 
 var rewardsHtml=rewards.map(function(r){
 return '<div class="reward-row">'+
@@ -2790,7 +2858,7 @@ rewardsHtml+
 '<span class="reward-val" style="font-size:15px">+'+game.playerScore+' pts</span>'+
 '</div>'+
 '</div>'+
-'<div class="result-coins anim-fiu" style="animation-delay:.2s"><span class="coin-bounce"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9.5 9.5h3.5a1.5 1.5 0 0 1 0 3H9.5m0 0v2.5m0-5.5V7"/></svg></span> '+state.coins+' moedas</div>'+
+'<div class="result-coins anim-fiu" style="animation-delay:.2s"><span class="coin-bounce"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9.5 9.5h3.5a1.5 1.5 0 0 1 0 3H9.5m0 0v2.5m0-5.5V7"/></svg></span> <span id="animCoins">0</span> moedas</div>'+
 '<div class="xp-section anim-fiu" style="animation-delay:.3s">'+
 '<div class="xp-label">'+
 '<span>Nível '+state.level+' \u2014 '+rank.title+'</span>'+
@@ -2813,6 +2881,8 @@ reviewBtnHtml+
 
 animateScoreCountUp('animPlayerScore',game.playerScore,800);
 animateScoreCountUp('animOppScore',game.opponentScore,800);
+animateScoreCountUp('animCoins',state.coins,700);
+sfxCoin();
 }
 
 function animateScoreCountUp(elId,target,duration){
