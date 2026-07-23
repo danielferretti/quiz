@@ -1,19 +1,16 @@
 {
-  "name": "FRANQ QUIZ",
+  "name": "Franq Quiz",
   "short_name": "Franq Quiz",
   "description": "Quiz de conhecimento financeiro para Personal Bankers",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1C2133",
-  "theme_color": "#0F1923",
+  "background_color": "#F5F7FB",
+  "theme_color": "#687BEA",
   "lang": "pt-BR",
   "icons": [
-    {
-      "src": "/design/img/icon_jogar.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
+    { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
