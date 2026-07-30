@@ -84,7 +84,7 @@ height:100%;overscroll-behavior:none;-webkit-font-smoothing:antialiased;
 body{display:flex;justify-content:center;min-height:100%;-webkit-touch-callout:none;transition:background-color .25s ease,color .25s ease}
 ::-webkit-scrollbar{display:none}
 #app{
-width:100%;max-width:390px;position:relative;min-height:100vh;min-height:100dvh;
+width:100%;max-width:480px;position:relative;min-height:100vh;min-height:100dvh;
 overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0);touch-action:manipulation;
 background-image:radial-gradient(ellipse 80% 50% at 20% -5%,rgba(104,123,234,0.14) 0%,transparent 60%),radial-gradient(ellipse 70% 40% at 90% 105%,rgba(139,155,255,0.07) 0%,transparent 60%);
 }
@@ -536,7 +536,7 @@ color:var(--text-sec);max-width:110px;min-height:44px;backdrop-filter:blur(8px);
 /* ===== bottom nav ===== */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;display:none;justify-content:center;z-index:100}
 .bottom-nav.visible{display:flex}
-.bottom-nav-inner{width:100%;max-width:390px;background:var(--glass-nav);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--glass-border);padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom,0));box-shadow:0 -8px 30px rgba(0,0,0,0.35)}
+.bottom-nav-inner{width:100%;max-width:480px;background:var(--glass-nav);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--glass-border);padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom,0));box-shadow:0 -8px 30px rgba(0,0,0,0.35)}
 .nav-items{display:flex;justify-content:space-around;width:100%}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 14px;border-radius:14px;background:transparent;color:var(--text-ter);font-size:10px;font-weight:600;transition:color 200ms var(--ease);border:none;min-height:46px;letter-spacing:0.01em}
 .nav-item svg{transition:opacity 200ms var(--ease),transform 200ms var(--ease-spring);opacity:0.55}
@@ -546,7 +546,7 @@ color:var(--text-sec);max-width:110px;min-height:44px;backdrop-filter:blur(8px);
 /* ===== challenge sheet ===== */
 .challenge-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
 .challenge-overlay.show{display:flex}
-.challenge-sheet{width:100%;max-width:390px;background:var(--card);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:14px 20px 40px;max-height:72vh;overflow-y:auto;border:1px solid var(--glass-border);border-bottom:none}
+.challenge-sheet{width:100%;max-width:480px;background:var(--card);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:14px 20px 40px;max-height:72vh;overflow-y:auto;border:1px solid var(--glass-border);border-bottom:none}
 .sheet-grabber{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px}
 .challenge-title{font-family:var(--font-serif);font-weight:500;font-size:20px;margin-bottom:16px;text-align:center;position:relative}
 .challenge-close-x{position:absolute;top:-4px;right:-4px;width:32px;height:32px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-sec)}
@@ -605,7 +605,7 @@ color:var(--text-sec);max-width:110px;min-height:44px;backdrop-filter:blur(8px);
 .chat-bubble-name{font-size:10px;font-weight:700;color:var(--primary-soft);margin-bottom:2px}
 .chat-bubble-time{font-size:9px;color:var(--text-ter);margin-top:3px;text-align:right}
 .chat-msg.me .chat-bubble-time{color:rgba(255,255,255,0.6)}
-.chat-input-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0));background:var(--glass-nav);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.chat-input-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0));background:var(--glass-nav);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .chat-input{flex:1;padding:11px 16px;border-radius:var(--r-pill);background:var(--card);border:1px solid var(--border);color:var(--text);font-size:13px;outline:none;min-height:42px}
 .chat-input::placeholder{color:var(--text-ter)}
 .chat-send-btn{width:42px;height:42px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;color:#fff;flex-shrink:0}

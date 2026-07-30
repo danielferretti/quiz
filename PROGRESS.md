@@ -9,6 +9,9 @@ FORMAT:
 - <what shipped / what changed / what's blocked>
 -->
 
+## 2026-07-30
+- Fixed layout dead-space on larger phones (iPhone 15 Pro Max and similar): app shell + bottom nav + challenge sheet + chat bar were hard-capped at 390px max-width, leaving ~20px empty margins on both sides. Bumped all four to 480px so the app fills wider viewports edge-to-edge.
+
 ## 2026-07-22 (theme)
 - Added light/dark theme, **light now the default** (aligns with franq.com.br's light-first language). Split color tokens into `:root` (light, Franq-site-derived: #F5F7FB bg, white cards, deep-periwinkle text, lima) + `:root[data-theme="dark"]` (the prior dark). Flipped all hardcoded white-alpha tracks/glass/borders and the 5 lima-as-text spots to theme-aware tokens. "Modo escuro" toggle in Settings, persisted in state.settings.theme + synced to Supabase; flash-free apply via a pre-paint `<head>` script. Verified both themes across home/gameplay/settings, no console errors.
 
